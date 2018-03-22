@@ -29,7 +29,7 @@ t_MULT= r'\*'
 t_DIVISAO = r'\/'
 t_IGUAL = r'\='
 t_VIRGULA = r'\,'
-t_ATRIBUICAO = r'\:='
+t_ATRIBUICAO = r'\:=+'
 t_MENOR = r'\<'
 t_MAIOR = r'\>'
 t_MENOR_IGUAL = r'<='
@@ -40,7 +40,7 @@ t_ABRE_COL = r'\['
 t_FECHA_COL = r'\]'
 t_DOIS_PONTOS = r':'
 t_E_LOGICO = r'&&' 
-t_OU_LOGICO = r'\|'
+t_OU_LOGICO = r'\|\|'
 t_NEGACAO = r'!'
 
 
@@ -49,46 +49,39 @@ def t_ID(t):
   t.type  = reservadas.get(t.value, 'ID')
   return t
 
+def t_NOTACAO_CIENTIFICA(t):
+  r'[0-9]+(\.[0-9]+)*(e|E)+(\+|\-)*[0-9]+(\.[0-9])*'
+  t.type = "NOTACAO_CIENTIFICA"
+  return t
+
 
 def t_FLUTUANTE(t):
   r'[0-9]+(\.[0-9]+)(e(\+|\-)?(\d+))?'
-  t.type = float(t.value)
+  t.type = reservadas.get(t.value, 'FLUTUANTE')
   return t
 
 def t_INTEIRO(t):
-  r'\d+'
-  t.type = int(t.value)
+  r'[0-9]+'
+  t.type = reservadas.get(t.value, 'INTEIRO')
   return t 
 
-
-
-def t_NOVA_LINHA(t):
-  r'(\n)+'
-  t.type  = "NOVA_LINHA"
-  return t
   
 def t_COMENTARIO(t):
   r'[\{]+[a-zA-Zà-úÀ-Ú]*[0-9a-zà-úA-ZÀ-Ú\s\n]*[\}]+'
   t.type  = reservadas.get(t.value, 'COMENTARIO')
   return t
-  
-def t_NOTACAO_CIENTIFICA(t):
-  r'[0-9]+(\.[0-9]+)*(e|E)+(\+|\-)*[0-9]+(\.[0-9])*'
-  t.type = "NOTACAO_CIENTIFICA"
+
+def t_NOVA_LINHA(t):
+  r'\n+'
+  t.lexer.lineno += len(t.value)
+  t.type  = "NOVA_LINHA"
   return t
+
+  
   
 # Ignora espaços
 t_ignore  = ' \t'
 
-# Regras para erros
-#def t_error(t):
-#  print ("Erro '%s', linha %d" %(t.value[0], t.lineno))
-#  print (type(t.value))
-  #t.lexer.skip(1)
-#  exit(0)
-  
-# Build the lexer
-#lexer = lex.lex()
 
 # Error handling rule
 def t_error(t):
