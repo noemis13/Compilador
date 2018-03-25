@@ -1,0 +1,138 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+
+\usepackage{graphicx,url}
+
+  
+\usepackage[latin1]{inputenc}  
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{indentfirst}
+\usepackage[brazil]{babel} 
+
+     
+\sloppy
+
+\title{Análise Léxica}
+
+\author{Noemi Pereira Scherer\inst{1}}
+
+
+\address{Universidade Tecnológica Federal do Paraná (UTFPR)
+  \\
+  Campo Mourão -- PR -- Brasil
+  \email{\{noemischerer13\}@gmail.com}
+}
+
+\begin{document} 
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+     
+\begin{resumo} 
+  Este meta-artigo descreve o estilo a ser usado na confecção de artigos e
+  resumos de artigos para publicação nos anais das conferências organizadas
+  pela SBC. É solicitada a escrita de resumo e abstract apenas para os artigos
+  escritos em português. Artigos em inglês deverão apresentar apenas abstract.
+  Nos dois casos, o autor deve tomar cuidado para que o resumo (e o abstract)
+  não ultrapassem 10 linhas cada, sendo que ambos devem estar na primeira
+  página do artigo.
+\end{resumo}
+
+
+\section{Introdução}
+Análise léxica é responsável por analisar a entrada de linhas de caracteres do código-fonte de um programa de computador e produzir uma sequência de símbolos denominados \textit{tokens}, que sendo melhores manipulados por um parser (leitor de saída) \cite{wiki}.
+
+\subsection{Objetivo}
+O principal objetivo desse trabalho é analisar um determinado código escrito na linguagem T++ e retornar o conjunto de \textit{tokens} encontrado.
+
+\section{A Linguagem T++} \label{sec:firstpage}
+A linguagem de programação T++ foi desenvolvida especialmente para ser utilizada na disciplina de compiladores. Ela é uma linguagem simples, contendo algumas palavras reservadas, símbolos e arranjos uni e bidimensionais, não é sensível ao contexto, ou seja, palavras iguais com letras maiúsculas e minúsculas são consideradas as mesmas. A Tabela \ref{linguagemt} mostra todas as palavras reservadas e símbolos que a linguagem T++ permite.
+ 
+A construção do código é inteiramente em Português. Os números podem ser inteiros, flutuantes (notação científica ou não), e as declarações de variáveis devem obrigatoriamente começar com letras precedente de várias letras e/ou números.
+ 
+
+\begin{table}[H]
+\caption{\textit{Tokens} permitidos pela Linguagem T++}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Palavras Reservadas& Símbolos\\ 
+\hline
+se    & + soma\\
+então & - subtração\\
+senão & * multiplicação\\
+fim	  & / divisão\\
+repita& = igualdade\\
+flutuante& , vírgula\\
+retorna& := atribuição\\
+até& $<$ menor\\
+leia& $>$ maior\\
+escreve& $<$= menor-igual\\
+inteiro& $>$= maior-igual\\
+notação científica	& () abre e fecha parênteses\\
+		& : dois pontos\\
+		& [] abre e fecha colchetes\\
+		& \{\} comentário\\
+		& $|$ $|$ ou-lógico \\
+		& \&\& e-lógico \\
+		& ! negação \\ \hline
+		
+		
+\end{tabular}
+\label{linguagemt}
+\end{table}
+
+\section{Métodos e Resultados}
+
+\subsection{Expressões Regulares e Autômatos}
+
+Uma expressão regular é responsável por identificar uma cadeias de caracteres de uma determinada linguagem, como palavras ou padrões. Elas são escritas numa linguagem formal que pode ser interpretada por um processador de expressão regular \cite{expRegular}.
+
+Essa expressão pode ser associada com a aritmética, ao invés dela denotar um número (como 2+2), a expressão regular denota uma linguagem regular. Por exemplo: a0+, que resultará em \{"a0", "a00", "a000", ...\} \cite{expRegular}.
+
+As expressões regulares são utilizadas para a especificação léxica de uma determinada linguagem. 
+
+
+% % %
+
+Para cada \textit{token} permitido na Linguagem T++ é criado uma expressão regular, o qual tem como objetivo analisar uma cadeia de caracteres no código. As expressões regulares utilizadas nesse trabalho estão descritas
+
+\begin{table}[H]
+\caption{Expressões regulares}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Tokens} & \textbf{Expressão regulares}\\ 
+\hline
+ID & [a-zA-Zà-úÀ-Ú][\_0-9a-zà-úA-ZÀ-Ú]* \\\hline
+
+Notação Científica & [0-9]+(\textbackslash .[0-9]+)*(e$|$ 
+E)+(\textbackslash + $|$\textbackslash -)*[0-9]+(\textbackslash.[0-9])* \\\hline		
+
+Flutuante & [0-9]+(\textbackslash.[0-9]+)(e( \textbackslash +$|$ \textbackslash-)?(\ d+))? \\\hline
+
+Inteiro & [0-9]+ \\\hline
+
+Comentário & \{ [ 
+\textasciicircum \textbackslash \{ 
+\textasciicircum \textbackslash \} ] \} \\\hline
+
+Nova Linha & \textbackslash n+ \\\hline
+
+\end{tabular}
+\label{expressaoRegulares}
+\end{table}
+
+ 
+
+\bibliographystyle{sbc}
+\bibliography{sbc-template}
+
+\end{document}
