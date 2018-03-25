@@ -45,7 +45,7 @@ t_NEGACAO = r'!'
 
 
 def t_ID(t):
-  r'[a-zA-Zà-úÀ-Ú][_0-9a-zà-úA-ZÀ-Ú]*'
+  r'[a-zA-Zà-úÀ-Ú][0-9a-zà-úA-ZÀ-Ú]*'
   t.type  = reservadas.get(t.value, 'ID')
   return t
 
