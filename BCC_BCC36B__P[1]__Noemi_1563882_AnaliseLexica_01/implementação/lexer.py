@@ -50,7 +50,7 @@ def t_ID(t):
   return t
 
 def t_NOTACAO_CIENTIFICA(t):
-  r'[0-9]+(\.[0-9]+)*(e|E)+(\+|\-)*[0-9]+(\.[0-9])*'
+  r'[0-9]+(\.[0-9]+)*(e|E)+(\+|\-)?[0-9]+(\.[0-9])*'
   t.type = "NOTACAO_CIENTIFICA"
   return t
 

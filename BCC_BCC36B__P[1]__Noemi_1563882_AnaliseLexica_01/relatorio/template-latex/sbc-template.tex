@@ -82,8 +82,7 @@ notação científica	& () abre e fecha parênteses\\
 		& \{\} comentário\\
 		& $|$ $|$ ou-lógico \\
 		& \&\& e-lógico \\
-		& ! negação \\ \hline
-		
+		& ! negação \\\hline	
 		
 \end{tabular}
 \label{linguagemt}
@@ -102,7 +101,7 @@ As expressões regulares são utilizadas para a especificação léxica de uma determ
 
 % % %
 
-Para cada \textit{token} permitido na Linguagem T++ é criado uma expressão regular, o qual tem como objetivo analisar uma cadeia de caracteres no código. As expressões regulares utilizadas nesse trabalho estão descritas
+Para cada \textit{token} permitido na Linguagem T++ é criado uma expressão regular, o qual tem como objetivo analisar uma cadeia de caracteres no código. As expressões regulares utilizadas nesse trabalho estão descritas na Tabela~\ref{expressaoRegulares}.
 
 \begin{table}[H]
 \caption{Expressões regulares}
@@ -130,7 +129,68 @@ Nova Linha & \textbackslash n+ \\\hline
 \label{expressaoRegulares}
 \end{table}
 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./id1}
+\caption{Expressão regular resumida do ID}
+\label{fig:ExpressaoId1}
+\end{figure}
  
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./id2}
+\caption{Expressão regular completa do ID}
+\label{fig:ExpressaoId2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./inteiro1}
+\caption{Expressão regular do número inteiro}
+\label{fig:ExpressaoInteiro}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./flutuante2}
+\caption{Expressão regular do número flutuante}
+\label{fig:ExpressaoFlutuante}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./notacao}
+\caption{Expressão regular do número flutuante em notação científica}
+\label{fig:ExpressaoNotacao}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./comentario1}
+\caption{Expressão regular resumida do comentário}
+\label{fig:ExpressaoComent}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./comentario2}
+\caption{Expressão regular completa do comentário}
+\label{fig:ExpressaoComent2}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./linha1}
+\caption{Expressão regular da nova linha}
+\label{fig:ExpressaoLinha}
+\end{figure}
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
