@@ -2,13 +2,28 @@
 
 \bibitem[AHO 2008]{expRegular}
 AHO, A.~V. (2008).
-\newblock {\em Compuladores: Princípios, técnicas e ferramentas}.
+\newblock {\em Compuladores: Princ\'ipios, t\'ecnicas e ferramentas}.
 \newblock SP: Pearson Addison-Wesley, 2nd edition.
 
-\bibitem[{Wikipedia} 2017]{wiki}
-{Wikipedia} (2017).
-\newblock Análise léxica.
-\newblock \url{https://pt.wikipedia.org/wiki/An%C3%A1lise_l%C3%A9xica}.
+\bibitem[{David M. Beazley} 2011]{ply}
+{David M. Beazley} (2011).
+\newblock Ply (python lex-yacc).
+\newblock
+  \url{http://www.eng.utah.edu/~cs3100/lectures/l14/ply-3.4/doc/ply.html}.
+\newblock Acessado em 26-03-2018.
+
+\bibitem[{USP} ]{automatos}
+{USP}.
+\newblock Aut\^omatos finito determin\'isticos.
+\newblock
+  \url{https://edisciplinas.usp.br/pluginfile.php/4159708/mod_resource/content/1/De_representacao_de_linguagens_ate_Automato_Finito_-_2012.pdf},
+  year={2012}, note={Acessado em 27-03-2018},.
+
+\bibitem[{Wikibooks} 2018]{wikibook}
+{Wikibooks} (2018).
+\newblock Construção de compiladores: An\'alise l\'exica.
+\newblock
+  \url{https://pt.wikibooks.org/wiki/Constru%C3%A7%C3%A3o_de_compiladores/An%C3%A1lise_l%C3%A9xica}.
 \newblock Acessado em 25-03-2018.
 
 \end{thebibliography}

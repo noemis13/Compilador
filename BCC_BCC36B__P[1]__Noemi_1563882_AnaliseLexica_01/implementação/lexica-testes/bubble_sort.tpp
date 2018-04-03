@@ -1,9 +1,4 @@
 inteiro: vet[10]
-
-{  noemi 
-
-}
-
 inteiro: tam
 
 tam := 10
