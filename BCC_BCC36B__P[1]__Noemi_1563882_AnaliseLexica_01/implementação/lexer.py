@@ -87,8 +87,8 @@ t_ignore  = ' \t'
 def t_error(t):
     print ("Erro '%s', linha %d" %(t.value[0], t.lineno))
     print (type(t.value))
-    #t.lexer.skip(1)
-    exit(0)
+    t.lexer.skip(1)
+    #exit(0)
 
 lexica = lex.lex()
 

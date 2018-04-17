@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[12p, english,brazil,a4paper,utf8,onesidet]{article}
 \usepackage{float}
 
 \usepackage{sbc-template}
@@ -7,7 +7,8 @@
 \usepackage{url}
 \usepackage{indentfirst}
 \usepackage[brazil]{babel} 
-
+\usepackage{tabularx}
+\usepackage{hhline}
 \usepackage{xcolor}
 \usepackage{nomencl}
 \usepackage{indentfirst}
@@ -16,10 +17,10 @@
 \usepackage{etoolbox}
 \usepackage{listings}
 \usepackage{cleveref}
-\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
-    decorations.pathreplacing,decorations.pathmorphing,shapes,%
-    matrix,shapes.symbols}
-
+     
+% Suporte a figuras e subfiguras
+\usepackage{graphics}
+\usepackage{subfigure}
      
 \sloppy
 
@@ -105,10 +106,13 @@ notação científica	& () abre e fecha parênteses\\\hline
  
 A construção do código dessa linguagem é inteiramente em Português. Os números podem ser inteiros, flutuantes (notação científica ou não), e as declarações de variáveis devem obrigatoriamente começar com letras precedente de várias letras e/ou números.
  
-Apesar de T++ ser uma linguagem simples, ela permite a execução de algoritmos complexos, como de ordenação. A seguir, está descrito o algoritmo de busca BubbleSort na linguagem t++.
+Apesar de T++ ser uma linguagem simples, ela permite a execução de algoritmos complexos, como de ordenação. A Figura~\ref{exemple} demonstra o algoritmo de busca BubbleSort na linguagem t++.
 
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
 
+\begin{figure}[H]
+\caption{Exeplo do código BubbleSort na linguagem T++}
+\label{exemple}
 \begin{lstlisting}[frame=single] 
 inteiro: vet[10]
 inteiro: tam
@@ -151,6 +155,7 @@ inteiro principal()
   retorna(0)
 fim
 \end{lstlisting}
+\end{figure}
 
 \section{Expressões Regulares e Autômatos}
 
@@ -320,7 +325,7 @@ Para utilizar a ferramenta no código fonte deve-se importar o ply por meio do se
 
 No código fonte da análise léxica é necessário descrever quais são as palavras reservadas e os \textit{tokens} da linguagem, como demostra na Figura~\ref{fig:Codigo1}.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{./cod1}
 \caption{Palavras reservadas e \textit{tokens} no código fonte da análise léxica.}
