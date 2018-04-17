@@ -69,15 +69,19 @@ def t_INTEIRO(t):
 def t_COMENTARIO(t):
   r'{[^\{^\}]*}'
   t.type  = reservadas.get(t.value, 'COMENTARIO')
-  return t
+  for x in range(1, len(t.value)):
+  	if t.value[x] == "\n":
+        	t.lexer.lineno += 1
+  pass
+
+  #return t
 
 def t_NOVA_LINHA(t):
   r'\n+'
   t.lexer.lineno += len(t.value)
   t.type  = "NOVA_LINHA"
   return t
-
-  
+ 
   
 # Ignora espaços
 t_ignore  = ' \t'
