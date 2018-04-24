@@ -1,6 +1,7 @@
 import ply.lex as lex
 import io
 
+
 # Palavras reservadas
 reservadas = {
     'se':'SE',
