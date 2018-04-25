@@ -324,10 +324,10 @@ def p_empty(t):
 
 def p_error(t):
     if t:
-        print "Syntax error: '%s' Line %d" % (t.value, t.lineno)
+        print("Syntax error: '%s' Line %d" % (t.value, t.lineno))
     else:
         yacc.restart()
-        print "Syntax error"
+        print( "Syntax error")
 
 def parse_tree(code):
     parser = yacc.yacc(debug=True)

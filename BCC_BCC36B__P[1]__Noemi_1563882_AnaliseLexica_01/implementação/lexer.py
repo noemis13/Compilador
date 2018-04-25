@@ -1,5 +1,6 @@
 import ply.lex as lex
 import io
+from ply.lex import TOKEN
 
 
 # Palavras reservadas
