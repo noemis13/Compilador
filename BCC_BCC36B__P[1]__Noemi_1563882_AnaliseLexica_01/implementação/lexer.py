@@ -104,9 +104,9 @@ if __name__ == '__main__':
   out = io.open("saida.txt", mode="w", encoding="utf-8")
   lexica.input(code.read())
   while True:
-    tok = lexica.token()
-    if not tok:
-      break
-    print (tok)
-    out.write(str(tok)+ "\n")
+     tok = lexica.token()
+     if not tok:
+       break
+     print(tok)
+     out.write(str(tok)+ "\n")
   out.close()
