@@ -1,6 +1,6 @@
+import ply.yacc as yacc
 from ast import AST
-from ply import yacc
-from lexer import tokens
+from lexer import Lexica
 
 class Tree:
 
@@ -13,18 +13,17 @@ class Tree:
             return self.type
 
 
-
-class Sintatica:
+class Syntax:
 	def __init__(self, code):
-		#lex = lexer()
-		#self.tokens = lex.tokens
-		self.precedence = (
+		lex = Lexica()
+		self.tokens = lex.tokens
+		self.precedences = (
 		    (('left', 'IGUAL', 'NEGACAO', 'MENOR_IGUAL', 'MAIOR', 'MAIOR_IGUAL', 'MENOR'),
-		     ('left', 'SOMA', 'SUBTRACAO'),
-		     ('left', 'MULTIPLICACAO', 'DIVISAO'))
-		    )
+                     ('left', 'SOMA', 'SUBTRACAO'),
+                     ('left', 'MULTIPLICACAO', 'DIVISAO'))
+		)
 		parser = yacc.yacc(debug=True, module=self, optimize=False)
-		self.ast = parser.parse(code)
+		self.ast = parser.parse(code)	
 
 
 	def p_programa(self, p):
@@ -307,6 +306,7 @@ class Sintatica:
 	def p_vazio(self, p):
 		'empty : '
 
+
 	def p_error(p):
 	    	if p:
 		     print("Erro sintático: '%s', linha %d" % (p.value, p.lineno))
@@ -316,18 +316,18 @@ class Sintatica:
 		     yacc.restart()
 		     print('Erro sintático: definições incompletas!')
 		     exit(1)
-		     #p.lexer.skip(1)
+		    #p.lexer.skip(1)
 
 def prinTree(node, level=" "):
 	if node != None and node.child != None:
-            print("%s %s %s" % (level, node.type, node.value))
-            for son in node.child:
-            	if (node.child != None):
-                	prinTree(son, level + " ")
+		print("%s %s %s" % (level, node.type, node.value))
+		for son in node.child:
+		    if (node.child != None):
+		        prinTree(son, level + " ")
 
 if __name__ == '__main__':
 	import io, sys
-	code = open(sys.argv[1], mode="r", encoding="utf-8")
-	arvore = Sintatica(code.read())
+	lexemas = io.open(sys.argv[1], mode="r", encoding="utf-8")
+	arvore = Syntax(lexemas.read())
 	prinTree(arvore.ast)
-	code.close()
+	lexemas.close()
