@@ -12,12 +12,12 @@ class Lexica:
 	    'senão':'SENAO',
 	    'fim':'FIM',
 	    'repita':'REPITA',
-	    'vazio':'VAZIO',
+	    #'vazio':'VAZIO',
 	    'até':'ATE',
 	    'leia':'LEIA',
 	    'escreva':'ESCREVA',
 	    'retorna':'RETORNA',
-	    'principal':'PRINCIPAL',
+	    #'principal':'PRINCIPAL',
 	    'inteiro' : 'INTEIRO',
 	    'flutuante' : 'FLUTUANTE'
 	    }
@@ -85,8 +85,8 @@ class Lexica:
 	def t_NOVA_LINHA(self, t):
 	  r'\n+'
 	  t.lexer.lineno += len(t.value)
-	  t.type  = "NOVA_LINHA"
-	  return t
+	  #t.type  = "NOVA_LINHA"
+	  #return t
 	 
 	  
 	# Ignora espaços
