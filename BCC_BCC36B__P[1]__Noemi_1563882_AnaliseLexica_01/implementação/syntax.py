@@ -62,7 +62,7 @@ class Syntax:
 
     def p_lista_variaveis(self, p):
         '''
-        lista_variaveis : var VIRGULA lista_variaveis
+        lista_variaveis : lista_variaveis VIRGULA var
                         | var
         '''
         if (len(p) == 4):
@@ -74,12 +74,29 @@ class Syntax:
         '''
         var : ID
             | ID indice
+	    | ID lista_dimensao
         '''
         if (len(p) == 2):
             p[0] = Tree('var', [], p[1])
         elif (len(p) == 3):
-            p[0] = Tree('var', [p[2]], p[1])
+            p[0] = Tree('var', [p[2], p[1]])
 
+    def p_lista_dimensao(self, p):
+    	'''
+    	lista_dimensao : dimensao
+		       | lista_dimensao dimensao
+    	'''
+    	if (len(p) == 2):
+            p[0] = Tree('lista_dimensao', [p[1]])
+    	elif (len(p) == 3):
+            p[0] = Tree('lista_dimensao', [p[1], p[2]])
+
+    def p_dimensao(self, p):
+    	'''
+    	dimensao : ABRE_COL FECHA_COL
+    	'''
+    	p[0] = Tree('lista_dimensao', [], [p[1], p[2]])
+        
     def p_indice(self, p):
         '''
         indice : indice ABRE_COL expressao FECHA_COL
@@ -90,17 +107,17 @@ class Syntax:
         elif (len(p) == 4):
             p[0] = Tree('indice', [p[2]])
 
-    def p_tipo(self, p):
+    def p_tipo_1(self, p):
         '''
         tipo : INTEIRO
         '''
-        p[0] = Tree('inteiro', [])
+        p[0] = Tree('inteiro', [], p[1])
 
-    def p_tipo2(self, p):
+    def p_tipo_2(self, p):
         '''
         tipo : FLUTUANTE
         '''
-        p[0] = Tree('flutuante', [])
+        p[0] = Tree('flutuante', [], p[1])
 
     def p_declaracao_funcao(self, p):
         '''
@@ -116,11 +133,11 @@ class Syntax:
         '''
         cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM
         '''
-        p[0] = Tree('cabecalho', [p[3], p[5]], p[1])
+        p[0] = Tree('cabecalho', [p[3], p[5], p[1]])
 
     def p_lista_parametros(self, p):
         '''
-        lista_parametros : lista_parametros VIRGULA lista_parametros
+        lista_parametros : lista_parametros VIRGULA parametro
                             | parametro
                             | vazio
         '''
@@ -129,17 +146,16 @@ class Syntax:
         elif len(p) == 2:
             p[0] = Tree('lista_parametros', [p[1]])
 
-    def p_parametro1(self, p):
+    def p_parametro(self, p):
         '''
-        parametro : tipo DOIS_PONTOS ID
+        parametro : tipo DOIS_PONTOS var
+		  | parametro
         '''
-        p[0] = Tree('parametro', [p[1]], p[3])
+        if (len(p) == 4):
+            p[0] = Tree('parametro', [p[1], p[3]])
+        elif (len(p) == 2):
+            p[0] = Tree('parametro', [p[1]])
 
-    def p_parametro2(self, p):
-        '''
-        parametro : parametro ABRE_COL FECHA_COL
-        '''
-        p[0] = Tree('parametro', [p[1]])
 
     def p_corpo(self, p):
         '''
@@ -160,7 +176,6 @@ class Syntax:
                     | leia
                     | escreva
                     | retorna
-                    | error
 
         '''
         p[0] = Tree('acao', [p[1]])
@@ -168,7 +183,7 @@ class Syntax:
     def p_se(self, p):
         '''
             se : SE expressao ENTAO corpo FIM
-                | SE expressao ENTAO corpo SENAO corpo FIM
+               | SE expressao ENTAO corpo SENAO corpo FIM
         '''
         if len(p) == 6:
             p[0] = Tree('se', [p[2], p[4]])
@@ -184,15 +199,42 @@ class Syntax:
     def p_atribuicao(self, p):
         '''
             atribuicao : var ATRIBUICAO expressao
+		       | condicional
+                       | NEGACAO condicional
         '''
-        if len(p):
-    	    p[0] = Tree('atribuicao', [p[1], p[3]])
+        if len(p) == 4:
+            p[0] = Tree('se', [p[1], p[3]])
+        elif len(p) == 2:
+            p[0] = Tree('se', [p[1]])
+        elif len(p) == 3:
+            p[0] = Tree('se', [p[1]])
+
+    def p_condicional_1(self, p):
+    	'''
+	    condicional : expressao_simples operador_relacional expressao_aditiva
+			| condicional simbolo_condicional condicional
+    	'''
+    	p[0] = Tree('condicional', [p[1],p[2],p[3]])
+
+    def p_condicional_2(self, p):
+    	'''
+	    condicional : ABRE_PAR condicional FECHA_PAR
+	'''
+    	p[0] = Tree('condicional', [p[2]])
+
+    def p_simbolo_condicional(self, p):
+    	'''
+	    simbolo_condicional : OU_LOGICO
+				| E_LOGICO   
+	'''
+    	p[0] = Tree('simbolo_condicional', [], p[1])
+
 
     def p_leia(self, p):
         '''
-            leia : LEIA ABRE_PAR var FECHA_PAR
+            leia : LEIA ABRE_PAR ID FECHA_PAR
         '''
-        p[0] = Tree('leia', p[3])
+        p[0] = Tree('leia', [], p[3])
 
     def p_escreva(self, p):
         '''
@@ -208,20 +250,10 @@ class Syntax:
 
     def p_expressao(self, p):
         '''
-            expressao : expressao_logica
+            expressao : expressao_simples
                         | atribuicao
         '''
         p[0] = Tree('expressao', [p[1]])
-
-    def expressao_logica(self, p):
-    	'''
-	    expressao_logica: expressao_simples
-			     | expressao_logica operador_logico expressao_simples	
-	'''
-    	if len(p) == 2:
-    	    p[0] = Tree('expressao_logica', p[1])
-    	elif len(p) == 3:
-    	    p[0] = Tree('expressao_logica', [p[1],p[2],p[3]])
 
 
     def p_expressao_simples(self, p):
@@ -259,7 +291,6 @@ class Syntax:
         '''
             expressao_unaria : fator
                             | operador_soma fator
-			    | operador_negacao fator
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_unaria', [p[1]])
@@ -275,7 +306,7 @@ class Syntax:
                                 | MAIOR_IGUAL
                                 | NEGACAO
         '''
-        p[0] = Tree('operador_relacional', [])
+        p[0] = Tree('operador_relacional', [] ,p[1])
 
 
     def p_operador_soma(self, p):
@@ -283,23 +314,15 @@ class Syntax:
             operador_soma : SOMA
                     | SUB
         '''
-        p[0] = Tree('operador_soma', [])
+        p[0] = Tree('operador_soma', [], p[1])
 
   
-    def p_operador_logico(self, p):
-        '''
-            operador_soma : E_LOGICO
-                    	  | OU_LOGICO
-        '''
-        p[0] = Tree('operador_soma', [])
-
-
     def p_operador_multiplicacao(self, p):
         '''
             operador_multiplicacao : MULT
                                     | DIVISAO
         '''
-        p[0] = Tree('operador_multiplicacao', [])
+        p[0] = Tree('operador_multiplicacao', [], p[1])
 
     def p_fator(self, p):
         '''
@@ -319,7 +342,7 @@ class Syntax:
                     | FLUTUANTE
 		    | NOTACAO_CIENTIFICA
         '''
-        p[0] = Tree('numero', [])
+        p[0] = Tree('numero', [], p[1])
 
     def p_chamada_funcao(self, p):
         '''
