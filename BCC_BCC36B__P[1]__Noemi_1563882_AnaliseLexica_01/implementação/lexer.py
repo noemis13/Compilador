@@ -11,19 +11,20 @@ class Lexica:
 	    'então':'ENTAO',
 	    'senão':'SENAO',
 	    'fim':'FIM',
-	    'repita':'REPITA',
+	    'flutuante' : 'FLUTUANTE',
+	    'inteiro' : 'INTEIRO',
 	    #'vazio':'VAZIO',
 	    'até':'ATE',
 	    'leia':'LEIA',
+	    'repita':'REPITA',
 	    'escreva':'ESCREVA',
-	    'retorna':'RETORNA',
+	    'retorna':'RETORNA'
 	    #'principal':'PRINCIPAL',
-	    'inteiro' : 'INTEIRO',
-	    'flutuante' : 'FLUTUANTE'
+	    
 	    }
 
 	# Lista de tokens
-	tokens = ['SOMA', 'SUB', 'MULT', 'DIVISAO', 'IGUAL', 'DIFERENCA', 'VIRGULA', 'ATRIBUT', 'MENOR', 'MAIOR', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'ABRE_COL', 'FECHA_COL', 'E_LOGICO', 'OU_LOGICO', 'NEGACAO', 'ID','NOVA_LINHA', 'COMENTARIO', 'NOTACAO_CIENTIFICA'] + \
+	tokens = ['DIVISAO', 'MULT', 'VIRGULA', 'ATRIBUT', 'MENOR', 'MAIOR', 'IGUAL', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'E_LOGICO', 'OU_LOGICO','SOMA', 'SUB',   'DIFERENCA', 'ABRE_COL', 'FECHA_COL', 'NOTACAO_CIENTIFICA', 'ID', 'NEGACAO'] + \
 	    list(reservadas.values())
 
 	# Regras de expressões regulares
@@ -61,9 +62,8 @@ class Lexica:
 
 
 	def t_FLUTUANTE(self, t):
-	  r'[0-9]+(\.[0-9]+)(e(\+|\-)?(\d+))?'
-	  #t.type = reservadas.get(t.value, 'FLUTUANTE')
-	  t.type = float(t.value)
+	  r'[0-9]+(\.[0-9]*)(e(\+|\-)?(\d+))?'
+	  t.type = self.reservadas.get(t.value, 'FLUTUANTE')
 	  return t
 
 	def t_INTEIRO(self, t):
@@ -98,8 +98,8 @@ class Lexica:
 	def t_error(self, t):
 	    print ("Erro '%s', linha %d" %(t.value[0], t.lineno))
 	    print (type(t.value))
-	    t.lexer.skip(1)
-	    #exit(0)
+	    #t.lexer.skip(1)
+	    exit(0)
 
 
 	# Salvar os tokens
