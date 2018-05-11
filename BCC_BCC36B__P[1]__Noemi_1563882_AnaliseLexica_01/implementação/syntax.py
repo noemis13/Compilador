@@ -346,6 +346,7 @@ class Syntax:
         '''
             vazio : 
         '''
+
     
     def p_error(self, p):
         print(p)
