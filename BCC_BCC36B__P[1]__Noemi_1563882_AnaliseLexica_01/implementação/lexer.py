@@ -23,7 +23,7 @@ class Lexica:
 	    }
 
 	# Lista de tokens
-	tokens = ['SOMA', 'SUB', 'MULT', 'DIVISAO', 'IGUAL', 'VIRGULA', 'ATRIBUICAO', 'MENOR', 'MAIOR', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'ABRE_COL', 'FECHA_COL', 'E_LOGICO', 'OU_LOGICO', 'NEGACAO', 'ID','NOVA_LINHA', 'COMENTARIO', 'NOTACAO_CIENTIFICA'] + \
+	tokens = ['SOMA', 'SUB', 'MULT', 'DIVISAO', 'IGUAL', 'DIFERENCA', 'VIRGULA', 'ATRIBUT', 'MENOR', 'MAIOR', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'ABRE_COL', 'FECHA_COL', 'E_LOGICO', 'OU_LOGICO', 'NEGACAO', 'ID','NOVA_LINHA', 'COMENTARIO', 'NOTACAO_CIENTIFICA'] + \
 	    list(reservadas.values())
 
 	# Regras de expressões regulares
@@ -32,8 +32,9 @@ class Lexica:
 	t_MULT= r'\*'
 	t_DIVISAO = r'\/'
 	t_IGUAL = r'\='
+	t_DIFERENCA = r'\<\>'
 	t_VIRGULA = r'\,'
-	t_ATRIBUICAO = r'\:=+'
+	t_ATRIBUT = r'\:=+'
 	t_MENOR = r'\<'
 	t_MAIOR = r'\>'
 	t_MENOR_IGUAL = r'<='
