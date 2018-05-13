@@ -30,3 +30,4 @@ inteiro principal()
 	escreva(fatorial(fatorial(1)))
 fim
 
+1+2

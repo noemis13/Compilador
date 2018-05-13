@@ -35,11 +35,15 @@ class Syntax:
         '''
         lista_declaracoes : lista_declaracoes declaracao
                            | declaracao
+			   | error
         '''
         if (len(p) == 3):
             p[0] = Tree('lista_declaracoes', [p[1], p[2]])
-        elif (len(p) == 2):
+        elif ( p.slice[1] == 'declaracao' ):
             p[0] = Tree('lista_declaracoes', [p[1]])
+        elif ( p.slice[1] == 'error' ):
+            print( "Erro: delcaração incompleta! \n")
+
 
     def p_declaracao(self, p):
         '''
@@ -49,17 +53,26 @@ class Syntax:
         '''
         p[0] = Tree('declaracao', [p[1]])
 
+
     def p_declaracao_variaveis(self, p):
         '''
         declaracao_variaveis : tipo DOIS_PONTOS lista_variaveis
         '''
         p[0] = Tree('declaracao_variaveis', [p[1], p[3]], p[2])
 
+    def p_declaracao_variaveis_error(self, p):
+        '''
+        declaracao_variaveis : tipo DOIS_PONTOS error
+        '''
+        print("Erro: Declaração de variável incompleta. \n")
+
+
     def p_inicializacao_variaveis(self, p):
         '''
         inicializacao_variaveis : atribuicao
         '''
         p[0] = Tree('inicializacao_variaveis', [p[1]])
+
 
     def p_lista_variaveis(self, p):
         '''
@@ -90,7 +103,19 @@ class Syntax:
             p[0] = Tree('indice', [p[1], p[3]])
         elif (len(p) == 4):
             p[0] = Tree('indice', [p[2]])
-
+   
+    def p_indice_error(self, p):
+        '''
+        indice : indice ABRE_COL error FECHA_COL
+                | ABRE_COL error FECHA_COL
+		| error FECHA_COL
+		| ABRE_COL error
+        	| indice error FECHA_COL
+		| indice ABRE_COL error
+		
+        '''
+        print("Erro: Não foi declarado o tamanho ou faltou colchetes.\n" )
+    
     def p_tipo(self, p):
         '''
         tipo : INTEIRO
@@ -114,6 +139,12 @@ class Syntax:
         cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM
         '''
         p[0] = Tree('cabecalho', [p[3], p[5]], p[1])
+
+    def p_cabecalho_error(self, p):
+        '''
+        cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo error
+        '''
+        print("Erro: Faltou a declaração 'fim' da função.\n" )
 
     def p_lista_parametros(self, p):
         '''
@@ -146,7 +177,7 @@ class Syntax:
             p[0] = Tree('corpo', [p[1], p[2]])
         elif len(p) == 2:
             p[0] = Tree('corpo', [p[1]])
-
+		
     def p_acao(self, p):
         '''
         acao : expressao
@@ -169,11 +200,28 @@ class Syntax:
         elif len(p) == 8:
             p[0] = Tree('se', [p[2], p[4], p[6]])
 
+    def p_se_error(self, p):
+        '''
+            se : SE expressao error corpo FIM
+               | error SENAO corpo FIM
+        '''
+        if len(p) == 6:
+            print("A expressão 'então' não foi definida.\n")
+        elif len(p) == 5:
+            print("Erro: Não foi definido a condição 'se'. \n")
+
     def p_repita(self, p):
         '''
             repita : REPITA corpo ATE expressao
         '''
         p[0] = Tree('repita', [p[2], p[4]])
+
+    def p_repita_error(self, p):
+        '''
+            repita : REPITA corpo error
+        '''
+        print ("Erro: Definições do laço REPITA incompletas! \n")
+
 
     def p_atribuicao(self, p):
         '''
@@ -347,7 +395,6 @@ class Syntax:
             vazio : 
         '''
 
-    
     def p_error(self, p):
         print(p)
         if p:
@@ -358,7 +405,8 @@ class Syntax:
         else:
             yacc.restart()
             print('Erro sintático: definições incompletas!')
-            exit(1)
+            p.lexer.skip(1)
+            #exit(1)
 
 def prinTree(node, level=" "):
     if node != None and node.child != None:
