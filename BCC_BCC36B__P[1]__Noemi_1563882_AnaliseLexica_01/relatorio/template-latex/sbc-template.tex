@@ -17,6 +17,7 @@
 \usepackage{etoolbox}
 \usepackage{listings}
 \usepackage{cleveref}
+\usepackage{longtable}
      
 % Suporte a figuras e subfiguras
 \usepackage{graphics}
@@ -50,7 +51,30 @@
 
 
 \section{Introdução}
-A análise léxica é um processo que analisa a entrada de linhas de caracteres (código fonte de um programa) e produz uma sequência de símbolos léxicos denominados \textit{tokens}, sendo facilmente manipulado por um \textit{parser} (leitor de saída) \cite{wikibook}.
+
+%Compiladores
+Um compilador é responsável pela tradução de um programa descrito em uma linguagem de alto nível para um programa equivalente em código de máquina. De forma geral, um compilador não produz diretamente um código de máquina e sim um programa em linguagem simbólica (\textit{assembly}) 
+semanticamente equivalente ao código em linguagem de alto nível. Por meio de montadores, esse programa em linguagem simbólica é traduzida em uma linguagem de máquina \cite{compilador}.
+
+Um compilador executa dois tipos de atividade, para desempenhar suas tarefas. A primeira é a análise do código fonte, no qual a estrutura e significado do programa de alto nível são reconhecidos. A segunda é a síntese do programa equivalente em linguagem simbólica \cite{compilador}.
+
+Para exemplificar essas duas atividades, considere a Figura~\ref{exempleC} na qual descreve um código na linguagem C, que para um compilador é uma sequência de caracteres em um arquivo texto. O primeiro passo é reconhecer que agrupamentos de caracteres têm significado para o programa, por exemplo, saber que \texttt{int} é uma palavra-chave da linguagem e que \texttt{a} e \texttt{b} são variáveis neste programa. Posteriormente, o compilador deve reconhecer que a sequência \texttt{int a} corresponde a uma declaração de uma variável inteira cujo identificador recebeu o nome \texttt{a}. 
+
+\begin{figure}[H]
+\caption{Exemplo de código na linguagem C}
+\label{exempleC}
+\begin{lstlisting}[frame=single] 
+int a, b, valor;
+a = 10;
+b = 20;
+valor = a*(b+20)
+\end{lstlisting}
+\end{figure}
+ 
+
+
+% Analise Lexica
+A primeira análise é a léxica, que é um processo que analisa a entrada de linhas de caracteres (código fonte de um programa) e produz uma sequência de símbolos léxicos denominados \textit{tokens}, sendo facilmente manipulado por um \textit{parser} (leitor de saída) \cite{wikibook}.
 
 O analisador léxico lê cada caractere do programa fonte e, traduz em uma saída os \textit{tokens}. Dessa forma, é possível reconhecer as palavras reservadas, constantes, identificadores e outras palavras que pertencem a linguagem de programação analisada. O analisador também pode executar outras tarefas como o tratamento de espaços, eliminação de comentários e contagem do número de linhas que o programa possui \cite{wikibook}.
 
@@ -65,9 +89,22 @@ A implementação de um analisador léxico requer uma descrição do autômato que rec
 \item Próximo estado, que recebe como argumento a referência para o autômato, para o estado corrente e para o símbolo sendo analisado. O procedimento consulta a tabela de transições e retorna o próximo estado do autômato, ou o valor nulo se não houver transição possível.
 \end{itemize}
 
+%Analise sintática
+A segunda análise é a sintática (\textit{parser}) que determina a estrutura gramatical dos \textit{tokens} segundo uma determinada gramática formal. Ou seja, ela é um processo que determina se uma cadeia de símbolos léxicos pode ser gerada por uma gramática \cite{analiseSintatica}.
+
+Nesta análise o compilador deve reconhecer que a sequência de \textit{tokens} corresponde a comandos relacionados à linguagem \cite{compilador}, como o código da Figura~\ref{exempleC}, o primeiro comando é a declaração de variáveis e os três outros são comandos de atribuições. 
+
+A análise sintática transforma um texto na entrada em uma estrutura de dados, como uma árvore. Por meio dessa análise obtêm-se um grupo de \textit{tokens}, para que o analisador use um conjunto de regras para construir uma árvore sintática da estrutura \cite{wikibook}.
+
+Essa análise aceita linguagens livre de contexto, e existem duas formas de determinar se a entrada de dados pode ser derivada de um símbolo inicial com as regras de uma gramática formal \cite{analiseSintatica}:
+
+\textbf{Descendente (\textit{top-down})}: um analisador pode iniciar com o símbolo inicial e transformá-lo na entrada de dados. O analisador inicia dos maiores elementos e os quebra em partes menores, como exemplo, analisador sintático LL.
+
+\textbf{Ascendente (\textit{bottom-up})}: um analisador pode iniciar com um entrada de dados e tentar reescrevê-la até o símbolo inicial. O analisador tenta localizar os elementos mais básicos, e então os maiores que contêm os elementos mais básicos, e assim por diante, como por exemplo, analisador sintático LR.
+
 
 \subsection{Objetivo}
-O objetivo desse trabalho é desenvolver em um programa capaz de realizar a análise léxica de códigos fontes escrito na Linguagem T++, retornando o conjunto de \textit{tokens} encontrado.
+O objetivo desse trabalho é desenvolver um programa capaz de realizar a análise léxica e sintática de códigos fontes escrito na Linguagem T++, retornando uma arvore sintática abstrata da linguagem.
 
 \section{A Linguagem T++} \label{sec:firstpage}
 A linguagem T++ foi desenvolvida especialmente para ser utilizada na disciplina de compiladores. Ela é uma linguagem simples, contendo algumas palavras reservadas, símbolos e arranjos uni e bidimensionais. A Tabela \ref{linguagemt} mostra todas as palavras reservadas e símbolos que a linguagem T++ permite.
@@ -91,7 +128,8 @@ até& $<$ menor\\\hline
 leia& $>$ maior\\\hline
 escreve& $<$= menor-igual\\\hline
 inteiro& $>$= maior-igual\\\hline
-notação científica	& () abre e fecha parênteses\\\hline
+notação científica &	$<>$= diferença\\\hline
+		& () abre e fecha parênteses\\\hline
 		& : dois pontos\\\hline
 		& [] abre e fecha colchetes\\\hline
 		& \{\} comentário\\\hline
@@ -102,7 +140,6 @@ notação científica	& () abre e fecha parênteses\\\hline
 \end{tabular}
 \label{linguagemt}
 \end{table}
-
  
 A construção do código dessa linguagem é inteiramente em Português. Os números podem ser inteiros, flutuantes (notação científica ou não), e as declarações de variáveis devem obrigatoriamente começar com letras precedente de várias letras e/ou números.
  
@@ -172,7 +209,7 @@ O modelo do autômato apresenta um estado inicial e um conjunto de estados finais
 % % %
 Para cada \textit{token} permitido na Linguagem T++ é criado uma expressão regular, o qual tem como objetivo analisar uma cadeia de caracteres no código. As expressões regulares utilizadas nesse trabalho estão descritas na Tabela~\ref{expressaoRegulares}.
 
-\begin{table}[H]
+\begin{table}[ht]
 \caption{Expressões regulares de cada token}
 \centering
 \begin{tabular}{|l|c|}
@@ -302,7 +339,7 @@ Por fim, o autômato da expressão regular da nova linha está representado represe
 \end{figure}
 
 
-\section{PLY - Python Lex Yacc e o Código}
+\section{PLY - Python Lex Yacc}
 
 O PLY é uma ferramenta da linguagem Python para construção de compiladores populares lex e yacc. O principal objetivo do PLY é permanecer fiel ao modo como as ferramentas lex/yacc tradicionais funcionam. Isso inclui fornecer validação extensiva de entradas, relatórios de erros e diagnósticos \cite{ply}. 
 
@@ -312,16 +349,18 @@ O PLY consiste em dois módulos separados; lex.py e yacc.py, ambos encontrados em
 
 As duas ferramentas são destinadas a trabalhar juntas. O lex.py fornece uma interface externa na forma de uma função \texttt{token()} que retorna o próximo \textit{token} válido no fluxo de entrada. Já a yacc.py chama isso repetidamente para recuperar \textit{tokens} e invocar regras gramaticais. A saída de yacc.py é geralmente uma \textit{Abstract Syntax Tree} (AST) \cite{ply}. 
 
-Para o desenvolvimento da análise sintática, foi utilizado apenas o módulo lex.py. Para isso, o primeiro passo foi instalar o ply no ambiente linux utilizando o seguinte comando:
+
+\section{Análise léxica}
+Para o desenvolvimento da análise léxica, foi utilizado apenas o módulo lex.py. Para isso, o primeiro passo foi instalar o ply no ambiente linux utilizando o seguinte comando:
 
 \texttt{pipe3 install ply}
 
 É importante ressaltar que a versão do python deve ser acima de 3, para aceitar caracteres com acento, pois na linguagem T++ existem palavras reservadas que obrigatoriamente possuem acentos, como então e senão.
 
+
 Para utilizar a ferramenta no código fonte deve-se importar o ply por meio do seguinte comando:
 
 \texttt{\textbf{import} ply.lex \textbf{as} lex}
-
 
 No código fonte da análise léxica é necessário descrever quais são as palavras reservadas e os \textit{tokens} da linguagem, como demostra na Figura~\ref{fig:Codigo1}.
 
@@ -341,7 +380,84 @@ Para o reconhecimento das palavras reservadas e \textit{tokens}, são definidas a
 \label{fig:Codigo2}
 \end{figure}
 
-\section{Resultados}
+\section{Análise sintática}
+
+\subsection{Descrição da gramática BNF}
+A \textit{Backus-Naur Form} (BNF) é uma forma matemática de descrever uma linguagem, de modo que defina a gramática da linguagem sem ambiguidade ou divergência \cite{bnf}.
+
+Primeiramente é definido um símbolo inicial para a gramática (programa) e depois são criadas regras (produções) para substituição desse simbolo por outro \cite{bnf}.
+
+A produção de uma regra segue a lógica de que o símbolo da esquerda do ':=' pode ser substituído por um simbolo a direita. As alternativas são separadas por | (ou).
+ 
+As produções criadas e utilizadas para o desenvolvimento da análise sintática estão descritas na Tabela~\ref{bnf}.
+
+\begin{longtable}[c]{| c  c |}
+ \caption{Produções BNF.\label{bnf}}\\
+ \hline
+ \multicolumn{2}{| c |}{\textbf{Descrição BNF}}\\
+ \hline
+ \endfirsthead
+ 
+ \hline
+ \multicolumn{2}{|c|}{Continuation of Table \ref{long}}\\
+ \hline
+ Something & something else\\
+ \hline
+ \endhead
+ 
+ \hline
+ \endfoot
+ 
+ \hline
+ \hline\hline
+ \endlastfoot
+ 
+ programa 			:=  & lista\_declaracoes\\\hline
+ lista\_declaracoes :=  & lista\_declaracoes declaracao \\
+ 					    & $|$ declaracao \\
+ 					    & $|$ error      \\\hline
+ declaracao 		:=    & declaracao\_variaveis \\
+                    	  & $|$ inicializacao\_variaveis \\
+                      	  & $|$ declaracao\_funcao \\\hline
+ declaracao\_variaveis := & tipo DOIS\_PONTOS lista\_variaveis \\\hline  declaracao\_variaveis := & tipo DOIS\_PONTOS error \\\hline
+ inicializacao\_variaveis := & atribuicao\\\hline
+ lista\_variaveis         := & lista\_variaveis VIRGULA var\\
+                         &$|$ var\\\hline
+  var                   := & ID\\
+             		  	& $|$ ID indice\\\hline
+ indice 				:= & indice ABRE\_COL expressao FECHA\_COL \\
+                 		& $|$ ABRE\_COL expressao FECHA\_COL  \\\hline          
+ indice 				:= & indice ABRE\_COL error FECHA\_COL\\
+                 		& $|$ ABRE\_COL error FECHA\_COL\\
+ 						& $|$ error FECHA\_COL\\
+ 						& $|$ ABRE\_COL error\\
+         				& $|$ indice error FECHA\_COL\\
+ 						& $|$ indice ABRE\_COL error \\\hline
+ tipo :=				 & INTEIRO\\
+ 	     				 & $|$ FLUTUANTE \\\hline
+ declaracao\_funcao := 	 & tipo cabecalho\\
+                         &  $|$ cabecalho\\\hline
+ cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo FIM \\\hline
+ cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo error \\\hline
+ lista\_parametros :=    & lista\_parametros VIRGULA parametro\\
+                         &    $|$ parametro\\
+                         &    $|$ vazio \\\hline
+  parametro := 			 & tipo DOIS\_PONTOS ID\\
+  		  				 & $|$ parametro ABRE\_COL FECHA\_COL \\\hline
+ corpo := 				 & corpo acao\\
+                		 & $|$ vazio \\\hline
+  acao := 				 & expressao\\
+              & $|$ declaracao\_variaveis\\
+              & $|$ se\\
+              & $|$ repita\\
+              & $|$ leia\\
+              & $|$ escreva\\
+              & $|$ retorna \\\hline 	     		
+ 
+ \end{longtable}
+
+
+\section{Resultados análise léxica}
 
 Com o código fonte da análise léxica pronta, é possível executá-lo de forma que receba um arquivo contendo o código na linguagem T++, leia cada \textit{token} do mesmo, e retorne um arquivo de saída identificando cada \textit{token} encontrado, bem como sua linha e coluna.
 
@@ -445,6 +561,9 @@ LexToken(FIM,'fim',14,289)
 \end{lstlisting}
 
 É possível notar que o código da análise léxica avaliou cada palavra do código em T++, o classificou e retornou seu valor em um arquivo de saída. Isso é exatamente o objetivo da análise léxica, retornar todos os \textit{tokens} que um determinado código possui.
+
+
+\section{Resultados análise sintática}
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}

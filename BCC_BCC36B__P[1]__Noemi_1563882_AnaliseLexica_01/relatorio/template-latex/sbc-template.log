@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  3 APR 2018 18:15
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  14 MAY 2018 23:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -511,19 +511,19 @@ LaTeX Warning: Unused global option(s):
 (./sbc-template.aux)
 \openout1 = `sbc-template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 39.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -621,124 +621,115 @@ e
 ABD: EveryShipout initializing macros
 \c@lstlisting=\count139
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <16> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 40.
+(Font)              <12> on input line 41.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 40.
+(Font)              <8> on input line 41.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 40.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 40.
+(Font)              <6> on input line 41.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 41.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-LaTeX Font Info:    Try loading font information for OMS+pcr on input line 40.
+LaTeX Font Info:    Try loading font information for OMS+pcr on input line 41.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 40.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 42.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 43.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <13> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 52.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 61.
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
-File: omsptm.fd 
-)
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 61.
- [1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 77.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 53.
+LaTeX Font Info:    Try loading font information for OT1+phv on input line 64.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
 )
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <8> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 77.
-LaTeX Font Info:    Font shape `OT1/phv/bx/it' in size <8> not available
-(Font)              Font shape `OT1/phv/b/it' tried instead on input line 77.
-LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <8> not available
-(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 77.
+(Font)              Font shape `OT1/phv/b/n' tried instead on input line 64.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 70.
 
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 70.
+ [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
+LaTeX Font Info:    Font shape `OT1/phv/bx/it' in size <8> not available
+(Font)              Font shape `OT1/phv/b/it' tried instead on input line 114.
+LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <8> not available
+(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 114.
+ [3]
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
 )
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 130.
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 167.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 130.
- [2]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 167.
 
- [3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 6445) has occurred while \output is active []
 
  [4]
 <./palavrasReservadas.jpg, id=29, 410.2828pt x 290.58563pt>
 File: ./palavrasReservadas.jpg Graphic file (type jpg)
 
 <use ./palavrasReservadas.jpg>
-Package pdftex.def Info: ./palavrasReservadas.jpg used on input line 226.
+Package pdftex.def Info: ./palavrasReservadas.jpg used on input line 263.
 (pdftex.def)             Requested size: 298.75264pt x 211.59366pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5]
-<./id1.png, id=34, 436.63126pt x 239.39438pt>
+ [5 <./palavrasReservadas.jpg>]
+<./id1.png, id=33, 436.63126pt x 239.39438pt>
 File: ./id1.png Graphic file (type png)
  <use ./id1.png>
-Package pdftex.def Info: ./id1.png used on input line 235.
+Package pdftex.def Info: ./id1.png used on input line 272.
 (pdftex.def)             Requested size: 298.75264pt x 163.79785pt.
-
-<./id2.png, id=35, 1344.02126pt x 570.13pt>
-File: ./id2.png Graphic file (type png)
- <use ./id2.png>
-Package pdftex.def Info: ./id2.png used on input line 243.
-(pdftex.def)             Requested size: 341.43437pt x 144.82881pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [6 <./palavrasReservadas.jpg> <./id1.png>]
+ [6]
+<./id2.png, id=38, 1344.02126pt x 570.13pt>
+File: ./id2.png Graphic file (type png)
+ <use ./id2.png>
+Package pdftex.def Info: ./id2.png used on input line 280.
+(pdftex.def)             Requested size: 341.43437pt x 144.82881pt.
+
 <./inteiro1.jpg, id=39, 397.485pt x 276.28218pt>
 File: ./inteiro1.jpg Graphic file (type jpg)
  <use ./inteiro1.jpg>
-Package pdftex.def Info: ./inteiro1.jpg used on input line 252.
+Package pdftex.def Info: ./inteiro1.jpg used on input line 289.
 (pdftex.def)             Requested size: 298.75264pt x 207.6622pt.
-
-<./flutuante2.jpg, id=40, 447.17062pt x 215.30438pt>
+ [7 <./id1.png> <./id2.png (PNG copy)> <./inteiro1.jpg>]
+<./flutuante2.jpg, id=44, 447.17062pt x 215.30438pt>
 File: ./flutuante2.jpg Graphic file (type jpg)
  <use ./flutuante2.jpg>
-Package pdftex.def Info: ./flutuante2.jpg used on input line 261.
+Package pdftex.def Info: ./flutuante2.jpg used on input line 298.
 (pdftex.def)             Requested size: 298.75264pt x 143.8458pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7 <./id2.png (PNG copy)> <./inteiro1.jpg>]
 <./notacao.jpg, id=45, 594.72188pt x 268.00125pt>
 File: ./notacao.jpg Graphic file (type jpg)
  <use ./notacao.jpg>
-Package pdftex.def Info: ./notacao.jpg used on input line 271.
+Package pdftex.def Info: ./notacao.jpg used on input line 308.
 (pdftex.def)             Requested size: 298.75264pt x 134.62596pt.
 
 <./comentario1.jpg, id=46, 409.53pt x 243.15843pt>
 File: ./comentario1.jpg Graphic file (type jpg)
  <use ./comentario1.jpg>
-Package pdftex.def Info: ./comentario1.jpg used on input line 281.
+Package pdftex.def Info: ./comentario1.jpg used on input line 318.
 (pdftex.def)             Requested size: 298.75264pt x 177.39658pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -747,85 +738,120 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <./comentario2.png, id=50, 510.40688pt x 377.15906pt>
 File: ./comentario2.png Graphic file (type png)
  <use ./comentario2.png>
-Package pdftex.def Info: ./comentario2.png used on input line 289.
+Package pdftex.def Info: ./comentario2.png used on input line 326.
 (pdftex.def)             Requested size: 298.75264pt x 220.7724pt.
 
 <./linha1.jpg, id=51, 393.72093pt x 255.20343pt>
 File: ./linha1.jpg Graphic file (type jpg)
  <use ./linha1.jpg>
-Package pdftex.def Info: ./linha1.jpg used on input line 299.
+Package pdftex.def Info: ./linha1.jpg used on input line 336.
 (pdftex.def)             Requested size: 298.75264pt x 193.6451pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [9 <./comentario1.jpg> <./comentario2.png>] [10 <./linha1.jpg>]
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
-(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 323.
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 363.
 
 <./cod1.jpg, id=58, 447.17062pt x 313.9228pt>
 File: ./cod1.jpg Graphic file (type jpg)
  <use ./cod1.jpg>
-Package pdftex.def Info: ./cod1.jpg used on input line 330.
+Package pdftex.def Info: ./cod1.jpg used on input line 369.
 (pdftex.def)             Requested size: 341.43437pt x 239.69989pt.
 
 <./cod2.jpg, id=59, 359.09157pt x 395.97937pt>
 File: ./cod2.jpg Graphic file (type jpg)
  <use ./cod2.jpg>
-Package pdftex.def Info: ./cod2.jpg used on input line 339.
+Package pdftex.def Info: ./cod2.jpg used on input line 378.
 (pdftex.def)             Requested size: 341.43437pt x 376.53476pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11 <./cod1.jpg>] [12 <./cod2.jpg>] [13] (./sbc-template.bbl
-Underfull \hbox (badness 2088) in paragraph at lines 16--21
+ [11 <./cod1.jpg>]
+Underfull \hbox (badness 1194) in paragraph at lines 388--389
+[]\OT1/ptm/m/n/12 Primeiramente []e de-fi-nido um s[]^^Pmbolo ini-cial para a g
+ram[]atica (pro-grama)
+ []
+
+
+LaTeX Warning: Reference `long' on page 12 undefined on input line 402.
+
+[12 <./cod2.jpg>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [13]
+[14]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [15]
+(./sbc-template.bbl
+Underfull \hbox (badness 2088) in paragraph at lines 30--35
 []\OT1/ptm/m/n/12 USP (2012).  Aut[]omatos fi-nito de-ter-min[]^^Psticos.  $\OT
 1/pcr/m/n/12 https : / / edisciplinas .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 16--21
+Underfull \hbox (badness 10000) in paragraph at lines 30--35
 \OT1/pcr/m/n/12 usp . br / pluginfile . php / 4159708 / mod _ resource / conten
 t / 1 / De _
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 16--21
+Underfull \hbox (badness 10000) in paragraph at lines 30--35
 \OT1/pcr/m/n/12 representacao _ de _ linguagens _ ate _ Automato _ Finito _ -[]
  _ 2012 .
  []
 
+LaTeX Font Info:    Font shape `OT1/ptm/m/ui' in size <12> not available
+(Font)              Font shape `OT1/ptm/m/it' tried instead on input line 38.
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--28
+Underfull \hbox (badness 10000) in paragraph at lines 37--42
+[]\OT1/ptm/m/n/12 Wikibooks (2013).  Cons-tru[]A\OMS/cmsy/m/n/12 x[]\OT1/ptm/m/
+n/12 A\OT1/ptm/m/it/12 $\OT1/ptm/m/n/12 o de com-pi-la-do-res/an[]A!`lise sint[
+]A!`tica).
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--42
+\OT1/pcr/m/n/12 https : / / pt . wikibooks . org / wiki / Constru % C3 % A7 % C
+3 % A3o _ de _
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--49
 \OT1/pcr/m/n/12 wikibooks . org / wiki / Constru % C3 % A7 % C3 % A3o _ de _ co
 mpiladores /
  []
 
-[14]) [15] (./sbc-template.aux) ) 
+) [16] (./sbc-template.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 15672 strings out of 495004
- 277175 string characters out of 6180662
- 376258 words of memory out of 5000000
- 18546 multiletter control sequences out of 15000+600000
+ 15683 strings out of 495004
+ 277290 string characters out of 6180662
+ 380258 words of memory out of 5000000
+ 18557 multiletter control sequences out of 15000+600000
  23822 words of font info for 50 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 56i,12n,55p,798b,1653s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips
-/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
-12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
-helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhv
-bo8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/font
-s/type1/urw/times/utmri8a.pfb>
-Output written on sbc-template.pdf (15 pages, 542258 bytes).
+ 56i,12n,55p,798b,1619s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/couri
+er/ucrb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/time
+s/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on sbc-template.pdf (16 pages, 553634 bytes).
 PDF statistics:
- 120 PDF objects out of 1000 (max. 8388607)
- 78 compressed objects within 1 object stream
+ 123 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  68 words of extra memory for PDF output out of 10000 (max. 10000000)
 
