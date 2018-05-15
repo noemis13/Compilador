@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  14 MAY 2018 23:02
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  15 MAY 2018 20:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -660,131 +660,227 @@ File: omsptm.fd
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 70.
+
+Underfull \vbox (badness 4429) has occurred while \output is active []
+
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
-LaTeX Font Info:    Font shape `OT1/phv/bx/it' in size <8> not available
-(Font)              Font shape `OT1/phv/b/it' tried instead on input line 114.
-LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <8> not available
-(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 114.
- [3]
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+
+LaTeX Warning: Reference `linguagemt' on page 3 undefined on input line 110.
+
+[3] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2013/08/26 1.5b listings language file
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
-)
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 167.
+) [4]
+Underfull \vbox (badness 1596) has occurred while \output is active []
+
+ [5]
+<./palavrasReservadas.jpg, id=32, 410.2828pt x 290.58563pt>
+File: ./palavrasReservadas.jpg Graphic file (type jpg)
+
+<use ./palavrasReservadas.jpg>
+Package pdftex.def Info: ./palavrasReservadas.jpg used on input line 257.
+(pdftex.def)             Requested size: 213.39568pt x 151.13643pt.
+ <./id1.png, id=33, 436.63126pt x 239.39438pt>
+File: ./id1.png Graphic file (type png)
+
+<use ./id1.png>
+Package pdftex.def Info: ./id1.png used on input line 266.
+(pdftex.def)             Requested size: 213.39568pt x 117.00107pt.
+ <./id2.png, id=34, 1344.02126pt x 570.13pt>
+File: ./id2.png Graphic file (type png)
+ <use ./id2.png>
+Package pdftex.def Info: ./id2.png used on input line 274.
+(pdftex.def)             Requested size: 256.07741pt x 108.6216pt.
+
+<./inteiro1.jpg, id=35, 397.485pt x 276.28218pt>
+File: ./inteiro1.jpg Graphic file (type jpg)
+ <use ./inteiro1.jpg>
+Package pdftex.def Info: ./inteiro1.jpg used on input line 283.
+(pdftex.def)             Requested size: 213.39568pt x 148.33014pt.
+ [6 <./palavrasReservadas.jpg> <./id1.png> <./id2.png (PNG copy)>]
+<./flutuante2.jpg, id=39, 447.17062pt x 215.30438pt>
+File: ./flutuante2.jpg Graphic file (type jpg)
+ <use ./flutuante2.jpg>
+Package pdftex.def Info: ./flutuante2.jpg used on input line 292.
+(pdftex.def)             Requested size: 213.39568pt x 102.747pt.
+
+<./notacao.jpg, id=40, 594.72188pt x 268.00125pt>
+File: ./notacao.jpg Graphic file (type jpg)
+ <use ./notacao.jpg>
+Package pdftex.def Info: ./notacao.jpg used on input line 302.
+(pdftex.def)             Requested size: 213.39568pt x 96.16139pt.
+
+<./comentario1.jpg, id=41, 409.53pt x 243.15843pt>
+File: ./comentario1.jpg Graphic file (type jpg)
+ <use ./comentario1.jpg>
+Package pdftex.def Info: ./comentario1.jpg used on input line 312.
+(pdftex.def)             Requested size: 213.39568pt x 126.70654pt.
+
+Underfull \vbox (badness 3954) has occurred while \output is active []
+
+ [7 <./inteiro1.jpg> <./flutuante2.jpg> <./notacao.jpg>]
+<./comentario2.png, id=46, 510.40688pt x 377.15906pt>
+File: ./comentario2.png Graphic file (type png)
+ <use ./comentario2.png>
+Package pdftex.def Info: ./comentario2.png used on input line 320.
+(pdftex.def)             Requested size: 213.39568pt x 157.68636pt.
+
+<./linha1.jpg, id=47, 393.72093pt x 255.20343pt>
+File: ./linha1.jpg Graphic file (type jpg)
+ <use ./linha1.jpg>
+Package pdftex.def Info: ./linha1.jpg used on input line 330.
+(pdftex.def)             Requested size: 213.39568pt x 138.31792pt.
+ [8 <./comentario1.jpg> <./comentario2.png> <./linha1.jpg>]
+Underfull \hbox (badness 1194) in paragraph at lines 339--340
+[]\OT1/ptm/m/n/12 Primeiramente []e de-fi-nido um s[]^^Pmbolo ini-cial para a g
+ram[]atica (pro-grama)
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 345--351
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 351--356
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 356--359
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 359--363
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 363--384
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 384--404
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 404--423
+ [] [] 
+ []
+
+[9]
+Overfull \hbox (9.02837pt too wide) in alignment at lines 423--441
+ [] [] 
+ []
+
+
+Overfull \hbox (9.02837pt too wide) in alignment at lines 441--457
+ [] [] 
+ []
+
+[10] [11]
+LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 480.
+ <./cod1.jpg, id=60, 447.17062pt x 313.9228pt>
+File: ./cod1.jpg Graphic file (type jpg)
+ <use ./cod1.jpg>
+Package pdftex.def Info: ./cod1.jpg used on input line 486.
+(pdftex.def)             Requested size: 341.43437pt x 239.69989pt.
+LaTeX Font Info:    Font shape `OT1/phv/bx/it' in size <8> not available
+(Font)              Font shape `OT1/phv/b/it' tried instead on input line 487.
+LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <8> not available
+(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 487.
+
+<./cod2.jpg, id=61, 359.09157pt x 395.97937pt>
+File: ./cod2.jpg Graphic file (type jpg)
+ <use ./cod2.jpg>
+Package pdftex.def Info: ./cod2.jpg used on input line 495.
+(pdftex.def)             Requested size: 341.43437pt x 376.53476pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [12 <./cod1.jpg>] <./gramaticaExemplo.png, id=67, 450.68375pt x 307.1475pt>
+File: ./gramaticaExemplo.png Graphic file (type png)
+
+<use ./gramaticaExemplo.png>
+Package pdftex.def Info: ./gramaticaExemplo.png used on input line 507.
+(pdftex.def)             Requested size: 256.07741pt x 174.52754pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [13 <./cod2.jpg>] <./exemplo.png, id=73, 933.4875pt x 603.25375pt>
+File: ./exemplo.png Graphic file (type png)
+ <use ./exemplo.png>
+Package pdftex.def Info: ./exemplo.png used on input line 514.
+(pdftex.def)             Requested size: 384.1096pt x 248.22852pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [14 <./gramaticaExemplo.png> <./exemplo.png>]
+<./syntax.jpg, id=79, 360.59718pt x 378.66469pt>
+File: ./syntax.jpg Graphic file (type jpg)
+ <use ./syntax.jpg>
+Package pdftex.def Info: ./syntax.jpg used on input line 532.
+(pdftex.def)             Requested size: 341.43437pt x 358.53915pt.
+
+Underfull \hbox (badness 2961) in paragraph at lines 537--538
+[]\OT1/ptm/m/n/12 Cada fun[][]ao aceita um []unico ar-gu-mento p que []e uma se
+qu[]encia con-
+ []
+
+
+Underfull \hbox (badness 1436) in paragraph at lines 537--538
+\OT1/pcr/b/n/12 = Tree('declaracao'), [p[1]]\OT1/ptm/m/n/12 , no qual []e adi-c
+i-o-nada na []arvore o va-lor
+ []
+
+[15 <./syntax.jpg>] <./tree.jpg, id=83, 353.06906pt x 116.68594pt>
+File: ./tree.jpg Graphic file (type jpg)
+
+<use ./tree.jpg>
+Package pdftex.def Info: ./tree.jpg used on input line 545.
+(pdftex.def)             Requested size: 384.1096pt x 126.94655pt.
+ <./printTree.jpg, id=84, 377.91188pt x 85.82062pt>
+File: ./printTree.jpg Graphic file (type jpg)
+
+<use ./printTree.jpg>
+Package pdftex.def Info: ./printTree.jpg used on input line 552.
+(pdftex.def)             Requested size: 384.1096pt x 87.2281pt.
+ <./error.jpg, id=85, 441.90094pt x 167.12437pt>
+File: ./error.jpg Graphic file (type jpg)
+
+<use ./error.jpg>
+Package pdftex.def Info: ./error.jpg used on input line 563.
+(pdftex.def)             Requested size: 384.1096pt x 145.27461pt.
+ [16 <./tree.jpg> <./printTree.jpg> <./error.jpg>]
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 588.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 167.
-
-Underfull \vbox (badness 6445) has occurred while \output is active []
-
- [4]
-<./palavrasReservadas.jpg, id=29, 410.2828pt x 290.58563pt>
-File: ./palavrasReservadas.jpg Graphic file (type jpg)
-
-<use ./palavrasReservadas.jpg>
-Package pdftex.def Info: ./palavrasReservadas.jpg used on input line 263.
-(pdftex.def)             Requested size: 298.75264pt x 211.59366pt.
- [5 <./palavrasReservadas.jpg>]
-<./id1.png, id=33, 436.63126pt x 239.39438pt>
-File: ./id1.png Graphic file (type png)
- <use ./id1.png>
-Package pdftex.def Info: ./id1.png used on input line 272.
-(pdftex.def)             Requested size: 298.75264pt x 163.79785pt.
-
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 588.
+ [17]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [6]
-<./id2.png, id=38, 1344.02126pt x 570.13pt>
-File: ./id2.png Graphic file (type png)
- <use ./id2.png>
-Package pdftex.def Info: ./id2.png used on input line 280.
-(pdftex.def)             Requested size: 341.43437pt x 144.82881pt.
-
-<./inteiro1.jpg, id=39, 397.485pt x 276.28218pt>
-File: ./inteiro1.jpg Graphic file (type jpg)
- <use ./inteiro1.jpg>
-Package pdftex.def Info: ./inteiro1.jpg used on input line 289.
-(pdftex.def)             Requested size: 298.75264pt x 207.6622pt.
- [7 <./id1.png> <./id2.png (PNG copy)> <./inteiro1.jpg>]
-<./flutuante2.jpg, id=44, 447.17062pt x 215.30438pt>
-File: ./flutuante2.jpg Graphic file (type jpg)
- <use ./flutuante2.jpg>
-Package pdftex.def Info: ./flutuante2.jpg used on input line 298.
-(pdftex.def)             Requested size: 298.75264pt x 143.8458pt.
-
-<./notacao.jpg, id=45, 594.72188pt x 268.00125pt>
-File: ./notacao.jpg Graphic file (type jpg)
- <use ./notacao.jpg>
-Package pdftex.def Info: ./notacao.jpg used on input line 308.
-(pdftex.def)             Requested size: 298.75264pt x 134.62596pt.
-
-<./comentario1.jpg, id=46, 409.53pt x 243.15843pt>
-File: ./comentario1.jpg Graphic file (type jpg)
- <use ./comentario1.jpg>
-Package pdftex.def Info: ./comentario1.jpg used on input line 318.
-(pdftex.def)             Requested size: 298.75264pt x 177.39658pt.
-
+ [18]
+<./codigo.jpg, id=95, 182.93344pt x 163.3603pt>
+File: ./codigo.jpg Graphic file (type jpg)
+ <use ./codigo.jpg>
+Package pdftex.def Info: ./codigo.jpg used on input line 681.
+(pdftex.def)             Requested size: 213.39568pt x 190.5724pt.
+ [19 <./codigo.jpg>] (./sbc-template.bbl
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [8 <./flutuante2.jpg> <./notacao.jpg>]
-<./comentario2.png, id=50, 510.40688pt x 377.15906pt>
-File: ./comentario2.png Graphic file (type png)
- <use ./comentario2.png>
-Package pdftex.def Info: ./comentario2.png used on input line 326.
-(pdftex.def)             Requested size: 298.75264pt x 220.7724pt.
-
-<./linha1.jpg, id=51, 393.72093pt x 255.20343pt>
-File: ./linha1.jpg Graphic file (type jpg)
- <use ./linha1.jpg>
-Package pdftex.def Info: ./linha1.jpg used on input line 336.
-(pdftex.def)             Requested size: 298.75264pt x 193.6451pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [9 <./comentario1.jpg> <./comentario2.png>] [10 <./linha1.jpg>]
-LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <12> not available
-(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 363.
-
-<./cod1.jpg, id=58, 447.17062pt x 313.9228pt>
-File: ./cod1.jpg Graphic file (type jpg)
- <use ./cod1.jpg>
-Package pdftex.def Info: ./cod1.jpg used on input line 369.
-(pdftex.def)             Requested size: 341.43437pt x 239.69989pt.
-
-<./cod2.jpg, id=59, 359.09157pt x 395.97937pt>
-File: ./cod2.jpg Graphic file (type jpg)
- <use ./cod2.jpg>
-Package pdftex.def Info: ./cod2.jpg used on input line 378.
-(pdftex.def)             Requested size: 341.43437pt x 376.53476pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [11 <./cod1.jpg>]
-Underfull \hbox (badness 1194) in paragraph at lines 388--389
-[]\OT1/ptm/m/n/12 Primeiramente []e de-fi-nido um s[]^^Pmbolo ini-cial para a g
-ram[]atica (pro-grama)
- []
-
-
-LaTeX Warning: Reference `long' on page 12 undefined on input line 402.
-
-[12 <./cod2.jpg>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [13]
-[14]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [15]
-(./sbc-template.bbl
+ [20]
 Underfull \hbox (badness 2088) in paragraph at lines 30--35
 []\OT1/ptm/m/n/12 USP (2012).  Aut[]omatos fi-nito de-ter-min[]^^Psticos.  $\OT
 1/pcr/m/n/12 https : / / edisciplinas .
@@ -823,19 +919,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--49
 mpiladores /
  []
 
-) [16] (./sbc-template.aux)
+) [21] (./sbc-template.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 15683 strings out of 495004
- 277290 string characters out of 6180662
- 380258 words of memory out of 5000000
- 18557 multiletter control sequences out of 15000+600000
+ 15786 strings out of 495004
+ 278965 string characters out of 6180662
+ 381258 words of memory out of 5000000
+ 18653 multiletter control sequences out of 15000+600000
  23822 words of font info for 50 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 56i,12n,55p,798b,1619s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,12n,55p,798b,1703s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/
@@ -848,10 +944,10 @@ er/ucrb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb
 xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/time
 s/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on sbc-template.pdf (16 pages, 553634 bytes).
+Output written on sbc-template.pdf (21 pages, 779530 bytes).
 PDF statistics:
- 123 PDF objects out of 1000 (max. 8388607)
- 80 compressed objects within 1 object stream
+ 149 PDF objects out of 1000 (max. 8388607)
+ 92 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 68 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 103 words of extra memory for PDF output out of 10000 (max. 10000000)
 

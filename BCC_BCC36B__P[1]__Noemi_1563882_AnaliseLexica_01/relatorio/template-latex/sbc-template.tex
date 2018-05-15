@@ -41,11 +41,11 @@
 \maketitle
 
 \begin{abstract}
-  This meta-article describes the procedures and results of the development of a lexical analyzer, which is responsible for verifying the input of character lines from a T ++ written source code, producing a synonym of lexical symbols. For the creation of this analyze, a Python language library called PLY was used.	
+  This meta-article describes the procedures and results of developing a lexical and syntactic parser. The first one is responsible for verifying the input of character lines from a source code written T++, producing a sequence of lexical symbols. The second parses the source code in T ++ and returns an abstract tree. For the creation of these analyzers, a Python language library called PLY and YACC was used.
 \end{abstract}
      
 \begin{resumo} 
-  Este meta-artigo descreve os procedimentos e resultados do desenvolvimento de um analisador léxico, que é responsável por verificar as entradas de linhas de caracteres de um código fonte escrito T++, produzindo uma senquência de símbolos léxicos. Para a criação desse analisar, foi utilizado uma biblioteca da linguagem Python denominado PLY.
+  Este meta-artigo descreve os procedimentos e resultados do desenvolvimento de um analisador léxico e sintática. O primeiro é responsável por verificar as entradas de linhas de caracteres de um código fonte escrito T++, produzindo uma sequência de símbolos léxicos. O segundo análise o código fonte em T++ e retorna uma árvore abstrata. Para a criação desses analisares, foi utilizado uma biblioteca da linguagem Python denominado PLY e YACC.
   
 \end{resumo}
 
@@ -110,91 +110,85 @@ O objetivo desse trabalho é desenvolver um programa capaz de realizar a análise 
 A linguagem T++ foi desenvolvida especialmente para ser utilizada na disciplina de compiladores. Ela é uma linguagem simples, contendo algumas palavras reservadas, símbolos e arranjos uni e bidimensionais. A Tabela \ref{linguagemt} mostra todas as palavras reservadas e símbolos que a linguagem T++ permite.
 
 
-\begin{table}[H]
-\caption{\textit{Tokens} permitidos pela Linguagem T++}
-\centering
-\begin{tabular}{|l|l|}
-\hline
-\textbf{Palavras Reservadas}& \textbf{Símbolos}\\ 
-\hline
-se    & + soma\\\hline
-então & - subtração\\\hline
-senão & * multiplicação\\\hline
-fim	  & / divisão\\\hline
-repita& = igualdade\\\hline
-flutuante& , vírgula\\\hline
-retorna& := atribuição\\\hline
-até& $<$ menor\\\hline
-leia& $>$ maior\\\hline
-escreve& $<$= menor-igual\\\hline
-inteiro& $>$= maior-igual\\\hline
-notação científica &	$<>$= diferença\\\hline
-		& () abre e fecha parênteses\\\hline
-		& : dois pontos\\\hline
-		& [] abre e fecha colchetes\\\hline
-		& \{\} comentário\\\hline
-		& $|$ $|$ ou-lógico \\\hline
-		& \&\& e-lógico \\\hline
-		& ! negação \\\hline	
-		
-\end{tabular}
-\label{linguagemt}
-\end{table}
+\begin{longtable}[c]{| c | c |}
+ \caption{\textit{Tokens} permitidos pela Linguagem T++}\\
+ 
+ \hline
+ \multicolumn{2}{| c |}{Lista de tokens}\\
+ \hline
+ Palavras Reservadas & Símbolos\\
+ \hline
+ \endfirsthead
+ 
+ \hline
+ \multicolumn{2}{|c|}{Continuação lista de tokens}\\
+ \hline
+ Palavras Reservadas & Símbolos\\
+ \hline
+ \endhead
+ 
+ \hline
+ \endfoot
+ 
+ \hline
+ \multicolumn{2}{| c |}{Fim lista de tokens}\\
+ \hline\hline
+ \endlastfoot
+ 
+se    & + soma\\
+então & - subtração\\
+senão & * multiplicação\\
+fim	  & / divisão\\
+repita& = igualdade\\
+flutuante& , vírgula\\
+retorna& := atribuição\\
+até& $<$ menor\\
+leia& $>$ maior\\
+escreve& $<$= menor-igual\\
+inteiro& $>$= maior-igual\\
+notação científica &	$<>$= diferença\\
+		& () abre e fecha parênteses\\
+		& : dois pontos\\
+		& [] abre e fecha colchetes\\
+		& \{\} comentário\\
+		& $|$ $|$ ou-lógico \\
+		& \&\& e-lógico \\
+		& ! negação \\
+\end{longtable}
  
 A construção do código dessa linguagem é inteiramente em Português. Os números podem ser inteiros, flutuantes (notação científica ou não), e as declarações de variáveis devem obrigatoriamente começar com letras precedente de várias letras e/ou números.
  
-Apesar de T++ ser uma linguagem simples, ela permite a execução de algoritmos complexos, como de ordenação. A Figura~\ref{exemple} demonstra o algoritmo de busca BubbleSort na linguagem t++.
+Apesar de T++ ser uma linguagem simples, ela permite a execução de algoritmos complexos, como de ordenação. A Figura~\ref{exemple} demonstra o algoritmo de busca soma vetor na linguagem t++.
 
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
-
 \begin{figure}[H]
 \caption{Exeplo do código BubbleSort na linguagem T++}
 \label{exemple}
 \begin{lstlisting}[frame=single] 
-inteiro: vet[10]
-inteiro: tam
-tam := 10
-
-preencheVetor()
-  inteiro: i
-  inteiro: j
-  i := 0
-  j := tam
-  repita
-    vet[i] = j
-    i := i + 1
-    j := j - 1
-  até i < tam
+inteiro: T 
+T:= 4
+inteiro: V1[T]
+inteiro somavet(inteiro: vet[], inteiro: tam)
+	inteiro: result 
+	result := 0
+	inteiro: i 
+	i := 0
+	repita
+		result := result + vet[i]
+		i := i + 1
+	até i = tam - 1
+	retorna(result)	
 fim
-
-bubble_sort()
-  inteiro: i
-  i := 0
-  repita
-    inteiro: j
-    j := 0
-    repita
-      se vet[i] > v[j] então
-        inteiro: temp
-        temp := vet[i]
-        vet[i] := vet[j]
-        vet[j] := temp
-      fim
-      j := j + 1
-    até j < i
-    i := i + 1
-  até i < tam
-fim
-
-inteiro principal()
-  preencheVetor()
-  bubble_sort()
-  retorna(0)
+inteiro principal ()
+	inteiro: x
+	x := somavet(V1,T)
+	retorna(0)
 fim
 \end{lstlisting}
 \end{figure}
 
-\section{Expressões Regulares e Autômatos}
+\section{Análise léxica}
+\subsection{Expressões Regulares e Autômatos}
 
 Uma expressão regular é responsável por identificar cadeia de caracteres de uma determinada linguagem, como palavras ou padrões. Elas são escritas numa linguagem formal que pode ser interpretada por um processador de expressão regular \cite{expRegular}.
 
@@ -260,7 +254,7 @@ A ordem de execução de cada expressão regular é representada em forma de autômat
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./palavrasReservadas}
+\includegraphics[width=0.5\linewidth]{./palavrasReservadas}
 \caption{Autômatos dos operadores.}
 \label{fig:ExpressaoOperadores}
 \end{figure}
@@ -269,7 +263,7 @@ Os autômatos da expressão regular do ID (identificador) estão representados de d
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./id1}
+\includegraphics[width=0.5\linewidth]{./id1}
 \caption{Autômato resumido da expressão regular do identificador (ID).}
 \label{fig:ExpressaoId1}
 \end{figure}
@@ -277,7 +271,7 @@ Os autômatos da expressão regular do ID (identificador) estão representados de d
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\linewidth]{./id2}
+\includegraphics[width=0.6\linewidth]{./id2}
 \caption{Autômato completo da expressão regular do identificador (ID).}
 \label{fig:ExpressaoId2}
 \end{figure}
@@ -286,7 +280,7 @@ O autômato da expressão regular dos números inteiros recebe qualquer número de z
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./inteiro1}
+\includegraphics[width=0.5\linewidth]{./inteiro1}
 \caption{Autômato dos números inteiros.}
 \label{fig:ExpressaoInteiro}
 \end{figure}
@@ -295,7 +289,7 @@ O autômato da expressão regular dos números flutuantes está representado na Figu
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./flutuante2}
+\includegraphics[width=0.5\linewidth]{./flutuante2}
 \caption{Autômato dos números flutuantes.}
 \label{fig:ExpressaoFlutuante}
 \end{figure}
@@ -305,7 +299,7 @@ O autômato da expressão regular dos números flutuantes em notação científica est
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./notacao}
+\includegraphics[width=0.5\linewidth]{./notacao}
 \caption{Autômato dos números flutuantes em notação científica.}
 \label{fig:ExpressaoNotacao}
 \end{figure}
@@ -315,7 +309,7 @@ Os autômatos da expressão regular dos comentários estão representados de duas fo
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./comentario1}
+\includegraphics[width=0.5\linewidth]{./comentario1}
 \caption{Autômato resumido do comentário.}
 \label{fig:ExpressaoComent}
 \end{figure}
@@ -323,7 +317,7 @@ Os autômatos da expressão regular dos comentários estão representados de duas fo
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./comentario2}
+\includegraphics[width=0.5\linewidth]{./comentario2}
 \caption{Autômato completo do comentário.}
 \label{fig:ExpressaoComent2}
 \end{figure}
@@ -333,11 +327,134 @@ Por fim, o autômato da expressão regular da nova linha está representado represe
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\linewidth]{./linha1}
+\includegraphics[width=0.5\linewidth]{./linha1}
 \caption{Autômato da nova linha.}
 \label{fig:ExpressaoLinha}
 \end{figure}
 
+\section{Análise sintática}
+\subsection{Descrição da gramática BNF}
+A \textit{Backus-Naur Form} (BNF) é uma forma matemática de descrever uma linguagem, de modo que defina a gramática da linguagem sem ambiguidade ou divergência \cite{bnf}.
+
+Primeiramente é definido um símbolo inicial para a gramática (programa) e depois são criadas regras (produções) para substituição desse simbolo por outro \cite{bnf}.
+
+A produção de uma regra segue a lógica de que o símbolo da esquerda do ':=' pode ser substituído por um simbolo a direita. As alternativas são separadas por | (ou).
+
+As produções criadas e utilizadas para o desenvolvimento da análise sintática estão descritas na Tabela~\ref{bnf}.
+
+\begin{longtable}[c]{| c  c |}
+	\caption{Produções BNF.\label{bnf}}\\
+	\hline
+	\hline\hline
+	\multicolumn{2}{| c |}{\textbf{Descrição BNF}}\\
+	\hline
+	\endfirsthead
+	
+	\hline
+	\multicolumn{2}{|c|}{\textbf{Continuação descrição BNF}}\\
+	\hline
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\hline
+	\hline\hline
+	\endlastfoot
+	
+	programa :=  & lista\_declaracoes\\\hline
+	lista\_declaracoes :=  & lista\_declaracoes declaracao \\
+	& $|$ declaracao \\
+	& $|$ error      \\\hline
+	declaracao:= & declaracao\_variaveis \\
+	& $|$ inicializacao\_variaveis \\
+	& $|$ declaracao\_funcao \\\hline
+	declaracao\_variaveis := & tipo DOIS\_PONTOS lista\_variaveis \\\hline  declaracao\_variaveis := & tipo DOIS\_PONTOS error \\\hline
+	inicializacao\_variaveis := & atribuicao\\\hline
+	lista\_variaveis         := & lista\_variaveis VIRGULA var\\
+	&$|$ var\\\hline
+	var                   := & ID\\
+	& $|$ ID indice\\\hline
+	indice 				:= & indice ABRE\_COL expressao FECHA\_COL \\
+	& $|$ ABRE\_COL expressao FECHA\_COL  \\\hline          
+	indice 				:= & indice ABRE\_COL error FECHA\_COL\\
+	& $|$ ABRE\_COL error FECHA\_COL\\
+	& $|$ error FECHA\_COL\\
+	& $|$ ABRE\_COL error\\
+	& $|$ indice error FECHA\_COL\\
+	& $|$ indice ABRE\_COL error \\\hline
+	tipo :=				 & INTEIRO\\
+	& $|$ FLUTUANTE \\\hline
+	declaracao\_funcao := 	 & tipo cabecalho\\
+	&  $|$ cabecalho\\\hline
+	cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo FIM \\\hline
+	cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo error \\\hline
+	lista\_parametros :=    & lista\_parametros VIRGULA parametro\\
+	&    $|$ parametro\\
+	&    $|$ vazio \\\hline
+	parametro := 			 & tipo DOIS\_PONTOS ID\\
+	& $|$ parametro ABRE\_COL FECHA\_COL \\\hline
+	corpo := 				 & corpo acao\\
+	& $|$ vazio \\\hline
+	acao := 				 & expressao\\
+	& $|$ declaracao\_variaveis\\
+	& $|$ se\\
+	& $|$ repita\\
+	& $|$ leia\\
+	& $|$ escreva\\
+	& $|$ retorna \\\hline 	     		
+	se :=& SE expressao ENTAO corpo FIM\\
+		 &              $|$ SE expressao ENTAO corpo SENAO corpo FIM\\\hline
+	se\_error := & SE expressao error corpo FIM\\
+		         &      $|$ error SENAO corpo FIM\\\hline
+	repita :=& REPITA corpo ATE expressao\\\hline
+	repita\_error :=& REPITA corpo error\\\hline
+	atribuicao :=& var ATRIBUT expressao \\\hline
+	leia :=& LEIA ABRE\_PAR var FECHA\_PAR\\\hline
+	escreva :=&  ESCREVA ABRE\_PAR expressao FECHA\_PAR\\\hline
+	retorna :=& RETORNA ABRE\_PAR expressao FECHA\_PAR\\\hline
+	expressao :=& expressao\_logica\\
+           & $|$ atribuicao\\\hline
+	expressao\_logica :=& expressao\_simples\\
+	&         $|$ expressao\_logica operador\_logico\\
+	& expressao\_simples\\\hline
+	expressao\_simples :=& expressao\_aditiva\\
+     &            $|$ expressao\_simples \\
+     & operador\_relacional expressao\_aditiva\\\hline
+	expressao\_aditiva :=& expressao\_multiplicativa\\
+	 &           $|$ expressao\_aditiva \\ & operador\_soma expressao\_multiplicativa\\\hline
+		expressao\_multiplicativa :=& expressao\_unaria\\
+		                           &	    $|$ expressao\_multiplicativa operador\_multiplicacao\\ & expressao\_unaria\\\hline
+		expressao\_unaria :=& fator\\
+		                     &        $|$ operador\_soma fator\\
+					     &$|$ operador\_negacao fator\\\hline
+		 operador\_relacional :=& MENOR\\
+		                         &       $|$ MAIOR\\
+		                         &       $|$ IGUAL\\
+						&$|$ DIFERENCA\\
+		                              &  $|$ MENOR\_IGUAL\\
+		                              &  $|$ MAIOR\_IGUAL\\\hline
+		  operador\_soma :=& SOMA\\
+		                           & $|$ SUB\\\hline
+		  operador\_negacao :=& NEGACAO\\\hline
+		  operador\_logico :=& E\_LOGICO\\
+		                           &   $|$ OU\_LOGICO\\\hline
+		  operador\_multiplicacao :=& MULT\\
+		                                  &    $|$ DIVISAO\\\hline
+		                                      	                                                          
+		  fator :=& ABRE\_COL expressao FECHA\_COL\\
+		                 &   $|$ var\\
+		                  &  $|$ chamada\_funcao\\
+		                  &  $|$ numero\\\hline
+		   numero :=& INTEIRO\\
+		             &         $|$ FLUTUANTE\\
+		   		  &  $|$ NOTACAO\_CIENTIFICA \\\hline
+		   chamada\_funcao :=& ID ABRE\_PAR lista\_argumentos FECHA\_PAR \\\hline
+		    lista\_argumentos :=& lista\_argumentos VIRGULA expressao\\
+		                       &        $|$ expressao\\
+		                       &        $|$ vazio\\\hline
+	                               				                                	                   
+\end{longtable}
 
 \section{PLY - Python Lex Yacc}
 
@@ -350,7 +467,7 @@ O PLY consiste em dois módulos separados; lex.py e yacc.py, ambos encontrados em
 As duas ferramentas são destinadas a trabalhar juntas. O lex.py fornece uma interface externa na forma de uma função \texttt{token()} que retorna o próximo \textit{token} válido no fluxo de entrada. Já a yacc.py chama isso repetidamente para recuperar \textit{tokens} e invocar regras gramaticais. A saída de yacc.py é geralmente uma \textit{Abstract Syntax Tree} (AST) \cite{ply}. 
 
 
-\section{Análise léxica}
+\subsection{PLY para análise léxica}
 Para o desenvolvimento da análise léxica, foi utilizado apenas o módulo lex.py. Para isso, o primeiro passo foi instalar o ply no ambiente linux utilizando o seguinte comando:
 
 \texttt{pipe3 install ply}
@@ -380,95 +497,90 @@ Para o reconhecimento das palavras reservadas e \textit{tokens}, são definidas a
 \label{fig:Codigo2}
 \end{figure}
 
-\section{Análise sintática}
+\subsection{PLY para análise sintática}
+Utiliza-se o \texttt{yacc.py} para analisar a sintaxe da linguagem. Ele utiliza uma técnica conhecida como analisador LR ou\textit{ shift-reduce parsing} \textit{LR}. Essa análise LR é uma técnica \textit{bottom up} que tenta reconhecer o lado direito de várias regras gramaticais. Sempre que um lado direito válido é encontrado na entrada, os símbolos de gramática são substituídos pelo símbolo de gramática no lado esquerdo \cite{ply}.
 
-\subsection{Descrição da gramática BNF}
-A \textit{Backus-Naur Form} (BNF) é uma forma matemática de descrever uma linguagem, de modo que defina a gramática da linguagem sem ambiguidade ou divergência \cite{bnf}.
+A implementação do analisador LR é responsável por deslocar símbolos da gramática para uma pilha, analisando a pilha e o próximo \textit{token} de entrada para padrões que correspondam a uma das regras gramaticais \cite{ply}. Como exemplo, considere a expressão \texttt{3 + 5 * (10 - 20)} e a gramática definida na Figura~\ref{fig:gramaticaExem}, a saída utilizando o analisador é demonstrada na Figura~\ref{fig:Exem}.
 
-Primeiramente é definido um símbolo inicial para a gramática (programa) e depois são criadas regras (produções) para substituição desse simbolo por outro \cite{bnf}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{./gramaticaExemplo}
+	\caption{Exemplo de regras gramaticais.}
+	\label{fig:gramaticaExem}
+\end{figure}
 
-A produção de uma regra segue a lógica de que o símbolo da esquerda do ':=' pode ser substituído por um simbolo a direita. As alternativas são separadas por | (ou).
- 
-As produções criadas e utilizadas para o desenvolvimento da análise sintática estão descritas na Tabela~\ref{bnf}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{./exemplo}
+	\caption{Exemplo do analisador LR.}
+	\label{fig:Exem}
+\end{figure}
 
-\begin{longtable}[c]{| c  c |}
- \caption{Produções BNF.\label{bnf}}\\
- \hline
- \multicolumn{2}{| c |}{\textbf{Descrição BNF}}\\
- \hline
- \endfirsthead
- 
- \hline
- \multicolumn{2}{|c|}{Continuation of Table \ref{long}}\\
- \hline
- Something & something else\\
- \hline
- \endhead
- 
- \hline
- \endfoot
- 
- \hline
- \hline\hline
- \endlastfoot
- 
- programa 			:=  & lista\_declaracoes\\\hline
- lista\_declaracoes :=  & lista\_declaracoes declaracao \\
- 					    & $|$ declaracao \\
- 					    & $|$ error      \\\hline
- declaracao 		:=    & declaracao\_variaveis \\
-                    	  & $|$ inicializacao\_variaveis \\
-                      	  & $|$ declaracao\_funcao \\\hline
- declaracao\_variaveis := & tipo DOIS\_PONTOS lista\_variaveis \\\hline  declaracao\_variaveis := & tipo DOIS\_PONTOS error \\\hline
- inicializacao\_variaveis := & atribuicao\\\hline
- lista\_variaveis         := & lista\_variaveis VIRGULA var\\
-                         &$|$ var\\\hline
-  var                   := & ID\\
-             		  	& $|$ ID indice\\\hline
- indice 				:= & indice ABRE\_COL expressao FECHA\_COL \\
-                 		& $|$ ABRE\_COL expressao FECHA\_COL  \\\hline          
- indice 				:= & indice ABRE\_COL error FECHA\_COL\\
-                 		& $|$ ABRE\_COL error FECHA\_COL\\
- 						& $|$ error FECHA\_COL\\
- 						& $|$ ABRE\_COL error\\
-         				& $|$ indice error FECHA\_COL\\
- 						& $|$ indice ABRE\_COL error \\\hline
- tipo :=				 & INTEIRO\\
- 	     				 & $|$ FLUTUANTE \\\hline
- declaracao\_funcao := 	 & tipo cabecalho\\
-                         &  $|$ cabecalho\\\hline
- cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo FIM \\\hline
- cabecalho := 			 & ID ABRE\_PAR lista\_parametros FECHA\_PAR corpo error \\\hline
- lista\_parametros :=    & lista\_parametros VIRGULA parametro\\
-                         &    $|$ parametro\\
-                         &    $|$ vazio \\\hline
-  parametro := 			 & tipo DOIS\_PONTOS ID\\
-  		  				 & $|$ parametro ABRE\_COL FECHA\_COL \\\hline
- corpo := 				 & corpo acao\\
-                		 & $|$ vazio \\\hline
-  acao := 				 & expressao\\
-              & $|$ declaracao\_variaveis\\
-              & $|$ se\\
-              & $|$ repita\\
-              & $|$ leia\\
-              & $|$ escreva\\
-              & $|$ retorna \\\hline 	     		
- 
- \end{longtable}
+De acordo com a Figura~\ref{fig:Exem}, uma máquina de estado subjacente e o \textit{token} de entrada atual determinam o passo seguinte. Se o próximo \textit{token} estiver descrito em uma regra gramatical válida, ele é transferido para a pilha. Se a parte superior da pilha contiver um lado direito válido de uma regra gramatical, ela é "reduzida" e os símbolos substituídos pelo símbolo à esquerda. Se o \textit{token} de entrada não puder ser deslocado e o topo da pilha não corresponder a nenhuma regra gramatical, ocorre um erro de sintaxe. Uma análise é considerada bem-sucedida quando o analisador atinge um estado em que a pilha de símbolos esteja vazia e não exista mais \textit{tokens} de entrada.
 
+\subsubsection{A implementação utilizando YACC}
+Para o desenvolvimento da análise sintática, foi utilizado o módulo \texttt{ply.yacc} e os \textit{tokens} obtidos da análise léxica. Para isso, foi necessário realizar duas importações no código:
+
+\texttt{\textbf{import} ply.yacc \textbf{as} yacc}
+
+\texttt{\textbf{from} lexer \textbf{import} Lexica}
+
+Cada regra gramatical é definida por uma função Python, no qual cada uma contém a especificação gramatical livre de contexto apropriada. As instruções que compõem o corpo da função implementam as ações responsável por adicionar valores na árvore abstrata, como mostra parte do código na Figura~\ref{fig:syntax}. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{./syntax}
+	\caption{Regras gramaticais representadas por meio de funções na linguagem Python.}
+	\label{fig:syntax}
+\end{figure}
+
+Cada função aceita um único argumento p que é uma sequência contendo os valores de cada símbolo gramatical na regra correspondente. Os valores de \texttt{p[i]} são mapeados para símbolos de gramática, como o exemplo \textbf{\texttt{p[0] = Tree('declaracao'), [p[1]]}}, no qual é adicionada na árvore o valor p[1], que pode ser: \texttt{declaracao\_variaveis, inicializacao\_variaveis ou declaraca\_funcao}.
+
+A primeira regra definida na especificação \textit{yacc} determina o símbolo de gramática inicial. Sempre que a regra inicial for reduzida pelo analisador e não houver mais entrada disponível, a análise será interrompida uma árvore abstrata contendo a gramática e valores será retornada.
+
+A estrutura da árvore abstrata é criada em uma classe denominada \texttt{Tree} (Figura~\ref{fig:tree}). Os símbolos encontrados pelo analisador sintático são adicionados nessa árvore, que é imprime todos seus nós ao final da análise por meio de uma função chamda \texttt{prinTree} (Figura~\ref{fig:printtree}). 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{./tree}
+	\caption{Estrutura da classe Tree em Python.}
+	\label{fig:tree}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{./printTree}
+	\caption{Função responsável por imprimir a árvore abstrata em python.}
+	\label{fig:printtree}
+\end{figure}
+
+
+Para capturar os erros de sintaxe encontrados, existe um denominada \texttt{p\_error} que retorna a linha e a coluna do código onde ocorreu o erro, como demostra a Figura~\ref{fig:error}.
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{./error}
+	\caption{Função error em Python.}
+	\label{fig:error}
+\end{figure}
+
+Para construir o analisador, é necessário chamar a função \texttt{yacc.yacc()}, no qual examina o módulo e tenta construir todas as tabelas de análise de LR para a gramática especificada.
 
 \section{Resultados análise léxica}
 
-Com o código fonte da análise léxica pronta, é possível executá-lo de forma que receba um arquivo contendo o código na linguagem T++, leia cada \textit{token} do mesmo, e retorne um arquivo de saída identificando cada \textit{token} encontrado, bem como sua linha e coluna.
+Com o código fonte da análise léxica pronto, é possível executá-lo de forma que receba um arquivo contendo o código na linguagem T++, leia cada \textit{token} do mesmo, e retorne um arquivo de saída identificando cada \textit{token} encontrado, bem como sua linha e coluna.
 
 Para executar o código pelo terminal utiliza-se o seguinte comando:
 
 \texttt{python3 lexer.py nomeDoArquivo.tpp}
 
-Considere o seguinte código feito em T++ responsável por calcular o fatorial de um número:
+Considere a Figura~\ref{fig:fat} que demostra um código feito em T++ responsável por calcular o fatorial de um número. 
 
+\begin{figure}[H]
+\caption{Fatorial em T++.}
+\label{fig:fat}
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
-
 \begin{lstlisting}[frame=single] 
 inteiro: n
 inteiro fatorial(inteiro: n)
@@ -491,10 +603,9 @@ inteiro principal()
 fim
 
 \end{lstlisting}
+\end{figure}
 
-Quando executado o código da análise léxica para o exemplo anterior, tem-se a seguinte saída:
-
-\lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
+Ao executar a análise léxica o código fatorial (Figura~\ref{fig:fat}), tem-se a seguinte saída:
 
 \begin{lstlisting}[frame=single] 
 LexToken(INTEIRO,'inteiro',1,0)
@@ -557,13 +668,85 @@ LexToken(INTEIRO,'0',13,282)
 LexToken(FECHA_PAR,')',13,283)
 LexToken(NOVA_LINHA,'\n',13,284)
 LexToken(FIM,'fim',14,289)
-
 \end{lstlisting}
 
 É possível notar que o código da análise léxica avaliou cada palavra do código em T++, o classificou e retornou seu valor em um arquivo de saída. Isso é exatamente o objetivo da análise léxica, retornar todos os \textit{tokens} que um determinado código possui.
 
 
 \section{Resultados análise sintática}
+O código da análise sintática recebe um arquivo contendo o código na linguagem T++. Ele chama a análise léxica para obter os \textit{tokens} e analisar se esses correspondem a gramática descrita.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{./codigo}
+	\caption{Código em T++.}
+	\label{fig:codigo}
+\end{figure}
+
+Considere o código fatorial da Figura~\ref{fig:codigo}, a saída obtida quando executado a análise sintática desse código é uma árvore abstrata:
+
+\begin{lstlisting}[frame=single] 
+  programa 
+   lista_declaracoes 
+    lista_declaracoes 
+     declaracao 
+      declaracao_funcao 
+       tipo inteiro
+       cabecalho func
+        lista_parametros 
+        corpo 
+         corpo 
+         acao 
+          retorna 
+           expressao 
+            expressao_logica 
+             expressao_simples 
+              expressao_aditiva 
+               expressao_multiplicativa 
+                expressao_unaria 
+                 fator 
+                  numero 0
+    declaracao 
+     declaracao_funcao 
+      tipo inteiro
+      cabecalho principal
+       lista_parametros 
+       corpo 
+        corpo 
+         corpo 
+          corpo 
+          acao 
+           declaracao_variaveis :
+            tipo inteiro
+            lista_variaveis 
+             lista_variaveis 
+              var i
+             var b
+         acao 
+          expressao 
+           atribuicao 
+            var i
+            expressao 
+             expressao_logica 
+              expressao_simples 
+               expressao_aditiva 
+                expressao_multiplicativa 
+                 expressao_unaria 
+                  fator 
+                   numero 1
+        acao 
+         retorna 
+          expressao 
+           expressao_logica 
+            expressao_simples 
+             expressao_aditiva 
+              expressao_multiplicativa 
+               expressao_unaria 
+                fator 
+                 numero 0
+
+\end{lstlisting}
+
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
