@@ -308,6 +308,15 @@ class Syntax:
             p[0] = Tree('expressao_unaria', [p[1]])
         else:
             p[0] = Tree('expressao_unaria', [p[1], p[2]])
+
+
+    def p_operador_multiplicacao(self, p):
+        '''
+            operador_multiplicacao : MULT
+                                    | DIVISAO
+        '''
+        p[0] = Tree('operador_multiplicacao', [], p[1])
+
  
     def p_operador_relacional(self, p):
         '''
@@ -346,12 +355,6 @@ class Syntax:
 
     
 
-    def p_operador_multiplicacao(self, p):
-        '''
-            operador_multiplicacao : MULT
-                                    | DIVISAO
-        '''
-        p[0] = Tree('operador_multiplicacao', [], p[1])
 
     def p_fator(self, p):
         '''
