@@ -39,6 +39,7 @@ class Semantica:
 
     def declaracao(self, node):
         if (node.child[0].type == "declaracao_variaveis"):
+            print("declaracao")
             self.declaracao_variaveis(node.child[0])
         elif (node.child[0].type == "inicializacao_variaveis"):
             self.inicializacao_variaveis(node.child[0])
@@ -55,30 +56,43 @@ class Semantica:
 
     #declaracao_variaveis : tipo DOIS_PONTOS lista_variaveis
     def declaracao_variaveis(self, node):
-        self.lista_variaveis(node.child[1])
+        tipo = node.child[0].type
+        arr_name = ""
+
+        for son in self.lista_variaveis(node.child[1]):
+            if ("[" in son):
+                arr_name = son.split('[')[0]
+                son = arr_name
+            if (self.escopo + '-' + son in self.simbolos.keys()):
+                print("Erro: A variável '" + son + "' já foi declarada anteriormente.")
+                exit(1)
+            if ("global-" + son in self.simbolos.keys()):
+                print("Erro: A variável '" + son + "' já foi declarada anteriormente.")
+                exit(1)
+            if (son in self.simbolos.keys()):
+                print("Erro: Já existe uma função com o nome '" + son + "'")
+                exit(1)
+            self.simbolos[self.escopo + "-" + son] = ["variavel", son, False, False, tipo, 0]
         return "void"
 
-
-
+# lista_variaveis : lista_variaveis VIRGULA var
+ #                       | var     
     def lista_variaveis(self, node):
         ret_args = []
-        
+
         if (len(node.child) == 1):
             if (len(node.child[0].child) == 1):
-                self.indice(node.child[0].child[0])
-                #ret_args.append(node.child[0].value + self.indice(node.child[0].child[0]))
-              
-            #else:
-            #    ret_args.append(node.child[0].value)
-            #return ret_args
-        #else:
-         #   ret_args = self.lista_variaveis(node.child[0])
-          #  if (len(node.child[1].child) == 1):
-           #     ret_args.append(node.child[1].value + self.indice(node.child[1].child[0]))
-            #else:
-            #    ret_args.append(node.child[1].value)
-            #return ret_args 
-
+                ret_args.append(node.child[0].value + self.indice(node.child[0].child[0]))
+            else:
+                ret_args.append(node.child[0].value)
+            return ret_args
+        else:
+            ret_args = self.lista_variaveis(node.child[0])
+            if (len(node.child[1].child) == 1):
+                ret_args.append(node.child[1].value + self.indice(node.child[1].child[0]))
+            else:
+                ret_args.append(node.child[1].value)
+            return ret_args
 
     def var(self, node):
         nome = self.escopo + "-" + node.value
@@ -115,17 +129,16 @@ class Semantica:
     def indice(self, node):
         if (len(node.child) == 1):
             tipo = self.expressao(node.child[0])
-            print(tipo)  
-        #    if (node.child[0].value == "" or tipo != "inteiro"):
-        #        print("Erro: index invalido, permitido somente inteiro")
-        #    return ("[]")
-        #else:
-        #    variavel = self.indice(node.child[0])
-        #    tipo = self.expressao(node.child[1])
-        #    if (tipo != "inteiro"):
-        #        print("Erro: index invalido, permitido sómente inteiro")
+            if (node.child[0].value == "" or tipo != "inteiro"):
+                print("Erro: index invalido, permitido somente inteiro")
+            return ("[]")
+        else:
+            variavel = self.indice(node.child[0])
+            tipo = self.expressao(node.child[1])
+            if (tipo != "inteiro"):
+                print("Erro: index invalido, permitido sómente inteiro")
                 #				exit(1)
-        #    return ("[]" + variavel)
+            return ("[]" + variavel)
  
 
     def expressao(self, node):
@@ -139,7 +152,6 @@ class Semantica:
         if (len(node.child)==1):
             return self.expressao_simples(node.child[0])
         else:
-            print("else")
             tipo1 = self.expressao_logica(node.child[0])
             self.operador_logico(node.child[1])
             return "logico"
@@ -219,8 +231,8 @@ class Semantica:
         #    return self.chamada_funcao(node.child[0])
         if (node.child[0].type == "numero"):
             return self.numero(node.child[0])
-        #else:
-        #    return self.expressao(node.child[0])
+        else:
+            return self.expressao(node.child[0])
 
  
     def numero(self, node):
