@@ -24,8 +24,7 @@ class Lexica:
 	    }
 
 	# Lista de tokens
-	tokens = ['DIVISAO', 'MULT', 'VIRGULA', 'ATRIBUT', 'MENOR', 'MAIOR', 'IGUAL', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'E_LOGICO', 'OU_LOGICO','SOMA', 'SUB',   'DIFERENCA', 'ABRE_COL', 'FECHA_COL', 'NOTACAO_CIENTIFICA', 'ID', 'NEGACAO'] + \
-	    list(reservadas.values())
+	tokens = ['DIVISAO', 'MULT', 'VIRGULA', 'ATRIBUT', 'MENOR', 'MAIOR', 'IGUAL', 'MENOR_IGUAL','MAIOR_IGUAL', 'ABRE_PAR', 'FECHA_PAR', 'DOIS_PONTOS', 'SOMA', 'SUB',   'DIFERENCA', 'ABRE_COL', 'FECHA_COL', 'NOTACAO_CIENTIFICA', 'ID', 'E_LOGICO', 'OU_LOGICO','NEGACAO'] + list(reservadas.values())
 
 	# Regras de expressões regulares
 	t_SOMA = r'\+' 
@@ -62,14 +61,14 @@ class Lexica:
 
 
 	def t_FLUTUANTE(self, t):
-	  r'[0-9]+(\.[0-9]*)(e(\+|\-)?(\d+))?'
-	  t.type = self.reservadas.get(t.value, 'FLUTUANTE')
+	  r'[0-9]+(\.[0-9]+)(e(\+|\-)?(\d+))?'
+	  t.value = float(t.value)
 	  return t
 
 	def t_INTEIRO(self, t):
 	  r'[0-9]+'
 	  #t.type = reservadas.get(t.value, 'INTEIRO')
-	  t.type = self.reservadas.get(t.value, 'INTEIRO')
+	  t.value = int(t.value)
 	  return t 
 
 	  
