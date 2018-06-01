@@ -18,7 +18,7 @@ class Tree:
 # Analisador Sintático #
 ########################
 
-class Parser:
+class Syntax:
     def __init__(self, code):
         lex = Lexica()
         self.tokens = lex.tokens
@@ -422,6 +422,6 @@ def prinTree(node, level=" "):
 if __name__ == '__main__':
     import io, sys
     lexemas = io.open(sys.argv[1], mode="r", encoding="utf-8")
-    arvore = Parser(lexemas.read())
+    arvore = Syntax(lexemas.read())
     prinTree(arvore.ast)
     lexemas.close()

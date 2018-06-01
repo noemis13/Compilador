@@ -9,8 +9,8 @@ class Semantica:
         self.escopo = "global"
         self.tree = Syntax(code).ast
         self.programa(self.tree)
-#        self.check_main(self.simbolos)
-        #self.check_utilizadas(self.simbolos)
+        self.check_main(self.simbolos)
+        self.check_var_utilizadas(self.simbolos)
         #self.check_functions(self.simbolos)
     
     def raiz(self):
@@ -29,7 +29,6 @@ class Semantica:
 
     
     def programa(self, node):
-        print(node.child[0])
         self.lista_declaracoes(node.child[0])
 
     def lista_declaracoes(self, node):
@@ -42,19 +41,17 @@ class Semantica:
                 self.declaracao(node.child[1])
 
     def declaracao(self, node):
-        print("\t declaração")
         if (node.child[0].type == "declaracao_variaveis"):
-            print("\t\t declaração_variaveis")
             self.declaracao_variaveis(node.child[0])
         elif (node.child[0].type == "inicializacao_variaveis"):
             self.inicializacao_variaveis(node.child[0])
-        #else:
-        #    if (len(node.child[0].child) == 1):
-        #        self.escopo = node.child[0].child[0].value
-        #    else:
-        #        self.escopo = node.child[0].child[1].value
-        #    self.declaracao_funcao(node.child[0])
-        #    self.escopo = "global"
+        else:
+            if (len(node.child[0].child) == 1):
+                self.escopo = node.child[0].child[0].value
+            else:
+                self.escopo = node.child[0].child[1].value
+            self.declaracao_funcao(node.child[0])
+            self.escopo = "global"
 
 
 
@@ -63,24 +60,19 @@ class Semantica:
     # Warning: verificar se variavel declarada foi tuilziada
     #Warning: coerção
     def declaracao_variaveis(self, node):
-        print("\t\t\t declaracao_variaveis")
         tipo = node.child[0].type
         arr_name = ""
 
         for son in self.lista_variaveis(node.child[1]):
-            print(son)
             if ("[" in son):
                 arr_name = son.split('[')[0]
                 son = arr_name
-            if (self.escopo + '-' + son in self.simbolos.keys()):
-                print("Erro: A variável '" + son + "' já foi declarada anteriormente.")
-                exit(1)
-            if ("global-" + son in self.simbolos.keys()):
-                print("Erro: A variável '" + son + "' já foi declarada anteriormente.")
-                exit(1)
+            if ( (self.escopo + '-' + son in self.simbolos.keys()) or ("global-" + son in self.simbolos.keys()) ):
+                print( "Warning: A variável '" + son + "' já foi declarada anteriormente." )
+                #exit(1)
             if (son in self.simbolos.keys()):
                 print("Erro: Já existe uma função com o nome '" + son + "'")
-                exit(1)
+                #exit(1)
             self.simbolos[self.escopo + "-" + son] = ["variavel", son, False, False, tipo, 0]
         return "void"
 
@@ -105,7 +97,6 @@ class Semantica:
                 ret_args.append(node.child[1].value)
             return ret_args
         
-
 
     def var(self, node):
         nome = self.escopo + "-" + node.value
@@ -466,7 +457,23 @@ class Semantica:
             ret_args.append(self.expressao(node.child[1]))
             return ret_args
 
+#######################################################################
+#################### CHECK #############################################
 
+    def check_main(self, simbolos):
+        if ("principal" not in simbolos.keys()):
+            print("Erro: função principal não declarada")
+            #exit(1)
+
+    def check_var_utilizadas(self, simbolos):
+        for k, v in simbolos.items():
+            if (v[0] == "variavel"):
+                if (v[2] == False):
+                    escopo = k.split("-")
+                    if (escopo[0] != "global"):
+                        print("Warning: Variavel '" + v[1] + "' da função '" + escopo[0] + "' nunca é utilizada")
+                    else:
+                        print("Warning: Variavel '" + v[1] + "' nunca é utilizada")
 
 
 
