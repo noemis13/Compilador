@@ -5,4 +5,3 @@
 
 inteiro: a
 flutuante: b
-

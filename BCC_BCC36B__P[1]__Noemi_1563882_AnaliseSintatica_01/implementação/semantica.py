@@ -9,9 +9,10 @@ class Semantica:
         self.escopo = "global"
         self.tree = Syntax(code).ast
         self.programa(self.tree)
+        #verificações
         self.check_main(self.simbolos)
         self.check_var_utilizadas(self.simbolos)
-        #self.check_functions(self.simbolos)
+        self.check_functions(self.simbolos)
     
     def raiz(self):
         if(self.tree.type == "programa_principal"):
@@ -60,7 +61,8 @@ class Semantica:
     # Warning: verificar se variavel declarada foi tuilziada
     #Warning: coerção
     def declaracao_variaveis(self, node):
-        tipo = node.child[0].type
+        #tipo = node.child[0].type
+        tipo = node.child[0].value
         arr_name = ""
 
         for son in self.lista_variaveis(node.child[1]):
@@ -134,22 +136,22 @@ class Semantica:
         if (len(node.child) == 1):
             tipo = self.expressao(node.child[0])
             if (node.child[0].value == "" or tipo != "inteiro"):
-                print("Erro: index invalido, permitido somente inteiro")
+                print("Erro: index inválido, permitido somente inteiro")
             return ("[]")
         else:
             variavel = self.indice(node.child[0])
             tipo = self.expressao(node.child[1])
             if (tipo != "inteiro"):
-                print("Erro: index invalido, permitido sómente inteiro")
+                print("Erro: index inválido, permitido somente inteiro")
                 #				exit(1)
             return ("[]" + variavel)
 
 
     def tipo(self, node):
-        if (node.type == "inteiro" or node.type == "flutuante"):
-            return node.type
+        if (node.value == "inteiro" or node.type == "flutuante"):
+            return node.value
         else:
-            print("Erro: Somente tipos inteiros e flutuantes são aceitos. Tipo entrado: " + node.type)
+            print("Erro: Somente tipos inteiros e flutuantes são aceitos. Tipo entrado: " + node.value)
 
     def declaracao_funcao(self, node):
         if (len(node.child) == 1):
@@ -175,12 +177,11 @@ class Semantica:
         tipo_fun = self.simbolos[node.value][4]
         if tipo_corpo != tipo_fun:
             if (node.value == "principal"):
-                print(
-                    "Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
+                print("Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
             else:
                 print(
                     "Erro: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
-                #				exit(1)
+               # exit(1)
 
 
 
@@ -262,6 +263,7 @@ class Semantica:
 
         return self.corpo(node.child[0])
 
+
     def atribuicao(self, node):
         nome = self.escopo + "-" + node.child[0].value
         if (self.escopo + "-" + node.child[0].value not in self.simbolos.keys()):
@@ -269,10 +271,13 @@ class Semantica:
             if ("global" + "-" + node.child[0].value not in self.simbolos.keys()):
                 print("Erro: A variável '" + node.child[0].value + "' não foi declarada.")
                 exit(1)
+        
         tipo_esperado = self.simbolos[nome][4]
         tipo_recebido = self.expressao(node.child[1])
+        
         self.simbolos[nome][2] = True
         self.simbolos[nome][3] = True
+        
         if (tipo_esperado != tipo_recebido):
             print(
                 "Warning: Coerção implícita de tipos! Tipo esperado: " + tipo_esperado + ", tipo recebido: " + tipo_recebido + ".")
@@ -282,7 +287,7 @@ class Semantica:
         if self.scope + "-" + node.value not in self.simbolos.keys():
             if "global-" + node.value not in self.simbolos.keys():
                 print("Erro: " + node.value + " não declarada")
-                exit(1)
+                #exit(1)
         return "void"
 
     def escreva(self, node):
@@ -475,10 +480,16 @@ class Semantica:
                     else:
                         print("Warning: Variavel '" + v[1] + "' nunca é utilizada")
 
+    def check_functions(self, simbolos):
+        for key, value in simbolos.items():
+            if (value[0] == "funcao" and key != "principal"):
+                if (value[5] != 1):
+                    print("Warning: Função '" + key + "' nunca utilizada.")
 
 
 if __name__ == '__main__':
     import sys, io
     code = io.open(sys.argv[1], mode="r", encoding="utf-8")
     s = Semantica(code.read())
-    pprint.pprint(s.simbolos, depth=3, width=300)
+    print("Tabela de simbolos: ", s.simbolos)
+    #pprint.pprint(s.simbolos, depth=3, width=300)

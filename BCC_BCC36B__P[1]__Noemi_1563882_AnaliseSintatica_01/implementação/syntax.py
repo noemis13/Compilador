@@ -377,7 +377,7 @@ class Syntax:
                     | FLUTUANTE
                     | NOTACAO_CIENTIFICA
         '''
-        p[0] = Tree('numero', [])
+        p[0] = Tree('numero', [], p[1])
 
     def p_chamada_funcao(self, p):
         '''
