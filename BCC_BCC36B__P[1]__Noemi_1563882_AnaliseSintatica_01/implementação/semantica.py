@@ -125,7 +125,7 @@ class Semantica:
                     exit(1)
             if (self.simbolos[nome][3] == False):
                 print("Erro: A váriavel '" + nome + "' não foi inicializada.")
-                exit(1)
+                #exit(1)
 
             self.simbolos[nome][2] = True
             return self.simbolos[nome][4]
@@ -157,7 +157,7 @@ class Semantica:
         if (len(node.child) == 1):
             tipo = "void"
             if node.child[0].value in self.simbolos.keys():
-                print("Erro: Função " + node.child[0].value + " já foi declarada.")
+                print("Erro: Função '" + node.child[0].value + "' já foi declarada.")
                 exit(1)
             elif "global-" + node.child[0].value in self.simbolos.keys():
                 print("Erro: Uso duplicado do nome '" + node.child[0].value + "'")
@@ -200,7 +200,7 @@ class Semantica:
 
 
     def parametro(self, node):
-        if (node.child[0].type == "parametro"):
+        if (node.child[1].type == "parametro"):
             return self.parametro(node.child[0]) + "[]"
         else:
             self.simbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, False, node.child[0].type, 0]
@@ -332,7 +332,6 @@ class Semantica:
                 print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
             return "simples"
 
-
     def expressao_aditiva(self, node):
         if (len(node.child) == 1):
             return self.expressao_multiplicativa(node.child[0])
@@ -416,7 +415,7 @@ class Semantica:
             print("Erro: A função '" + self.escopo + "' realiza uma chamada para a função principal.")
             exit(1)
         if node.value not in self.simbolos.keys():
-            print("Erro: Função " + node.value + " não declarada")
+            print("Erro: Função '" + node.value + "' não foi declarada")
             exit(1)
         self.simbolos[node.value][5] = 1
         argslista = []
@@ -425,7 +424,6 @@ class Semantica:
             argslista = []
         elif (not (type(argslista[0]) is str)):
             argslista = argslista[0]
-
         args_esperados = self.simbolos[node.value][2]
         if (type(args_esperados) is str):
             args_esperados = []
@@ -478,7 +476,7 @@ class Semantica:
                     if (escopo[0] != "global"):
                         print("Warning: Variavel '" + v[1] + "' da função '" + escopo[0] + "' nunca é utilizada")
                     else:
-                        print("Warning: Variavel '" + v[1] + "' nunca é utilizada")
+                        print("Warning: Variavel '" + v[1] + "' declarada mas nunca é utilizada")
 
     def check_functions(self, simbolos):
         for key, value in simbolos.items():

@@ -276,7 +276,7 @@ class Syntax:
     def p_expressao_simples(self, p):
         '''
             expressao_simples : expressao_aditiva
-                                | expressao_simples operador_relacional expressao_aditiva
+                              | expressao_simples operador_relacional expressao_aditiva
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_simples', [p[1]])
@@ -286,7 +286,7 @@ class Syntax:
     def p_expressao_aditiva(self, p):
         '''
             expressao_aditiva : expressao_multiplicativa
-                                | expressao_aditiva operador_multiplicacao expressao_unaria
+                                | expressao_aditiva operador_soma expressao_multiplicativa
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_aditiva', [p[1]])
