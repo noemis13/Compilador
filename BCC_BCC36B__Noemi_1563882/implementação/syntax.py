@@ -64,11 +64,11 @@ class Syntax:
         '''
         p[0] = Tree('declaracao_variaveis', [p[1], p[3]], p[2])
 
-#    def p_declaracao_variaveis_error(self, p):
-#        '''
-#        declaracao_variaveis : tipo DOIS_PONTOS error
-#        '''
-#        print("Erro: Declaração de variável incompleta. \n")
+    def p_declaracao_variaveis_error(self, p):
+        '''
+        declaracao_variaveis : tipo DOIS_PONTOS error
+        '''
+        print("Erro: Declaração de variável incompleta. \n")
 
 
     def p_inicializacao_variaveis(self, p):
@@ -152,7 +152,7 @@ class Syntax:
 
     def p_lista_parametros(self, p):
         '''
-        lista_parametros : lista_parametros VIRGULA lista_parametros
+        lista_parametros : lista_parametros VIRGULA parametro
                             | parametro
                             | vazio
         '''
@@ -161,15 +161,17 @@ class Syntax:
         elif len(p) == 2:
             p[0] = Tree('lista_parametros', [p[1]])
 
-    def p_parametro(self, p):
+    def p_parametro1(self, p):
         '''
         parametro : tipo DOIS_PONTOS ID
-		  | parametro ABRE_COL FECHA_COL
         '''
-        if p.slice[1] == 'tipo':
-    	    p[0] = Tree('condicional', [p[1]], p[3])
-        elif p.slice[1] == 'parametro':
-    	    p[0] = Tree('condicional', [p[1]])
+        p[0] = Tree('parametro', [p[1]], p[3])
+
+    def p_parametro2(self, p):
+        '''
+        parametro : parametro ABRE_COL FECHA_COL
+        '''
+        p[0] = Tree('parametro', [p[1]])
 
     def p_corpo(self, p):
         '''

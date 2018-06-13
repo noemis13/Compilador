@@ -64,7 +64,6 @@ class Semantica:
         #tipo = node.child[0].type
         tipo = node.child[0].value
         arr_name = ""
-
         for son in self.lista_variaveis(node.child[1]):
             if ("[" in son):
                 arr_name = son.split('[')[0]
@@ -76,6 +75,7 @@ class Semantica:
                 print("Erro: Já existe uma função com o nome '" + son + "'")
                 #exit(1)
             self.simbolos[self.escopo + "-" + son] = ["variavel", son, False, False, tipo, 0]
+            
         return "void"
 
 
@@ -102,6 +102,7 @@ class Semantica:
 
     def var(self, node):
         nome = self.escopo + "-" + node.value
+        apenasNome = node.value
         if (len(node.child) == 1):
             if (nome not in self.simbolos):
                 nome = "global-" + node.value
@@ -110,7 +111,7 @@ class Semantica:
                     exit(1)
 
             if (self.simbolos[nome][3] == False):
-                print("Erro: váriavel '" + nome + "' não foi inicializada")
+               print("Erro: váriavel '" + nome + "' não foi inicializada")
                 #				exit(1)
             var = self.indice(node.child[0])
             self.simbolos[nome][4] = self.simbolos[nome][4] + var
@@ -121,10 +122,11 @@ class Semantica:
             if (nome not in self.simbolos):
                 nome = "global-" + node.value
                 if (nome not in self.simbolos):
+                    
                     print("Erro: A váriavel '" + node.value + "' não foi declarada")
-                    exit(1)
+                    #exit(1)
             if (self.simbolos[nome][3] == False):
-                print("Erro: A váriavel '" + nome + "' não foi inicializada.")
+                print("Erro: A váriavel '" + apenasNome + "' não foi inicializada.")
                 #exit(1)
 
             self.simbolos[nome][2] = True
@@ -171,20 +173,23 @@ class Semantica:
 
     def cabecalho(self, node):
         lista_par = self.lista_parametros(node.child[0])
-
         self.simbolos[node.value][2] = lista_par
         tipo_corpo = self.corpo(node.child[1])
         tipo_fun = self.simbolos[node.value][4]
+
         if tipo_corpo != tipo_fun:
             if (node.value == "principal"):
+                if tipo_corpo == None:
+                    tipo_corpo = "vazio";
                 print("Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
             else:
                 print(
                     "Erro: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
                # exit(1)
 
-
-
+  # lista_parametros : lista_parametros VIRGULA lista_parametros
+  #                          | parametro
+  #                          | vazio
     def lista_parametros(self, node):
         lista_param = []
         if (len(node.child) == 1):
@@ -195,15 +200,19 @@ class Semantica:
                 return lista_param
         else:
             lista_param = self.lista_parametros(node.child[0])
-            lista_param.append(self.parametro(node.child[1]))
+            par = self.parametro(node.child[1])
+            if par != None:
+                lista_param.append(self.parametro(node.child[1]))
             return lista_param
 
+# parametro : tipo DOIS_PONTOS ID
+#	  | parametro ABRE_COL FECHA_COL
 
     def parametro(self, node):
-        if (node.child[1].type == "parametro"):
+        if (node.child[0].type == "parametro"):
             return self.parametro(node.child[0]) + "[]"
         else:
-            self.simbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, False, node.child[0].type, 0]
+            self.simbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, True, node.child[0].type, 0]
             return self.tipo(node.child[0])
 
 
@@ -264,8 +273,9 @@ class Semantica:
         return self.corpo(node.child[0])
 
 
-    def atribuicao(self, node):
+    def atribuicao(self, node):    
         nome = self.escopo + "-" + node.child[0].value
+        
         if (self.escopo + "-" + node.child[0].value not in self.simbolos.keys()):
             nome = "global" + "-" + node.child[0].value
             if ("global" + "-" + node.child[0].value not in self.simbolos.keys()):
@@ -311,8 +321,7 @@ class Semantica:
            return self.expressao_logica(node.child[0])
         else:
             return self.atribuicao(node.child[0])
-            print("atribuicao")
-
+            
     def expressao_logica(self, node):
         if (len(node.child)==1):
             return self.expressao_simples(node.child[0])
@@ -416,31 +425,30 @@ class Semantica:
             exit(1)
         if node.value not in self.simbolos.keys():
             print("Erro: Função '" + node.value + "' não foi declarada")
-            exit(1)
-        self.simbolos[node.value][5] = 1
-        argslista = []
-        argslista.append(self.lista_argumentos(node.child[0]))
-        if (argslista[0] == None):
+            #exit(1)
+        else:
+            self.simbolos[node.value][5] = 1
             argslista = []
-        elif (not (type(argslista[0]) is str)):
-            argslista = argslista[0]
-        args_esperados = self.simbolos[node.value][2]
-        if (type(args_esperados) is str):
-            args_esperados = []
-        if (len(argslista) != len(args_esperados)):
-            lesperados = (len(args_esperados))
-            lrecebidos = (len(argslista))
-            print("Erro: Numero de argumentos esperados em '" + node.value + "': " + str(
-                lesperados) + ", quantidade de argumentos recebidos: " + str(lrecebidos))
-            exit(1)
+            argslista.append(self.lista_argumentos(node.child[0]))
+            if (argslista[0] == None):
+                argslista = []
+            elif (not (type(argslista[0]) is str)):
+                argslista = argslista[0]
+            args_esperados = self.simbolos[node.value][2]
+            if (type(args_esperados) is str):
+                args_esperados = []
+            if (len(argslista) != len(args_esperados)):
+                lesperados = (len(args_esperados))
+                lrecebidos = (len(argslista))
+                print("Erro: Numero de argumentos esperados em '" + node.value + "': " + str(lesperados) + ", quantidade de argumentos recebidos: " + str(lrecebidos))
+                #exit(1)
 
-        for i in range(len(argslista)):
-            if (argslista[i] != args_esperados[i]):
-                print("Erro: Argumento " + str(i) + ", tipo esperado " + args_esperados[i] + ", tipo recebido " +
-                      argslista[i])
-                exit(1)
-        self.simbolos[node.value][3] = True
-        return self.simbolos[node.value][4]
+            for i in range(len(argslista)):
+                if (argslista[i] != args_esperados[i]):
+                    print("Erro: Argumento " + str(i) + ", tipo esperado " + args_esperados[i] + ", tipo recebido " + argslista[i])
+                    exit(1)
+            self.simbolos[node.value][3] = True
+            return self.simbolos[node.value][4]
 
 
     def lista_argumentos(self, node):
@@ -489,5 +497,5 @@ if __name__ == '__main__':
     import sys, io
     code = io.open(sys.argv[1], mode="r", encoding="utf-8")
     s = Semantica(code.read())
-    print("Tabela de simbolos: ", s.simbolos)
+    print("\n Tabela de simbolos: ", s.simbolos)
     #pprint.pprint(s.simbolos, depth=3, width=300)
