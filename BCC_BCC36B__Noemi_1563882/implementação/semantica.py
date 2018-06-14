@@ -112,7 +112,6 @@ class Semantica:
 
             if (self.simbolos[nome][3] == False):
                print("Erro: váriavel '" + nome + "' não foi inicializada")
-                #				exit(1)
             var = self.indice(node.child[0])
             self.simbolos[nome][4] = self.simbolos[nome][4] + var
             self.simbolos[nome][2] = True
@@ -122,15 +121,14 @@ class Semantica:
             if (nome not in self.simbolos):
                 nome = "global-" + node.value
                 if (nome not in self.simbolos):
-                    
                     print("Erro: A váriavel '" + node.value + "' não foi declarada")
                     #exit(1)
-            if (self.simbolos[nome][3] == False):
-                print("Erro: A váriavel '" + apenasNome + "' não foi inicializada.")
-                #exit(1)
-
-            self.simbolos[nome][2] = True
-            return self.simbolos[nome][4]
+            else:
+                if (self.simbolos[nome][3] == False):
+                    print("Erro: A váriavel '" + apenasNome + "' não foi inicializada.")
+            if (nome in self.simbolos):
+                self.simbolos[nome][2] = True
+                return self.simbolos[nome][4]
 
 
 
@@ -178,13 +176,12 @@ class Semantica:
         tipo_fun = self.simbolos[node.value][4]
 
         if tipo_corpo != tipo_fun:
+            if tipo_corpo == None:
+                tipo_corpo = "vazio";
             if (node.value == "principal"):
-                if tipo_corpo == None:
-                    tipo_corpo = "vazio";
                 print("Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
             else:
-                print(
-                    "Erro: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
+                print("Erro: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
                # exit(1)
 
   # lista_parametros : lista_parametros VIRGULA lista_parametros
@@ -250,7 +247,7 @@ class Semantica:
         tipo_se = self.expressao(node.child[0])
         if tipo_se != "logico":
             print("Erro: Era esperado uma expressão logica para a condição, foi dado uma expressão do tipo: " + tipo_se)
-            exit(1)
+            #exit(1)
 
         if (len(node.child) == 2):
             return self.corpo(node.child[1])
@@ -268,36 +265,32 @@ class Semantica:
         tipo_se = self.expressao(node.child[1])
         if tipo_se != "logico":
             print("Erro: Espera-se uma expressão logica para o SE, foi dado: " + tipo_se)
-            exit(1)
+            #exit(1)
 
         return self.corpo(node.child[0])
 
 
-    def atribuicao(self, node):    
+    def atribuicao(self, node):  
         nome = self.escopo + "-" + node.child[0].value
-        
         if (self.escopo + "-" + node.child[0].value not in self.simbolos.keys()):
             nome = "global" + "-" + node.child[0].value
             if ("global" + "-" + node.child[0].value not in self.simbolos.keys()):
                 print("Erro: A variável '" + node.child[0].value + "' não foi declarada.")
-                exit(1)
+                #exit(1)
         
         tipo_esperado = self.simbolos[nome][4]
         tipo_recebido = self.expressao(node.child[1])
         
         self.simbolos[nome][2] = True
         self.simbolos[nome][3] = True
-        
         if (tipo_esperado != tipo_recebido):
-            print(
-                "Warning: Coerção implícita de tipos! Tipo esperado: " + tipo_esperado + ", tipo recebido: " + tipo_recebido + ".")
+            print("Warning: Coerção implícita de tipos! Tipo esperado da variável '" + node.child[0].value + "' é: " + tipo_esperado + ", tipo recebido: " + tipo_recebido)
         return "void"
 
     def leia(self, node):
         if self.scope + "-" + node.value not in self.simbolos.keys():
             if "global-" + node.value not in self.simbolos.keys():
                 print("Erro: " + node.value + " não declarada")
-                #exit(1)
         return "void"
 
     def escreva(self, node):
@@ -331,12 +324,19 @@ class Semantica:
             return "logico"
 
     def expressao_simples(self, node):
+        
         if len(node.child) == 1:
             return self.expressao_aditiva(node.child[0])
         else:
             tipo1 = self.expressao_simples(node.child[0])
             self.operador_relacional(node.child[1])
             tipo2 = self.expressao_aditiva(node.child[2])
+            
+            if tipo1 == None:
+                tipo1 = "tipo não declarado"
+            else:
+                tipo2 = "tipo não delcarado"			
+
             if (tipo1 != tipo2):
                 print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
             return "simples"
@@ -348,13 +348,20 @@ class Semantica:
             tipo1 = self.expressao_aditiva(node.child[0])
             self.operador_soma(node.child[1])
             tipo2 = self.expressao_multiplicativa(node.child[2])
-
-            if (tipo1 != tipo2):
-                print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
-            if ((tipo1 == "flutuante") or (tipo2 == "flutuante")):
-                return "flutuante"
+            
+            if tipo1 == None:
+                tipo1 = "tipo não declarado"
             else:
-                return "inteiro"
+                tipo2 = "tipo não delcarado"			
+            
+            if (tipo1 != tipo2):
+                print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2 + "'")
+            if (tipo1 == "flutuante") or (tipo2 == "flutuante"):
+                return "flutuante"
+            elif(tipo1 == "inteiro") or (tipo2 == "inteiro"):
+                return "interio"
+            else:
+                return "void"
 
     def expressao_multiplicativa(self, node):
         if (len(node.child) == 1):
@@ -363,12 +370,18 @@ class Semantica:
             tipo1 = self.expressao_multiplicativa(node.child[0])
             self.operador_multiplicacao(node.child[1])
             tipo2 = self.expressao_unaria(node.child[2])
+            
+            if tipo1 == None:
+                tipo1 = "tipo não declarado"
+            else:
+                tipo2 = "tipo não delcarado"			
+
             if (tipo1 != tipo2):
                 print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
-            if ((tipo1 == "flutuante") or (tipo2 == "flutuante")):
-                return "flutuante"
+            elif(tipo1 == "inteiro") or (tipo2 == "inteiro"):
+                return "interio"
             else:
-                return "inteiro"
+                return "void"
 
     def expressao_unaria(self, node):
         if (len(node.child) == 1):
@@ -418,14 +431,14 @@ class Semantica:
 
     def chamada_funcao(self, node):
         if (node.value == "principal" and self.escopo == "principal"):
-            print("Erro: Chamada recursiva para a função principal")
-            exit(1)
+            print("Erro: Chamada recursiva para a função 'principal'")
         if (node.value == "principal" and self.escopo != "principal"):
-            print("Erro: A função '" + self.escopo + "' realiza uma chamada para a função principal.")
-            exit(1)
-        if node.value not in self.simbolos.keys():
-            print("Erro: Função '" + node.value + "' não foi declarada")
-            #exit(1)
+            print("Erro: A função '" + self.escopo + "' realiza uma chamada não permitida para a função 'principal'")
+   
+        if (node.value not in self.simbolos.keys()):
+            if node.value != "principal":
+                print("Erro: Função '" + node.value + "' não foi declarada")
+   
         else:
             self.simbolos[node.value][5] = 1
             argslista = []
@@ -446,7 +459,7 @@ class Semantica:
             for i in range(len(argslista)):
                 if (argslista[i] != args_esperados[i]):
                     print("Erro: Argumento " + str(i) + ", tipo esperado " + args_esperados[i] + ", tipo recebido " + argslista[i])
-                    exit(1)
+                    #exit(1)
             self.simbolos[node.value][3] = True
             return self.simbolos[node.value][4]
 
@@ -498,4 +511,3 @@ if __name__ == '__main__':
     code = io.open(sys.argv[1], mode="r", encoding="utf-8")
     s = Semantica(code.read())
     print("\n Tabela de simbolos: ", s.simbolos)
-    #pprint.pprint(s.simbolos, depth=3, width=300)
