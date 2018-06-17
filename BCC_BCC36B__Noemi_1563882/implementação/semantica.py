@@ -64,13 +64,16 @@ class Semantica:
         #tipo = node.child[0].type
         tipo = node.child[0].value
         arr_name = ""
+        contBreak = 0
         for son in self.lista_variaveis(node.child[1]):
             if ("[" in son):
                 arr_name = son.split('[')[0]
                 son = arr_name
             if ( (self.escopo + '-' + son in self.simbolos.keys()) or ("global-" + son in self.simbolos.keys()) ):
-                print( "Warning: A variável '" + son + "' já foi declarada anteriormente." )
-                #exit(1)
+                if contBreak == 1:
+                    contBreak = 0
+                    print( "Warning: A variável '" + son + "' já foi declarada anteriormente." )
+                
             if (son in self.simbolos.keys()):
                 print("Erro: Já existe uma função com o nome '" + son + "'")
                 #exit(1)
@@ -84,19 +87,17 @@ class Semantica:
 
     def lista_variaveis(self, node):
         ret_args = []
-
+        
         if (len(node.child) == 1):
             if (len(node.child[0].child) == 1):
                 ret_args.append(node.child[0].value + self.indice(node.child[0].child[0]))
             else:
                 ret_args.append(node.child[0].value)
             return ret_args
+
         else:
-            ret_args = self.lista_variaveis(node.child[0])
-            if (len(node.child[1].child) == 1):
-                ret_args.append(node.child[1].value + self.indice(node.child[1].child[0]))
-            else:
-                ret_args.append(node.child[1].value)
+            ret_args = self.lista_variaveis(node.child[1])
+            ret_args.append(node.child[0].value)
             return ret_args
         
 
@@ -169,15 +170,17 @@ class Semantica:
             self.simbolos[node.child[1].value] = ["funcao", node.child[1].value, [], False, tipo, 0]
             self.cabecalho(node.child[1])
 
+#cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM     
     def cabecalho(self, node):
         lista_par = self.lista_parametros(node.child[0])
         self.simbolos[node.value][2] = lista_par
+
         tipo_corpo = self.corpo(node.child[1])
         tipo_fun = self.simbolos[node.value][4]
-
+        if tipo_corpo == None:
+            tipo_corpo = "vazio";
+            
         if tipo_corpo != tipo_fun:
-            if tipo_corpo == None:
-                tipo_corpo = "vazio";
             if (node.value == "principal"):
                 print("Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
             else:
@@ -209,8 +212,9 @@ class Semantica:
         if (node.child[0].type == "parametro"):
             return self.parametro(node.child[0]) + "[]"
         else:
-            self.simbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, True, node.child[0].type, 0]
-            return self.tipo(node.child[0])
+            self.simbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, True, node.child[0].value, 0]
+            return(node.child[0].value)
+            #return self.tipo(node.child[0])
 
 
     def vazio(self, node):
@@ -245,8 +249,8 @@ class Semantica:
 
     def se(self, node):
         tipo_se = self.expressao(node.child[0])
-        if tipo_se != "logico":
-            print("Erro: Era esperado uma expressão logica para a condição, foi dado uma expressão do tipo: " + tipo_se)
+        #if tipo_se != "logico":
+        #    print("Erro: Era esperado uma expressão logica para a condição, foi dado uma expressão do tipo: " + tipo_se)
             #exit(1)
 
         if (len(node.child) == 2):
@@ -263,8 +267,8 @@ class Semantica:
  
     def repita(self, node):
         tipo_se = self.expressao(node.child[1])
-        if tipo_se != "logico":
-            print("Erro: Espera-se uma expressão logica para o SE, foi dado: " + tipo_se)
+        #if tipo_se != "logico":
+        #    print("Erro: Espera-se uma expressão logica para o SE, foi dado: " + tipo_se)
             #exit(1)
 
         return self.corpo(node.child[0])
@@ -277,18 +281,22 @@ class Semantica:
             if ("global" + "-" + node.child[0].value not in self.simbolos.keys()):
                 print("Erro: A variável '" + node.child[0].value + "' não foi declarada.")
                 #exit(1)
-        
-        tipo_esperado = self.simbolos[nome][4]
+        if nome not in self.simbolos:
+            tipo_esperado = "tipo não declarado"
+        else:
+            tipo_esperado = self.simbolos[nome][4]
         tipo_recebido = self.expressao(node.child[1])
         
-        self.simbolos[nome][2] = True
-        self.simbolos[nome][3] = True
+        if nome in self.simbolos:
+            self.simbolos[nome][2] = True
+            self.simbolos[nome][3] = True
         if (tipo_esperado != tipo_recebido):
             print("Warning: Coerção implícita de tipos! Tipo esperado da variável '" + node.child[0].value + "' é: " + tipo_esperado + ", tipo recebido: " + tipo_recebido)
         return "void"
 
     def leia(self, node):
-        if self.scope + "-" + node.value not in self.simbolos.keys():
+        #if self.scope + "-" + node.value not in self.simbolos.keys():
+        if node.value not in self.simbolos.keys():
             if "global-" + node.value not in self.simbolos.keys():
                 print("Erro: " + node.value + " não declarada")
         return "void"
@@ -334,7 +342,7 @@ class Semantica:
             
             if tipo1 == None:
                 tipo1 = "tipo não declarado"
-            else:
+            if tipo2 == None:
                 tipo2 = "tipo não delcarado"			
 
             if (tipo1 != tipo2):
@@ -351,7 +359,7 @@ class Semantica:
             
             if tipo1 == None:
                 tipo1 = "tipo não declarado"
-            else:
+            if tipo2 == None:
                 tipo2 = "tipo não delcarado"			
             
             if (tipo1 != tipo2):
@@ -359,7 +367,7 @@ class Semantica:
             if (tipo1 == "flutuante") or (tipo2 == "flutuante"):
                 return "flutuante"
             elif(tipo1 == "inteiro") or (tipo2 == "inteiro"):
-                return "interio"
+                return "inteiro"
             else:
                 return "void"
 
@@ -373,7 +381,7 @@ class Semantica:
             
             if tipo1 == None:
                 tipo1 = "tipo não declarado"
-            else:
+            if tipo2 == None:
                 tipo2 = "tipo não delcarado"			
 
             if (tipo1 != tipo2):
@@ -448,6 +456,7 @@ class Semantica:
             elif (not (type(argslista[0]) is str)):
                 argslista = argslista[0]
             args_esperados = self.simbolos[node.value][2]
+
             if (type(args_esperados) is str):
                 args_esperados = []
             if (len(argslista) != len(args_esperados)):
@@ -458,7 +467,7 @@ class Semantica:
 
             for i in range(len(argslista)):
                 if (argslista[i] != args_esperados[i]):
-                    print("Erro: Argumento " + str(i) + ", tipo esperado " + args_esperados[i] + ", tipo recebido " + argslista[i])
+                    print("Erro: Função '" + node.value+ "'. Argumento " + str(i) + ", tipo esperado '" + args_esperados[i] + "', tipo recebido '" + argslista[i] + "'")
                     #exit(1)
             self.simbolos[node.value][3] = True
             return self.simbolos[node.value][4]
