@@ -2,7 +2,10 @@
 
 import ply.yacc as yacc
 from lexer import Lexica
+import graphviz as gv
+from graphviz import Digraph
 
+g1 = Digraph('G', format='svg')
 
 class Tree:
     def __init__(self, type_node, child=[], value=''):
@@ -35,6 +38,7 @@ class Syntax:
         programa : lista_declaracoes
                      '''
         p[0] = Tree('programa', [p[1]])
+        g1.edge('programa', 'lista_declaracoes')
 
     def p_lista_declaracoes(self, p):
         '''
@@ -46,9 +50,10 @@ class Syntax:
             p[0] = Tree('lista_declaracoes', [p[1], p[2]])
         elif (len(p) == 2):
             p[0] = Tree('lista_declaracoes', [p[1]])
-        elif ( p.slice[1] == 'error' ):
+        elif p.slice[1] == 'error' :
             print( "Erro: delcaração incompleta! \n")
-
+        g1.edge('lista_declaracoes', 'declaracao')    
+        
 
     def p_declaracao(self, p):
         '''
@@ -58,12 +63,21 @@ class Syntax:
         '''
         p[0] = Tree('declaracao', [p[1]])
 
+        if(str(p[1]) == 'declaracao_variaveis'):
+            g1.edge('declaracao', 'declaracao_variaveis')
+        elif(str(p[1]) == 'inicializacao_variaveis'):
+           g1.edge('declarcao', 'inicializacao_variaveis')
+        else:
+           g1.edge('declaracao', 'declaracao_funcao')
+
     def p_declaracao_variaveis(self, p):
         '''
         declaracao_variaveis : tipo DOIS_PONTOS lista_variaveis
         '''
         p[0] = Tree('declaracao_variaveis', [p[1], p[3]], p[2])
-
+        g1.edge('declaracao_variaveis', 'tipo')
+        g1.edge('tipo', 'lista_variaveis')
+        
     def p_declaracao_variaveis_error(self, p):
         '''
         declaracao_variaveis : tipo DOIS_PONTOS error
@@ -76,7 +90,8 @@ class Syntax:
         inicializacao_variaveis : atribuicao
         '''
         p[0] = Tree('inicializacao_variaveis', [p[1]])
-
+        g1.edge('inicializacao_variaveis', 'atribuicao')
+        
     def p_lista_variaveis(self, p):
         '''
         lista_variaveis : var VIRGULA lista_variaveis
@@ -84,8 +99,12 @@ class Syntax:
         '''
         if (len(p) == 4):
             p[0] = Tree('lista_variaveis', [p[1], p[3]])
+            #g1.edge('lista_variaveis', 'var', 'lista_variaveis')
         elif (len(p) == 2):
             p[0] = Tree('lista_variaveis', [p[1]])
+            #g1.edge('lista_variaveis', 'var')
+        g1.edge('lista_variaveis', 'var')
+
 
     def p_var(self, p):
         '''
@@ -94,9 +113,12 @@ class Syntax:
         '''
         if (len(p) == 2):
             p[0] = Tree('var', [], p[1])
+            g1.edge('var', p[1])
         elif (len(p) == 3):
             p[0] = Tree('var', [p[2]], p[1])
-
+            g1.edge('var', 'indice')
+            g1.edge('indice', p[1])
+            
     def p_indice(self, p):
         '''
         indice : indice ABRE_COL expressao FECHA_COL
@@ -104,8 +126,12 @@ class Syntax:
         '''
         if (len(p) == 5):
             p[0] = Tree('indice', [p[1], p[3]])
+            g1.edge('indice', 'indice')
+            g1.edge('indice', 'expressao')
         elif (len(p) == 4):
             p[0] = Tree('indice', [p[2]])
+            g1.edge('indice', 'expressao')
+        #g1.edge('indice', 'expressao')
 
 #    def p_indice_error(self, p):
 #        '''
@@ -125,7 +151,8 @@ class Syntax:
 	     | FLUTUANTE
         '''
         p[0] = Tree('tipo', [], p[1])
-
+        g1.edge('tipo', p[1])
+        
     def p_declaracao_funcao(self, p):
         '''
         declaracao_funcao : tipo cabecalho
@@ -133,14 +160,20 @@ class Syntax:
         '''
         if len(p) == 3:
             p[0] = Tree('declaracao_funcao', [p[1], p[2]])
+            g1.edge('declaracao_funcao', 'tipo')
+            g1.edge('tipo', 'cabecalho')
         elif len(p) == 2:
             p[0] = Tree('declaracao_funcao', [p[1]])
+            g1.edge('declaracao_funcao', 'cabecalho')
 
     def p_cabecalho(self, p):
         '''
         cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM
         '''
         p[0] = Tree('cabecalho', [p[3], p[5]], p[1])
+        g1.edge('cabecalho', p[1] )
+        g1.edge(p[1], 'lista_parametros')
+        g1.edge('lista_parametros', 'corpo')
 
 
 #    def p_cabecalho_error(self, p):
@@ -158,20 +191,27 @@ class Syntax:
         '''
         if len(p) == 4:
             p[0] = Tree('lista_parametros', [p[1], p[3]])
+            #g1.edge('lista_parametros', 'lista_parametros', 'parametro')
         elif len(p) == 2:
             p[0] = Tree('lista_parametros', [p[1]])
+            #g1.edge('lista_parametros', 'parametro')
+        g1.edge('lista_parametros', 'parametro')
+
 
     def p_parametro1(self, p):
         '''
         parametro : tipo DOIS_PONTOS ID
         '''
         p[0] = Tree('parametro', [p[1]], p[3])
-
+        g1.edge('parametro', 'tipo')
+        g1.edge('tipo', p[3])
+       
     def p_parametro2(self, p):
         '''
         parametro : parametro ABRE_COL FECHA_COL
         '''
         p[0] = Tree('parametro', [p[1]])
+        g1.edge('parametro', 'parametro')
 
     def p_corpo(self, p):
         '''
@@ -180,6 +220,7 @@ class Syntax:
         '''
         if len(p) == 3:
             p[0] = Tree('corpo', [p[1], p[2]])
+            g1.edge('corpo', 'acao')
         elif len(p) == 2:
             p[0] = Tree('corpo', [p[1]])
 
@@ -196,6 +237,7 @@ class Syntax:
 
         '''
         p[0] = Tree('acao', [p[1]])
+        g1.edge('acao', str(p[1]))       
 
     def p_se(self, p):
         '''
@@ -204,8 +246,13 @@ class Syntax:
         '''
         if len(p) == 6:
             p[0] = Tree('se', [p[2], p[4]])
+            g1.edge('se', 'expressao')
+            g1.edge('expressao', 'corpo')
         elif len(p) == 8:
             p[0] = Tree('se', [p[2], p[4], p[6]])
+            g1.edge('se', 'expressao')
+            g1.edge('expressao', 'corpo')
+            g1.edge('corpo', 'corpo')
 
 #    def p_se_error(self, p):
 #        '''
@@ -223,6 +270,8 @@ class Syntax:
             repita : REPITA corpo ATE expressao
         '''
         p[0] = Tree('repita', [p[2], p[4]])
+        g1.edge('repita', 'corpo')
+        g1.edge('corpo', 'expressao')
 
 #    def p_repita_error(self, p):
 #        '''
@@ -237,24 +286,29 @@ class Syntax:
         '''
         if len(p):
             p[0] = Tree('atribuicao', [p[1], p[3]])
+            g1.edge('atribuicao', 'var')
+            g1.edge('var', 'expressao')
 
     def p_leia(self, p):
         '''
             leia : LEIA ABRE_PAR ID FECHA_PAR
         '''
         p[0] = Tree('leia', [], p[3])
+        g1.edge('leia', p[3])
 
     def p_escreva(self, p):
         '''
             escreva : ESCREVA ABRE_PAR expressao FECHA_PAR
         '''
         p[0] = Tree('escreva', [p[3]])
-
+        g1.edge('escreva', 'expressao')       
+ 
     def p_retorna(self, p):
         '''
             retorna : RETORNA ABRE_PAR expressao FECHA_PAR
         '''
         p[0] = Tree('retorna', [p[3]])
+        g1.edge('retorna', 'expressao') 
 
     def p_expressao(self, p):
         '''
@@ -262,7 +316,7 @@ class Syntax:
                         | atribuicao
         '''
         p[0] = Tree('expressao', [p[1]])
-
+        g1.edge('expressao', str(p[1]))        
 
     def p_expressao_logica(self, p):
     	'''
@@ -271,8 +325,11 @@ class Syntax:
         '''
     	if len(p) == 2:
             p[0] = Tree('expressao_logica', [p[1]])
+            g1.edge('expressao_logica', 'expressao_simples')
     	elif len(p) == 4:
             p[0] = Tree('expressao_logica', [p[1], p[2], p[3]])
+            g1.edge('expressao_logica', 'operador_logico')
+            g1.edge('operador_logico', 'expressao_simples')
 
 
     def p_expressao_simples(self, p):
@@ -282,8 +339,11 @@ class Syntax:
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_simples', [p[1]])
+            g1.edge('expressao_simples', 'expressao_aditiva')
         elif len(p) == 4:
             p[0] = Tree('expressao_simples', [p[1], p[2], p[3]])
+            g1.edge('expressao_simples', 'operador_relacional')
+            g1.edge('operador_relacional', 'expressao_aditiva')
 
     def p_expressao_aditiva(self, p):
         '''
@@ -292,8 +352,11 @@ class Syntax:
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_aditiva', [p[1]])
+            g1.edge('expressao_aditiva', 'expressao_multiplicativa')
         elif len(p) == 4:
             p[0] = Tree('expressao_aditiva', [p[1], p[2], p[3]])
+            g1.edge('expressao_aditiva', 'operador_soma')
+            g1.edge('operador_soma', 'expressao_multiplicativa')
 
     def p_expressao_multiplicativa(self, p):
         '''
@@ -303,20 +366,24 @@ class Syntax:
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_multiplicativa', [p[1]])
+            g1.edge('expressao_multiplicativa', 'expressao_unaria')
         elif len(p) == 4:
             p[0] = Tree('expressao_multiplicativa', [p[1], p[2], p[3]])
+            g1.edge('expressao_multiplicativa', 'operador_multiplicacao')
+            g1.edge('operador_multiplicao', 'expressao_unaria')
 
     def p_expressao_unaria(self, p):
         '''
-
             expressao_unaria : fator
                             | operador_soma fator
-
         '''
         if len(p) == 2:
             p[0] = Tree('expressao_unaria', [p[1]])
+            g1.edge('expressao_unaria', 'fator')
         else:
             p[0] = Tree('expressao_unaria', [p[1], p[2]])
+            g1.edge('expressao_unaria', 'operador_soma')
+            g1.edge('operador_soma', 'fator')
 
     def p_operador_relacional(self, p):
         '''
@@ -329,6 +396,7 @@ class Syntax:
                                 | NEGACAO
         '''
         p[0] = Tree('operador_relacional', [])
+        g1.edge('operador_relacional', p[1])
 
     def p_operador_logico(self, p):
         '''
@@ -337,6 +405,7 @@ class Syntax:
 
         '''
         p[0] = Tree('operador_logico', [], p[1])
+        g1.edge('operador_logico', p[1])
   
 
     def p_operador_soma(self, p):
@@ -346,7 +415,7 @@ class Syntax:
 
         '''
         p[0] = Tree('operador_soma', [])
-
+        g1.edge('operador_soma', p[1])
 
 #   def p_operador_negacao(self, p):
 #        '''
@@ -360,19 +429,22 @@ class Syntax:
                                     | DIVISAO
         '''
         p[0] = Tree('operador_multiplicacao', [])
+        g1.edge('operador_multiplicacao', p[1])
 
     def p_fator(self, p):
         '''
-            fator : ABRE_COL  expressao FECHA_COL
+            fator : ABRE_COL expressao FECHA_COL
                     | var
                     | chamada_funcao
                     | numero
         '''
         if len(p) == 4:
             p[0] = Tree('fator', [p[2]])
+            g1.edge('fator', 'expressao')
         else:
             p[0] = Tree('fator', [p[1]])
-
+            g1.edge('fator', str(p[1]))
+            
     def p_numero(self, p):
         '''
             numero : INTEIRO
@@ -380,12 +452,15 @@ class Syntax:
                     | NOTACAO_CIENTIFICA
         '''
         p[0] = Tree('numero', [], p[1])
+        g1.edge('numero', str(p[1]))
 
     def p_chamada_funcao(self, p):
         '''
             chamada_funcao : ID ABRE_PAR lista_argumentos FECHA_PAR
         '''
         p[0] = Tree('chamada_funcao', [p[3]], p[1])
+        g1.edge('chamada_funcao', p[1])
+        g1.edge(p[1], 'lista_argumentos')
 
     def p_lista_argumentos(self, p):
         '''
@@ -397,6 +472,8 @@ class Syntax:
             p[0] = Tree('lista_argumentos', [p[1], p[3]])
         else:
             p[0] = Tree('lista_argumentos', [p[1]])
+        g1.edge('lista_argumentos', 'expressao')
+
 
     def p_vazio(self, p):
         '''
@@ -426,4 +503,8 @@ if __name__ == '__main__':
     lexemas = io.open(sys.argv[1], mode="r", encoding="utf-8")
     arvore = Syntax(lexemas.read())
     prinTree(arvore.ast)
+    #print("\narvore abstrata\n")
+    #print(g1.source)
+    filename = g1.render(filename='img/g1')
+ 
     lexemas.close()
