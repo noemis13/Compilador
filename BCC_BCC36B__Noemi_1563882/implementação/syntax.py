@@ -133,16 +133,16 @@ class Syntax:
             g1.edge('indice', 'expressao')
         #g1.edge('indice', 'expressao')
 
-#    def p_indice_error(self, p):
-#        '''
-#        indice : indice ABRE_COL error FECHA_COL
-#                | ABRE_COL error FECHA_COL
+ #   def p_indice_error(self, p):
+ #       '''
+ #       indice : indice ABRE_COL error FECHA_COL
+ #               | ABRE_COL error FECHA_COL
 #		| error FECHA_COL
 #		| ABRE_COL error
 #        	| indice error FECHA_COL
 #		| indice ABRE_COL error
 #		
-#        '''
+ #       '''
 #        print("Erro: Não foi declarado o tamanho ou faltou colchetes.\n" )
 
     def p_tipo(self, p):
@@ -395,7 +395,7 @@ class Syntax:
                                 | MAIOR_IGUAL
                                 | NEGACAO
         '''
-        p[0] = Tree('operador_relacional', [])
+        p[0] = Tree('operador_relacional', [], p[1])
         g1.edge('operador_relacional', p[1])
 
     def p_operador_logico(self, p):
@@ -414,7 +414,7 @@ class Syntax:
                           | SUB
 
         '''
-        p[0] = Tree('operador_soma', [])
+        p[0] = Tree('operador_soma', [], p[1])
         g1.edge('operador_soma', p[1])
 
 #   def p_operador_negacao(self, p):
@@ -428,7 +428,7 @@ class Syntax:
             operador_multiplicacao : MULT
                                     | DIVISAO
         '''
-        p[0] = Tree('operador_multiplicacao', [])
+        p[0] = Tree('operador_multiplicacao', [], p[1])
         g1.edge('operador_multiplicacao', p[1])
 
     def p_fator(self, p):
@@ -505,6 +505,6 @@ if __name__ == '__main__':
     prinTree(arvore.ast)
     #print("\narvore abstrata\n")
     #print(g1.source)
-    filename = g1.render(filename='img/g1')
+    filename = g1.render(filename='img/asa')
  
     lexemas.close()

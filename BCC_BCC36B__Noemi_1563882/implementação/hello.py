@@ -6,5 +6,5 @@ g1.node('B')
 g1.edge('A', 'B')
 
 print(g1.source)
-filename = g1.render(filename='img/g1')
+#filename = g1.render(filename='img/g1')
 

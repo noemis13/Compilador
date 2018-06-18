@@ -1,0 +1,6 @@
+digraph G {
+	declaracao_variaveis -> a
+	declaracao -> declaracao_variaveis
+	declaracao_variaveis -> b
+	declaracao -> declaracao_variaveis
+}
