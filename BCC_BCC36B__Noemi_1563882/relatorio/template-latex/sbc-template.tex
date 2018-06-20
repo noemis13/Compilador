@@ -25,7 +25,7 @@
      
 \sloppy
 
-\title{Análise Léxica}
+\title{Compiladores: análise léxica, sintática e semântica}
 
 \author{Noemi Pereira Scherer\inst{1}}
 
@@ -41,11 +41,12 @@
 \maketitle
 
 \begin{abstract}
-  This meta-article describes the procedures and results of developing a lexical and syntactic parser. The first one is responsible for verifying the input of character lines from a source code written T++, producing a sequence of lexical symbols. The second parses the source code in T ++ and returns an abstract tree. For the creation of these analyzers, a Python language library called PLY and YACC was used.
+ This meta-article describes the procedures and results of the development of a lexical, syntactic and semantic analyzer. The first one is responsible for verifying the input of character lines from a source code written T++, producing a sequence of lexical symbols. The second analyzes the source code in T++ and returns an abstract tree. The third runs through this tree in order to find and report errors in the language. For the creation of these analyzers, a Python language library called PLY and YACC was used.
+ 
 \end{abstract}
      
 \begin{resumo} 
-  Este meta-artigo descreve os procedimentos e resultados do desenvolvimento de um analisador léxico e sintática. O primeiro é responsável por verificar as entradas de linhas de caracteres de um código fonte escrito T++, produzindo uma sequência de símbolos léxicos. O segundo análise o código fonte em T++ e retorna uma árvore abstrata. Para a criação desses analisares, foi utilizado uma biblioteca da linguagem Python denominado PLY e YACC.
+  Este meta-artigo descreve os procedimentos e resultados do desenvolvimento de um analisador léxico, sintático e semântico. O primeiro é responsável por verificar as entradas de linhas de caracteres de um código fonte escrito T++, produzindo uma sequência de símbolos léxicos. O segundo analisa o código fonte em T++ e retorna uma árvore abstrata. Por fim, o terceiro percorre essa árvore com o objetivo de encontrar e informar erros na linguagem. Para a criação desses analisares, foi utilizado uma biblioteca da linguagem Python denominado PLY e YACC.
   
 \end{resumo}
 
@@ -102,14 +103,43 @@ Essa análise aceita linguagens livre de contexto, e existem duas formas de deter
 
 \textbf{Ascendente (\textit{bottom-up})}: um analisador pode iniciar com um entrada de dados e tentar reescrevê-la até o símbolo inicial. O analisador tenta localizar os elementos mais básicos, e então os maiores que contêm os elementos mais básicos, e assim por diante, como por exemplo, analisador sintático LR.
 
+%análise semântica
+A terceira análise é a semântica, responsável por verificar os erros de semântica no código fonte e coletar informações necessárias para a próxima fase da compilação, a geração de código. O objetivo dessa análise é trabalhar no nível de inter-relacionamento entre partes distintas do programa \cite{wikiSeman}.
+
+Considere o seguinte exemplo de código em C (Figura~\ref{exempleC}):
+\begin{figure}[H]
+\caption{Exemplo de código em C}
+\label{exempleSem}
+\begin{lstlisting}[frame=single] 
+int f1(int a, float b) {
+  return a%b;
+}
+\end{lstlisting}
+\end{figure}
+
+A tentativa de compilar esse código irá gerar um erro detectado pelo analisador semântico, mais especificamente pelas regras de verificação de tipos, indicando que o operador módulo \% não pode ter um operador real \cite{semantica}. 
+
+Na análise semântica, são utilizadas verificações de tipos para certificar se um determinado operando recebe outro do mesmo tipo. Como exemplo, bem comum nas linguagens de programação, a análise semântica retorna um erro quando uma variável de tipo numérica (real ou inteira) recebe um valor do tipo texto (\textit{string}) \cite{wikiSeman}. Também são verificados erros no código, os exemplos de erros semânticos mais comum são:
+
+
+\begin{itemize}
+\item Uma variável não declarada;
+\item Uma multiplicação entre tipos de dados diferentes;
+\item Atribuição de um literal para outro tipo, como um inteiro em uma \textit{string} ou vice-versa.
+\end{itemize}
+
+Para guardar as informações sobre os nomes declarados no programa, a semântica utiliza uma tabela de símbolos (TS). A TS é referenciada toda vez que um nome é encontrado no programa fonte. Alterações são feitas na TS sempre que um novo nome ou nova informação sobre um já existente é obtida. A TS deve ser criada de forma a permitir inserções e consultas da forma mais eficiente possível, além de permitir o seu crescimento dinâmico. Cada entrada na tabela é a declaração de um nome, que pode ser implementada como um registro (\textit{struct}) contendo campos (nome, tipo, classe, tamanho, escopo, etc.) que a qualificam \cite{wikiSeman}.
+
+
 
 \subsection{Objetivo}
-O objetivo desse trabalho é desenvolver um programa capaz de realizar a análise léxica e sintática de códigos fontes escrito na Linguagem T++, retornando uma arvore sintática abstrata da linguagem.
+O objetivo desse trabalho é desenvolver um programa capaz de realizar a análise léxica, sintática e semântica de códigos fontes escrito na Linguagem T++, retornando uma arvore sintática abstrata e erros presentes na linguagem.
 
 \section{A Linguagem T++} \label{sec:firstpage}
 A linguagem T++ foi desenvolvida especialmente para ser utilizada na disciplina de compiladores. Ela é uma linguagem simples, contendo algumas palavras reservadas, símbolos e arranjos uni e bidimensionais. A Tabela \ref{linguagemt} mostra todas as palavras reservadas e símbolos que a linguagem T++ permite.
 
-
+\begin{center}
+\label{linguagemt}
 \begin{longtable}[c]{| c | c |}
  \caption{\textit{Tokens} permitidos pela Linguagem T++}\\
  
@@ -155,14 +185,14 @@ notação científica &	$<>$= diferença\\
 		& \&\& e-lógico \\
 		& ! negação \\
 \end{longtable}
- 
+\end{center}
 A construção do código dessa linguagem é inteiramente em Português. Os números podem ser inteiros, flutuantes (notação científica ou não), e as declarações de variáveis devem obrigatoriamente começar com letras precedente de várias letras e/ou números.
  
 Apesar de T++ ser uma linguagem simples, ela permite a execução de algoritmos complexos, como de ordenação. A Figura~\ref{exemple} demonstra o algoritmo de busca soma vetor na linguagem t++.
 
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
 \begin{figure}[H]
-\caption{Exeplo do código BubbleSort na linguagem T++}
+\caption{Exemplo do código BubbleSort na linguagem T++}
 \label{exemple}
 \begin{lstlisting}[frame=single] 
 inteiro: T 
@@ -203,7 +233,7 @@ O modelo do autômato apresenta um estado inicial e um conjunto de estados finais
 % % %
 Para cada \textit{token} permitido na Linguagem T++ é criado uma expressão regular, o qual tem como objetivo analisar uma cadeia de caracteres no código. As expressões regulares utilizadas nesse trabalho estão descritas na Tabela~\ref{expressaoRegulares}.
 
-\begin{table}[ht]
+\begin{table}[h]
 \caption{Expressões regulares de cada token}
 \centering
 \begin{tabular}{|l|c|}
@@ -359,7 +389,7 @@ As produções criadas e utilizadas para o desenvolvimento da análise sintática es
 	\endfoot
 	
 	\hline
-	\hline\hline
+	\hline
 	\endlastfoot
 	
 	programa :=  & lista\_declaracoes\\\hline
@@ -455,6 +485,7 @@ As produções criadas e utilizadas para o desenvolvimento da análise sintática es
 		                       &        $|$ vazio\\\hline
 	                               				                                	                   
 \end{longtable}
+
 
 \section{PLY - Python Lex Yacc}
 
@@ -567,8 +598,64 @@ Para capturar os erros de sintaxe encontrados, existe um denominada \texttt{p\_e
 
 Para construir o analisador, é necessário chamar a função \texttt{yacc.yacc()}, no qual examina o módulo e tenta construir todas as tabelas de análise de LR para a gramática especificada.
 
-\section{Resultados análise léxica}
+\section{Análise Semântica}
+A análise semântica analisa possíveis erros no código da linguagem T++, percorrendo a árvore abstrata gerada pela a análise sintática. Para isso, foi necessário importar o código da análise sintática e na função inicial obter a árvore gerada por ela:
 
+\texttt{\textbf{from} syntax \textbf{import} Syntax}
+
+\texttt{\textbf{self}.tree = Syntax(code).ast }
+
+%estratégias utilizadas para a analise
+Para verificar a existências de erros, foi analisado cada nó filho (saída da árvore), percorrendo suas instruções até chegar em alguma instrução no código, como declaração e inicialização de variáveis ou chamadas de funções, verificando a existência de alguma inconsistência não condizente que a estrutura permitida na linguagem. A medida que essas instruções são percorridas, ao identificar variáveis ou funções, elas são adicionadas em uma tabela de símbolos, armazenando seus valores que auxiliam a definir se a ação é ou não permitida no código.
+
+A tabela de símbolos é um dicionário de dados responsável por armazenar todas as variáveis e funções presente no código e seus atributos, como o escopo, nome, tipo e quantidade de parâmetros, em caso de funções. A seguir é demonstrado um exemplo da tabela de símbolo:
+
+\texttt{\{'\textbf{principal}': ['funcao', 'principal', 'void', False, 'inteiro', 0],}
+
+\texttt{'\textbf{global-b}': ['variavel', 'b', True, True, 'inteiro', 0],}\}
+
+Para as funções, como a \texttt{principal}, na primeira posição do vetor é armazenado o atributo (função), na segunda o nome da função, na terceira armazena os tipos dos parâmetros (se tiver), na quarta identifica se a função possui parâmetros, sendo True possui e False não, na quinta armazena o tipo da função e a na sexta um valor 0 e 1, sendo 1 função utilizada e 0 não utilizada.
+
+Já para as variáveis, como a \texttt{golobal-b}, significa que ela possui escopo global, e a primeira posição do vertor armazena se é variável, a segunda o seu valor (\texttt{b}), a terceira se a variável é utilizada, a quarta se a variável foi inicializada (True sim e False não), a quinta armazena o tipo da variável e a sexta um parâmetro que não é alterado,
+
+
+Inicialmente, o primeiro nó filho será "programa", dessa forma a análise semântica inicia-se na função \texttt{programa}, recebendo a árvore como parâmetro. O próximo passo é verificar seu filho, que é "lista\_declarações", chamando respectivamente a função com esse nome. A partir de então é verificado se existe declaração de variáveis, função ou inicialização de variáveis. Ao passo que identifica os nós filhos, é chamada a função que condiz com ele.
+
+Em algumas dessas funções são realizadas a análise de erro, com o auxílio da tabela de símbolos. Para melhor compreensão, considere parte da função \texttt{var} demonstrada na Figura~\ref{var}.
+
+\begin{figure}[h]
+\caption{Análise semântica: Função var responsável por determinar erros.}
+\label{var}
+\begin{lstlisting}[frame=single] 
+def var(self, node):
+ nome = self.escopo + "-" + node.value
+ apenasNome = node.value
+ if (len(node.child) == 1):
+  #verificar declaracao da variavel
+  if (nome not in self.tabelaSimbolos):
+   nome = "global-" + node.value
+   if (nome not in self.tabelaSimbolos):
+    print("Erro: váriavel'"+node.value+"'não foi declarada")
+  else:
+   if (self.tabelaSimbolos[nome][3] == False):
+    print("Erro:váriavel'"+nome+"'não foi inicializada")
+   var = self.indice(node.child[0])
+   self.tabelaSimbolos[nome][4]=
+                 self.tabelaSimbolos[nome][4]+var
+   self.tabelaSimbolos[nome][2] = True
+   return self.tabelaSimbolos[nome][4]
+(...)
+\end{lstlisting}
+\end{figure}
+
+A função \texttt{var} é responsável por identificar e verificar se a variável (\texttt{node}) recebida por parâmetro foi declarada. Para isso é pesquisado na tabela de símbolos o escopo correspondente a variável, se é global ou se está em alguma função. Então verifica-se o tamanho desse nó filho podendo ser variável ou vetor, ou seja, pode ser \texttt{ID} ou \texttt{ID índice}. Se não for vetor, verifica-se se a variável está presente na tabela de símbolo. Caso não esteja, verifica-se ainda se ela foi declarada como escopo global, se isso não for verdade, quer dizer que a variável não foi declarada, mostrando uma mensagem de erro. Caso a variável esteja na tabela de símbolos, verifica-se se ela foi inicializada por meio da posição 3 na tabela, se for \texttt{False} é mostrado uma mensagem de erro que a variável não foi inicializada, caso contrário, atribui-se \texttt{True} na tabela de símbolos indicando que a variável foi declarada e armazena o seu tipo (inteiro ou flutuante). 
+
+Todas as verificações seguem essa mesma ideia, verificar os atributos do nó filho na tabela de símbolos, analisa-los e retornar uma mensagem de erro, caso necessário.  Apenas três funções são chamadas ao terminar de percorrer a árvore, passando apenas a tabela de símbolos, são elas \texttt{verifica\_main}, \texttt{verifica\_variaveis} e \texttt{verifica\_funcoes}, cujo objetivo é, respectivamente, verificar se a função principal foi declarada, se as variáveis e as funções são utilizadas.
+
+Além de realizar as verificações, durante o percurso dos nós, é criado uma nova árvore abstrata resumida, com o objetivo de adicionar apenas as variáveis, funções e expressões no código. Para isso, foi utilizado a biblioteca Graphviz do Python.
+
+\section{Os resultados}
+\subsection{Resultados da análise léxica}
 Com o código fonte da análise léxica pronto, é possível executá-lo de forma que receba um arquivo contendo o código na linguagem T++, leia cada \textit{token} do mesmo, e retorne um arquivo de saída identificando cada \textit{token} encontrado, bem como sua linha e coluna.
 
 Para executar o código pelo terminal utiliza-se o seguinte comando:
@@ -577,7 +664,7 @@ Para executar o código pelo terminal utiliza-se o seguinte comando:
 
 Considere a Figura~\ref{fig:fat} que demostra um código feito em T++ responsável por calcular o fatorial de um número. 
 
-\begin{figure}[H]
+\begin{figure}[h]
 \caption{Fatorial em T++.}
 \label{fig:fat}
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
@@ -673,82 +760,82 @@ LexToken(FIM,'fim',14,289)
 É possível notar que o código da análise léxica avaliou cada palavra do código em T++, o classificou e retornou seu valor em um arquivo de saída. Isso é exatamente o objetivo da análise léxica, retornar todos os \textit{tokens} que um determinado código possui.
 
 
-\section{Resultados análise sintática}
+\subsection{Resultados da análise sintática}
 O código da análise sintática recebe um arquivo contendo o código na linguagem T++. Ele chama a análise léxica para obter os \textit{tokens} e analisar se esses correspondem a gramática descrita.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\linewidth]{./codigo}
 	\caption{Código em T++.}
 	\label{fig:codigo}
 \end{figure}
 
-Considere o código fatorial da Figura~\ref{fig:codigo}, a saída obtida quando executado a análise sintática desse código é uma árvore abstrata:
+Considere o código fatorial da Figura~\ref{fig:codigo}, a saída obtida quando executado a análise sintática desse código é uma árvore abstrata que está representada na Figura~\ref{fig:asa}.
 
+\subsection{Resultados da análise semântica}
+O código da análise semântica recebe um arquivo contendo o programa na linguagem T++. Ele chama a análise sintática para obter a árvore abstrata gerada, analisando a estrutura e verificando se existem erros no programa. Como saída, tem-se a tabela de símbolos, possíveis mensagens de erros e uma árvore sintática abstrata anotada.
+
+Como exemplo de saída, considere o código descrito na linguagem T++, especificado na Figura~\ref{codSemantica}.
+
+\lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
+\begin{figure}[h]
+\caption{Exemplo do código BubbleSort na linguagem T++.}
+\label{codSemantica}
 \begin{lstlisting}[frame=single] 
-  programa 
-   lista_declaracoes 
-    lista_declaracoes 
-     declaracao 
-      declaracao_funcao 
-       tipo inteiro
-       cabecalho func
-        lista_parametros 
-        corpo 
-         corpo 
-         acao 
-          retorna 
-           expressao 
-            expressao_logica 
-             expressao_simples 
-              expressao_aditiva 
-               expressao_multiplicativa 
-                expressao_unaria 
-                 fator 
-                  numero 0
-    declaracao 
-     declaracao_funcao 
-      tipo inteiro
-      cabecalho principal
-       lista_parametros 
-       corpo 
-        corpo 
-         corpo 
-          corpo 
-          acao 
-           declaracao_variaveis :
-            tipo inteiro
-            lista_variaveis 
-             lista_variaveis 
-              var i
-             var b
-         acao 
-          expressao 
-           atribuicao 
-            var i
-            expressao 
-             expressao_logica 
-              expressao_simples 
-               expressao_aditiva 
-                expressao_multiplicativa 
-                 expressao_unaria 
-                  fator 
-                   numero 1
-        acao 
-         retorna 
-          expressao 
-           expressao_logica 
-            expressao_simples 
-             expressao_aditiva 
-              expressao_multiplicativa 
-               expressao_unaria 
-                fator 
-                 numero 0
+flutuante: a
+inteiro: b
 
+func()
+  a := 10.2
+  retorna(a)
+fim
+
+inteiro principal()
+	b := 5
+	func()
+fim
 \end{lstlisting}
+\end{figure}
+
+A saída obtida ao executar a análise semântica retorna um erro e um aviso. O primeiro indica que a função \texttt{func} deveria retornar vazio, mas retorna uma variável do tipo flutuante. Já o segundo é que a função \texttt{principal} deveria retornar inteiro, mas não retorna nenhum valor. A Figura~\ref{fig:erroSaida} mostra essa saída obtida pelo terminal.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{./erro}
+	\caption{Saída da análise semântica: erros.}
+	\label{fig:erroSaida}
+\end{figure}
+
+Além das mensagens de erros, também foi obtido como saída a tabela de símbolos correspondente ao código. A variável \texttt{b} foi armazenada como escopo global, tendo como características, tipo inteiro, sendo inicializada e utilizada. A variável global \texttt{a} também é inicializada e utilizada, porém possui tipo flutuante. Já a função \texttt{func}, não possui tipo nem listas de parâmetros e é utilizada. Por fim, a função \texttt{principal} é do tipo inteiro e também não possui parâmetros de entrada. A Figura~ apresenta os valores da tabela de símbolos obtidos.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{./ts}
+	\caption{Saída da análise semântica: tabela de símbolos.}
+	\label{fig:ts}
+\end{figure}
+
+Por fim, é gerada e salvo em formato SVG uma árvore abstrata resumida da análise sintática (Figura~\ref{fig:asto}).
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{./asto}
+	\caption{Saída da análise semântica: árvore sintática abstrata anotada.}
+	\label{fig:asto}
+\end{figure}
+
 
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
 \nocite{expRegular}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{./asa}
+	\caption{Resultado análise sintática: árvore sintática abstrata.}
+	\label{fig:asa}
+\end{figure}
 \end{document}

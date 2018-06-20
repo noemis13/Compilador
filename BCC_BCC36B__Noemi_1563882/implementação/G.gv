@@ -1,23 +1,18 @@
 digraph G {
-	tipo -> flutuante
-	var -> a
+	tipo -> inteiro
+	var -> n
 	lista_variaveis -> var
 	declaracao_variaveis -> tipo
 	declaracao_variaveis -> lista_variaveis
 	declaracao -> declaracao_variaveis
-	lista_declaracoes -> declaracao
 	tipo -> inteiro
-	var -> b
-	lista_variaveis -> var
-	declaracao_variaveis -> tipo
-	declaracao_variaveis -> lista_variaveis
-	declaracao -> declaracao_variaveis
-	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
 	tipo -> inteiro
+	parametro -> tipo
+	tipo -> a
 	lista_parametros -> parametro
-	var -> b
-	numero -> 18
+	vazio
+	var -> a
+	numero -> 10
 	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
@@ -31,7 +26,28 @@ digraph G {
 	acao -> expressao
 	corpo -> acao
 	var -> a
-	numero -> 1.0
+	fator -> var
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> expressao_aditiva
+	expressao_logica -> expressao_simples
+	expressao -> expressao_logica
+	retorna -> expressao
+	acao -> retorna
+	corpo -> acao
+	cabecalho -> fat
+	fat -> lista_parametros
+	lista_parametros -> corpo
+	declaracao_funcao -> tipo
+	declaracao_funcao -> cabecalho
+	declaracao -> declaracao_funcao
+	tipo -> inteiro
+	vazio
+	lista_parametros -> parametro
+	vazio
+	var -> n
+	numero -> 1
 	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
@@ -44,33 +60,36 @@ digraph G {
 	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
-	var -> a
-	var -> b
-	fator -> var
+	numero -> 10
+	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
-	atribuicao -> var
-	var -> expressao
-	expressao -> atribuicao
+	lista_argumentos -> expressao
+	chamada_funcao -> fat
+	fat -> lista_argumentos
+	fator -> chamada_funcao
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> expressao_aditiva
+	expressao_logica -> expressao_simples
+	expressao -> expressao_logica
 	acao -> expressao
 	corpo -> acao
-	var -> b
-	var -> a
-	fator -> var
+	numero -> 0
+	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
-	atribuicao -> var
-	var -> expressao
-	expressao -> atribuicao
-	acao -> expressao
+	retorna -> expressao
+	acao -> retorna
 	corpo -> acao
 	cabecalho -> principal
 	principal -> lista_parametros
@@ -79,7 +98,10 @@ digraph G {
 	declaracao_funcao -> cabecalho
 	declaracao -> declaracao_funcao
 	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
+	lista_declaracoes -> declaracao
+	lista_declaracoes -> lista_declaracoes
+	lista_declaracoes -> declaracao
+	lista_declaracoes -> lista_declaracoes
 	programa
 	programa -> lista_declaracoes
 }

@@ -15,7 +15,7 @@ inteiro fatorial(inteiro: n, flutuante: m)
 			flutuante: p
 		até n = 0
 	fim
-	
+
 	z := 1.9 {SEM ERRO, FOI INICIALIZADO}
 	z := z+1 {ERRO, ID NAO FOI INICIALIZADO}
 

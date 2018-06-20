@@ -3,7 +3,7 @@
 import ply.yacc as yacc
 from lexer import Lexica
 import graphviz as gv
-from graphviz import Digraph
+from graphviz import Digraph, Graph
 
 g1 = Digraph('G', format='svg')
 
@@ -38,35 +38,38 @@ class Syntax:
         programa : lista_declaracoes
                      '''
         p[0] = Tree('programa', [p[1]])
-        g1.edge('programa', 'lista_declaracoes')
+        g1.node('programa')
+        g1.edge('programa','lista_declaracoes')
 
     def p_lista_declaracoes(self, p):
         '''
         lista_declaracoes : lista_declaracoes declaracao
-                           | declaracao
-			   | error
+                          | declaracao
+                         | error
         '''
         if (len(p) == 3):
             p[0] = Tree('lista_declaracoes', [p[1], p[2]])
+            g1.edge('lista_declaracoes', 'declaracao')
+            g1.edge('declaracao', 'lista_declaracoes')
         elif (len(p) == 2):
             p[0] = Tree('lista_declaracoes', [p[1]])
+            g1.edge('lista_declaracoes', 'declaracao')
         elif p.slice[1] == 'error' :
-            print( "Erro: delcaração incompleta! \n")
-        g1.edge('lista_declaracoes', 'declaracao')    
-        
+            print( "Erro: declaração incompleta! \n")
+
 
     def p_declaracao(self, p):
         '''
         declaracao : declaracao_variaveis
-                    | inicializacao_variaveis
-                    | declaracao_funcao
+                   | inicializacao_variaveis
+                   | declaracao_funcao
         '''
         p[0] = Tree('declaracao', [p[1]])
 
         if(str(p[1]) == 'declaracao_variaveis'):
             g1.edge('declaracao', 'declaracao_variaveis')
         elif(str(p[1]) == 'inicializacao_variaveis'):
-           g1.edge('declarcao', 'inicializacao_variaveis')
+           g1.edge('declaracao', 'inicializacao_variaveis')
         else:
            g1.edge('declaracao', 'declaracao_funcao')
 
@@ -76,12 +79,14 @@ class Syntax:
         '''
         p[0] = Tree('declaracao_variaveis', [p[1], p[3]], p[2])
         g1.edge('declaracao_variaveis', 'tipo')
-        g1.edge('tipo', 'lista_variaveis')
+        g1.edge('declaracao_variaveis', 'lista_variaveis')
         
     def p_declaracao_variaveis_error(self, p):
         '''
         declaracao_variaveis : tipo DOIS_PONTOS error
         '''
+        g1.edge('declaracao_variaveis', 'tipo')
+        g1.edge('declaracao_variaveis', 'error')
         print("Erro: Declaração de variável incompleta. \n")
 
 
@@ -99,11 +104,12 @@ class Syntax:
         '''
         if (len(p) == 4):
             p[0] = Tree('lista_variaveis', [p[1], p[3]])
-            #g1.edge('lista_variaveis', 'var', 'lista_variaveis')
+            g1.edge('lista_variaveis', 'var')
+            g1.edge('lista_variaveis', 'lista_variaveis')
         elif (len(p) == 2):
             p[0] = Tree('lista_variaveis', [p[1]])
-            #g1.edge('lista_variaveis', 'var')
-        g1.edge('lista_variaveis', 'var')
+            g1.edge('lista_variaveis', 'var')
+        # g1.edge('lista_variaveis', 'var')
 
 
     def p_var(self, p):
@@ -156,12 +162,12 @@ class Syntax:
     def p_declaracao_funcao(self, p):
         '''
         declaracao_funcao : tipo cabecalho
-                        | cabecalho
+                          | cabecalho
         '''
         if len(p) == 3:
             p[0] = Tree('declaracao_funcao', [p[1], p[2]])
             g1.edge('declaracao_funcao', 'tipo')
-            g1.edge('tipo', 'cabecalho')
+            g1.edge('declaracao_funcao', 'cabecalho')
         elif len(p) == 2:
             p[0] = Tree('declaracao_funcao', [p[1]])
             g1.edge('declaracao_funcao', 'cabecalho')
@@ -186,16 +192,19 @@ class Syntax:
     def p_lista_parametros(self, p):
         '''
         lista_parametros : lista_parametros VIRGULA parametro
-                            | parametro
-                            | vazio
+                         | parametro
+                         | vazio
         '''
         if len(p) == 4:
             p[0] = Tree('lista_parametros', [p[1], p[3]])
-            #g1.edge('lista_parametros', 'lista_parametros', 'parametro')
+            g1.edge('lista_parametros', 'parametro')
+            g1.edge('lista_parametros', 'lista_parametros')
         elif len(p) == 2:
             p[0] = Tree('lista_parametros', [p[1]])
-            #g1.edge('lista_parametros', 'parametro')
-        g1.edge('lista_parametros', 'parametro')
+            g1.edge('lista_parametros', 'parametro')
+        else:
+            p[0] = Tree('vazio', [p[1]])
+            g1.edge('lista_parametros', 'vazio')
 
 
     def p_parametro1(self, p):
@@ -216,7 +225,7 @@ class Syntax:
     def p_corpo(self, p):
         '''
         corpo : corpo acao
-                | vazio
+              | vazio
         '''
         if len(p) == 3:
             p[0] = Tree('corpo', [p[1], p[2]])
@@ -426,7 +435,7 @@ class Syntax:
     def p_operador_multiplicacao(self, p):
         '''
             operador_multiplicacao : MULT
-                                    | DIVISAO
+                                   | DIVISAO
         '''
         p[0] = Tree('operador_multiplicacao', [], p[1])
         g1.edge('operador_multiplicacao', p[1])
@@ -434,9 +443,9 @@ class Syntax:
     def p_fator(self, p):
         '''
             fator : ABRE_COL expressao FECHA_COL
-                    | var
-                    | chamada_funcao
-                    | numero
+                  | var
+                  | chamada_funcao
+                  | numero
         '''
         if len(p) == 4:
             p[0] = Tree('fator', [p[2]])
@@ -448,8 +457,8 @@ class Syntax:
     def p_numero(self, p):
         '''
             numero : INTEIRO
-                    | FLUTUANTE
-                    | NOTACAO_CIENTIFICA
+                   | FLUTUANTE
+                   | NOTACAO_CIENTIFICA
         '''
         p[0] = Tree('numero', [], p[1])
         g1.edge('numero', str(p[1]))
@@ -479,6 +488,7 @@ class Syntax:
         '''
             vazio :
         '''
+        #g1.node('vazio')
 
     def p_error(self, p):
         print(p)
@@ -506,5 +516,5 @@ if __name__ == '__main__':
     #print("\narvore abstrata\n")
     #print(g1.source)
     filename = g1.render(filename='img/asa')
- 
+
     lexemas.close()

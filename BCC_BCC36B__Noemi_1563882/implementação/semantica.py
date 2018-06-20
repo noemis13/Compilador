@@ -1,5 +1,4 @@
 from syntax import Syntax
-from ply import yacc
 from graphviz import Digraph
 
 g = Digraph('G', format='svg')
@@ -8,70 +7,80 @@ class Semantica:
     def __init__(self, code):
         self.tabelaSimbolos = {}
         self.escopo = "global"
-        #pegar a arovre abstrata
         self.tree = Syntax(code).ast 
         self.programa(self.tree)
- 
-        self.verifica_main(self.tabelaSimbolos)
-        self.verifica_variaveis(self.tabelaSimbolos)
-        self.verifica_funcoes(self.tabelaSimbolos)
- 
-    #verificações iniciais
-    def verifica_main(self, tabelaSimbolos):
-        if ("principal" not in tabelaSimbolos.keys()):
-            print("Erro: A função principal não foi declarada")
-            
-    def verifica_variaveis(self, tabelaSimbolos):
-       for i, valor in tabelaSimbolos.items():
-           if valor[0] == "variavel" and valor[2] == False:
-           	valorEscopo = i.split("-")
-           	if valorEscopo != "golbal":
-           		print("Warning: A variável '" + valor[1] +"' do  '" + valorEscopo[0] + "' não é utilizada")
-           	else:
-           		print("Warning: A variável '" + valor[1] +"' não é utilizada")
-  
-
-    def verifica_funcoes(self, tabelaSimbolos):
-       for i, valor in tabelaSimbolos.items():
-             if valor[0] == 'funcao':
-                 if i != 'principal' and valor[5] !=1:
-                     print("Warning: A função '"+ i +"' não é utilizada")
-
-       
-    def raiz(self):
-        if(self.tree.type == "programa_principal"):
-            self.scope = "principal"
-            self.principal(self.tree.child[0])
-            self.scope = "global"
+        self.verificacoes(self.tabelaSimbolos)
+        
+    def verificacoes(self, tabelaSimbolos):
+        #verificar se a função principal foi declarada
+        nomePrincipal = "principal"
+        nomeFuncao = "funcao"
+        nomeVariavel = "variavel"
+        nomeGlobal = "global"
+        if nomePrincipal not in tabelaSimbolos.keys():
+            print("Erro: FUnção 'principal' não declarada")
+        
+        for i, valor in tabelaSimbolos.items():
+            #verificar se as funções são utilizadas
+            if valor[0] == nomeFuncao:
+                if i != nomePrincipal and valor[4] != 1:
+                    print("Warning: Função '" + i + "' não utilizada")
+            #verificar se as variaveis são utilzadas
+            elif valor[0] == nomeVariavel:
+                if valor[2] == False:
+                    nomeEscopo = i.split("-") 
+                    print("Warning: Variável '" + valor[1] + "' não é utilizada, pertencente ao escopo'" + nomeEscopo[0] + "' ")    
     
     def programa(self, node):
-        self.lista_declaracoes(node.child[0])
+        nodeFilho = node.child[0]
+        self.lista_declaracoes(nodeFilho)
+
 
 #     lista_declaracoes : lista_declaracoes declaracao
 #                           | declaracao        
     def lista_declaracoes(self, node):
-        if (len(node.child) == 1):
-            self.declaracao(node.child[0])
-        else:
-            if(node.child[0] != None):
-            	self.lista_declaracoes(node.child[0])
+        valorNode = node.child[0]
+        
+        if len(node.child) !=1:
+            if(valorNode != None):
+            	self.lista_declaracoes(valorNode)
+            
             if(node.child[1] != None):
-                self.declaracao(node.child[1])
+                valorNode = node.child[1]
+                self.declaracao(valorNode)
+        else:
+            self.declaracao(valorNode)
 
+        
     def declaracao(self, node):
-        if (node.child[0].type == "declaracao_variaveis"):
-            self.declaracao_variaveis(node.child[0])
-            #adicionar na arvore
-            g.edge('declaracao', 'declaracao_variaveis')
-        elif (node.child[0].type == "inicializacao_variaveis"):
+        
+        if node.child[0].type == "inicializacao_variaveis":
             #adicionar na arvore
             g.edge('declaracao', 'inicializacao_variaveis')
-            self.inicializacao_variaveis(node.child[0])
+            
+            noFilho = node.child[0].child[0] 
+            #adicionar na arvore
+            g.edge('inicializacao_variaveis', 'atribuicao')
+       
+            self.atribuicao(noFilho)
+            
+
+        elif node.child[0].type == "declaracao_variaveis":
+            #adicionar na arvore
+            g.edge('declaracao', 'declaracao_variaveis')
+
+            self.declaracao_variaveis(node.child[0])
+            
         else:
-            if (len(node.child[0].child) == 1):
-                self.escopo = node.child[0].child[0].value
+            tamNoFilho = len(node.child[0].child)
+            if  tamNoFilho != 1:
+                valorNoFilho = node.child[0].child[1].value 
+                self.escopo = valorNoFilho
+                
             else:
-                self.escopo = node.child[0].child[1].value
+                valorNoFilho = node.child[0].child[0].value
+                self.escopo = valorNoFilho
+            
             self.declaracao_funcao(node.child[0])
             self.escopo = "global"
             
@@ -79,464 +88,355 @@ class Semantica:
             g.edge('declaracao', 'declaracao_funcao')
 
 
-    #declaracao_variaveis : tipo DOIS_PONTOS lista_variaveis
     def declaracao_variaveis(self, node):
-        tipo = node.child[0].value
-        nome = ""
-        contBreak = 0
-        for valorVar in self.lista_variaveis(node.child[1]):
+        tamVar = len(node.child[1].child) 
+        
+        if tamVar != 1:
+            #armazenar todas as variaveis na lista de variaveis
+            nomeVar = self.lista_variaveis(node.child[1])
             
-            if ("[" in valorVar):
-                nome = valorVar.split('[')[0]
-                valorVar = nome
-            if ( (self.escopo + '-' + valorVar in self.tabelaSimbolos.keys()) or ("global-" + valorVar in self.tabelaSimbolos.keys()) ):
-                if contBreak == 1:
-                    contBreak = 0
-                    print( "Warning: A variável '" + valorVar + "' já foi declarada anteriormente." )
-                
-            if (valorVar in self.tabelaSimbolos.keys()):
-                print("Erro: Já existe uma função com o nome '" + valorVar + "'")
-            self.tabelaSimbolos[self.escopo + "-" + valorVar] = ["variavel", valorVar, False, False, tipo, 0]
-            g.edge('declaracao_variaveis', valorVar)
-        return "void"
+        else:
+            nomeVar = node.child[1].child[0].value
+            self.verifica_indice(node.child[1]) 
+            
+        tipoVar = node.child[0].value
+        
+        # se for uma lista de declaracoes
+        if len(nomeVar) > 1:
+            for i in nomeVar:
+                self.verifica_declaracao_variaveis(i, tipoVar)
+        else:
+            self.verifica_declaracao_variaveis(nomeVar, tipoVar)
 
-
-    def inicializacao_variaveis(self, node):
-        self.atribuicao(node.child[0])
-        #adicionar na arvore
-        g.edge('inicializacao_variaveis', 'atribuicao')
 
     def lista_variaveis(self, node):
         nomeVar = []
-        
-        if (len(node.child) == 1):
-            if (len(node.child[0].child) == 1):
-                nomeVar.append(node.child[0].value + self.indice(node.child[0].child[0]))
-            else:
-                nomeVar.append(node.child[0].value)
-            return nomeVar
-
+        if len(node.child) == 1:
+            nomeVar.append(node.child[0].value)
         else:
             nomeVar = self.lista_variaveis(node.child[1])
             nomeVar.append(node.child[0].value)
-            return nomeVar
-        
+        return nomeVar
 
-    def var(self, node):
-        nome = self.escopo + "-" + node.value
-        apenasNome = node.value
-                
-        if (len(node.child) == 1):
-            #verificar declaracao da variavel
-                
-            if (nome not in self.tabelaSimbolos):
-                nome = "global-" + node.value
-                if (nome not in self.tabelaSimbolos):
-                    print("Erro: A váriavel '" + node.value + "' não foi declarada")
-            else:
-                if (self.tabelaSimbolos[nome][3] == False):
-                   print("Erro: váriavel '" + nome + "' não foi inicializada")
-                var = self.indice(node.child[0])
-                self.tabelaSimbolos[nome][4] = self.tabelaSimbolos[nome][4] + var
-                self.tabelaSimbolos[nome][2] = True
-                return self.tabelaSimbolos[nome][4]
-
-        else:
-            if (nome not in self.tabelaSimbolos):
-                nome = "global-" + node.value
-                if (nome not in self.tabelaSimbolos):
-                    print("Erro: A váriavel '" + node.value + "' não foi declarada")
-                else:
-                    if (self.tabelaSimbolos[nome][3] == False):
-                        print("Erro: A váriavel '" + apenasNome + "' não foi inicializada.")  
-            else:
-                if (self.tabelaSimbolos[nome][3] == False):
-                    print("Erro: A váriavel '" + apenasNome + "' não foi inicializada.")
-            if (nome in self.tabelaSimbolos):
-                self.tabelaSimbolos[nome][2] = True
-                return self.tabelaSimbolos[nome][4]
-
-
+    def verifica_indice(self, node):
+        if len(node.child[0].child) == 1:
+            self.indice(node.child[0].child[0])
 
     def indice(self, node):
-        if (len(node.child) == 1):
-            tipo = self.expressao(node.child[0])
-            if (node.child[0].value == "" or tipo != "inteiro"):
-                print("Erro: index inválido, permitido somente inteiro")
-            return ("[]")
-        else:
-            variavel = self.indice(node.child[0])
-            tipo = self.expressao(node.child[1])
-            if (tipo != "inteiro"):
-                print("Erro: index inválido, permitido somente inteiro")
-            return ("[]" + variavel)
-        g.edge('indice', 'expressao')
-        
+        tipo = self.expressao(node.child[0])
+        if node.child[0].value == "" or tipo != "inteiro":
+            print("Erro: o índice do tipo '" + tipo + "' é inválido")
 
 
-    def tipo(self, node):
-        
-        if (node.value == "inteiro" or node.value == "flutuante"):
-            g.edge('tipo', node.value)
-            return node.value
-        else:
-            print("Erro: Somente tipos inteiros e flutuantes são aceitos. Tipo entrado: " + node.value)
+    def verifica_declaracao_variaveis(self, nomeVar, tipo):
+        escopoVar = self.escopo + '-' + nomeVar
+        escopoGlobalVar = "global-" + nomeVar
 
+        if escopoVar in self.tabelaSimbolos.keys(): 
+            if escopoGlobalVar in self.tabelaSimbolos.keys():
+                print( "Warning: Variável '" + nomeVar + "' declarada anteriormente" )
+                
+        self.tabelaSimbolos[self.escopo + "-" + nomeVar] = ["variavel", nomeVar, False, tipo, 0]
+
+        g.edge('declaracao_variaveis', nomeVar)
+
+
+  
     def declaracao_funcao(self, node):
-        if (len(node.child) == 1):
-            tipo = "void"
-            self.tabelaSimbolos[node.child[0].value] = ["funcao", node.child[0].value, [], False, tipo, 0]
+        tamNode = len(node.child)
+        valorNode = node.child[0].value
+
+        if tamNode == 1:
+            self.tabelaSimbolos[valorNode] = ["funcao", valorNode, [], "void", 0]
             self.cabecalho(node.child[0])
+
         else:
-            tipo = self.tipo(node.child[0])
-            self.tabelaSimbolos[node.child[1].value] = ["funcao", node.child[1].value, [], False, tipo, 0]
-            self.cabecalho(node.child[1])
-            #adicionar na arvore
-            g.edge(node.child[1].value, 'tipo')
+            g.edge('tipo', valorNode)
             
+            valorFilhoNode = node.child[1].value
+            self.tabelaSimbolos[valorFilhoNode] = ["funcao", valorFilhoNode, [], valorNode, 0]
+            self.cabecalho(node.child[1])
+
+            #adicionar na arvore
+            g.edge(valorFilhoNode, 'tipo')
+
+          
+         
 #cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM     
     def cabecalho(self, node):
-        lista_par = self.lista_parametros(node.child[0])
-        self.tabelaSimbolos[node.value][2] = lista_par
+        parametros = self.lista_parametros(node.child[0])       
+        self.tabelaSimbolos[node.value][2] = parametros
 
-        tipo_corpo = self.corpo(node.child[1])
-        tipo_fun = self.tabelaSimbolos[node.value][4]
-        if tipo_corpo == None:
-            tipo_corpo = "vazio";
+        tipoDoCorpo = self.corpo(node.child[1])
+        tipFun = self.tabelaSimbolos[node.value][3]
+
             
-        if tipo_corpo != tipo_fun:
-            if (node.value == "principal"):
-                print("Warning: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
-            else:
-                print("Erro: a função '" + node.value + "' deveria retornar: '" + tipo_fun + "' mas retorna '" + tipo_corpo + "'")
+        if tipoDoCorpo != tipFun:
+            if tipoDoCorpo == None:
+                tipoDoCorpo = "vazio";
+            print("Warning: função '" + node.value + "' retorna: '" + tipoDoCorpo + "' mas, deveria retornar '" + tipFun + "'")
         
         #adicionar na arvore
         g.edge('declaracao_funcao', node.value)
         g.edge(node.value, 'acao') 
 
-  # lista_parametros : lista_parametros VIRGULA lista_parametros
-  #                          | parametro
-  #                          | vazio
+
+
     def lista_parametros(self, node):
-        lista_param = []
-        if (len(node.child) == 1):
-            if (node.child[0] == None):
-                return self.vazio(node.child[0])
+        parametros = []
+        if len(node.child) == 1:
+            if node.child[0] == None:
+                parametros = "void"
             else:
-                lista_param.append(self.parametro(node.child[0]))
-                return lista_param
+                parametros.append(self.parametro(node.child[0]))
         else:
-            lista_param = self.lista_parametros(node.child[0])
+            parametros = self.lista_parametros(node.child[0])
             par = self.parametro(node.child[1])
             if par != None:
-                lista_param.append(self.parametro(node.child[1]))
-            return lista_param
+                parametros.append(self.parametro(node.child[1]))
+        return parametros
+
 
 # parametro : tipo DOIS_PONTOS ID
 #	  | parametro ABRE_COL FECHA_COL
-
     def parametro(self, node):
-        if (node.child[0].type == "parametro"):
-            return self.parametro(node.child[0]) + "[]"
-        else:
-            self.tabelaSimbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, True, node.child[0].value, 0]
-            return(node.child[0].value)
+        self.tabelaSimbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, node.child[0].value, 1]
+        
+        return(node.child[0].value)
 
 
-    def vazio(self, node):
-        return "void"
 
     def corpo(self, node):
-        if (node.child != None):
-            if (len(node.child) == 1):
-                return self.vazio(node.child[0])
+        if node.child != None:
+            if len(node.child) == 1:
+                tipoCorpo = "void"
             else:
-                tipo1c = self.corpo(node.child[0])
-                tipo2c = self.acao(node.child[1])
-                if (tipo2c != None):
-                    return tipo2c
+                self.corpo(node.child[0])
+                tipoCorpo = self.acao(node.child[1])
+                return tipoCorpo
 
     def acao(self, node):
-        tipo_ret_acao = "void"
-        if (node.child[0].type == "expressao"):
+        valorNode = node.child[0]
+
+        if node.child[0].type == "expressao":
             g.edge('acao', 'expressao')
-            return self.expressao(node.child[0])
-        elif (node.child[0].type == "declaracao_variaveis"):
-            g.edge('acao', 'declaracao_variaveis')
-            return self.declaracao_variaveis(node.child[0])
-        elif (node.child[0].type == "se"):
-            g.edge('acao', 'se')
-            return self.se(node.child[0])
-        elif (node.child[0].type == "repita"):
-            g.edge('acao', 'repita')
-            return self.repita(node.child[0])
-        elif (node.child[0].type == "leia"):
-            g.edge('acao', 'leia')
-            return self.leia(node.child[0])
-        elif (node.child[0].type == "escreva"):
-            g.edge('acao', 'escreva')
-            return self.escreva(node.child[0])
-        elif (node.child[0].type == "retorna"):
-            g.edge('acao', 'retorna')
-            return self.retorna(node.child[0])
-
-    def se(self, node):
-        tipo_se = self.expressao(node.child[0])
-
-        if (len(node.child) == 2):
-            return self.corpo(node.child[1])
-        else:
-            tipo_c1 = self.corpo(node.child[1])
-            tipo_c2 = self.corpo(node.child[2])
-            if tipo_c1 != tipo_c2:
-                if (tipo_c1 == "void"):
-                    return tipo_c2
-                else:
-                    return tipo_c1
-            return tipo_c1
-        g.edge('se', 'expressao')
- 
-    def repita(self, node):
-        tipo_repita = self.expressao(node.child[1])
-        g.edge('repita', 'expressao')
-        return self.corpo(node.child[0])
-
-
-    def atribuicao(self, node):
-        g.edge('atribuicao', node.child[0].value)
-
-        nome = self.escopo + "-" + node.child[0].value
-        if (self.escopo + "-" + node.child[0].value not in self.tabelaSimbolos.keys()):
-            nome = "global" + "-" + node.child[0].value
-            if ("global" + "-" + node.child[0].value not in self.tabelaSimbolos.keys()):
-                print("Erro: A variável '" + node.child[0].value + "' não foi declarada.")
-        if nome not in self.tabelaSimbolos:
-            tipo_esperado = "tipo não declarado"
-        else:
-            tipo_esperado = self.tabelaSimbolos[nome][4]
-        tipo_recebido = self.expressao(node.child[1])
+            return self.expressao(valorNode)
         
-        if nome in self.tabelaSimbolos:
-            #variavel iincializada e delcarada
-            self.tabelaSimbolos[nome][2] = True
-            self.tabelaSimbolos[nome][3] = True
-        if tipo_recebido is None:
-             tipo_recebido = "void"        
+        elif node.child[0].type == "declaracao_variaveis":
+            g.edge('acao', 'declaracao_variaveis')
+            return self.declaracao_variaveis(valorNode)
 
-        if (tipo_esperado != tipo_recebido):
-            print("Warning: Coerção implícita de tipos! Tipo esperado da variável '" + node.child[0].value + "' é: " + tipo_esperado + ", tipo recebido: " + tipo_recebido)
-        return "void"
+        elif node.child[0].type == "leia":
+            g.edge('acao', 'leia')
+            return self.leia(valorNode)
+
+        elif node.child[0].type == "escreva":
+            g.edge('acao', 'escreva')
+            return self.escreva(valorNode)
+
+        elif node.child[0].type == "retorna":
+            g.edge('acao', 'retorna')
+            return self.retorna(valorNode)
 
     def leia(self, node):
-        g.edge('leia', node.value)
-        if node.value not in self.tabelaSimbolos.keys():
-            if "global-" + node.value not in self.tabelaSimbolos.keys():
-                print("Erro: " + node.value + " não declarada")
+        valorNode = node.value 
+        
+        g.edge('leia', valorNode)
+
+        if valorNode not in self.tabelaSimbolos.keys():
+            if "global-" + valorNode not in self.tabelaSimbolos.keys():
+                print("Erro: Não foi declarada a '" + valorNode + "'")
         return "void"
+
 
     def escreva(self, node):
         g.edge('escreva', 'expressao')
-        tipo_exp = self.expressao(node.child[0])
-
-        if tipo_exp == "logico":
-            print("Erro: expressao inválida!")
+        tExp = self.expressao(node.child[0])
+        if tExp == "logico":
+            print("Erro: expressao no 'escreva' não é válida")
 
         return "void"
 
     def retorna(self, node):
         g.edge('retorna', 'expressao')
-        tipo_exp = self.expressao(node.child[0])
 
-        if (tipo_exp == "logico"):
-            print("Erro: expressao inválida!")
-        return tipo_exp
+        tExp = self.expressao(node.child[0])
+        return tExp
+
+
+
+    def atribuicao(self, node):
+        valorNoFilho = node.child[0].value
+        
+        g.edge('atribuicao', valorNoFilho)
+
+        nomeVar = self.escopo + "-" + valorNoFilho
+        
+        if nomeVar not in self.tabelaSimbolos.keys():
+            nomeVar = "global" + "-" + valorNoFilho
+            if nomeVar not in self.tabelaSimbolos.keys():
+                print("Erro: A variável '" + valorNoFilho+ "' não foi declarada.")
+        tipoRes = self.expressao(node.child[1])
+        if nomeVar not in self.tabelaSimbolos:
+            tipoVar = "tipo não declarado"
+        else:
+            tipoVar = self.tabelaSimbolos[nomeVar][3]
+            self.tabelaSimbolos[nomeVar][2] = True
+            self.tabelaSimbolos[nomeVar][4] = 1
+        
+        if tipoVar != tipoRes:
+            if tipoRes is None:
+                tipoRes = "void"        
+            print("Warning: Coerção implícita do valor de '" + valorNoFilho + "'. O tipo esperado era: " + tipoVar + ", tipo recebido foi: " + tipoRes)
 
 
     def expressao(self, node):
-        if (node.child[0].type == "expressao_logica"):
-           return self.expressao_logica(node.child[0])
-        else:
+        if node.child[0].type == "atribuicao":
             g.edge('expressao', 'atribuicao')
             return self.atribuicao(node.child[0])
-            
+        elif node.child[0].type == "expressao_logica":
+           return self.expressao_logica(node.child[0])
+           
+ 
     def expressao_logica(self, node):
-        if (len(node.child)==1):
-            return self.expressao_simples(node.child[0])
-        else:
-            tipo1 = self.expressao_logica(node.child[0])
-            op = self.operador_logico(node.child[1])
-            
-            g.edge('expressao', op)
-            
-            return "logico"
-
+        tamNoFilho = len(node.child)
+        noFilho = node.child[0]
+        if tamNoFilho == 1:
+            return self.expressao_simples(noFilho)
+        
+     
     def expressao_simples(self, node):
-        
-        if len(node.child) == 1:
-            return self.expressao_aditiva(node.child[0])
-        else:
-            tipo1 = self.expressao_simples(node.child[0])
-            op = self.operador_relacional(node.child[1])
-            tipo2 = self.expressao_aditiva(node.child[2])
-            
-            if tipo1 == None:
-                tipo1 = "tipo não declarado"
-            if tipo2 == None:
-                tipo2 = "tipo não delcarado"			
-
-            if (tipo1 != tipo2):
-                print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
-            g.edge('expressao', op)
-        
-            return "simples"
-
+        tamNoFilho = len(node.child)
+        noFilho = node.child[0]
+        if tamNoFilho == 1:
+            return self.expressao_aditiva(noFilho)
+     
+  
     def expressao_aditiva(self, node):
-        if (len(node.child) == 1):
-            return self.expressao_multiplicativa(node.child[0])
-        else:
-            tipo1 = self.expressao_aditiva(node.child[0])
-            op = self.operador_soma(node.child[1])
-            tipo2 = self.expressao_multiplicativa(node.child[2])
-            g.edge('expressao', op)
+        tamNoFilho = len(node.child)
+        noFilho = node.child[0]
+        if tamNoFilho == 1:
+            return self.expressao_multiplicativa(noFilho)
         
-            if tipo1 == None:
-                tipo1 = "tipo não declarado"
-            if tipo2 == None:
-                tipo2 = "tipo não delcarado"			
-            
-            if (tipo1 != tipo2):
-                print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2 + "'")
-            if (tipo1 == "flutuante") or (tipo2 == "flutuante"):
-                return "flutuante"
-            elif(tipo1 == "inteiro") or (tipo2 == "inteiro"):
-                return "inteiro"
-            else:
-                return "void"
-
+ 
     def expressao_multiplicativa(self, node):
-        if (len(node.child) == 1):
-            return self.expressao_unaria(node.child[0])
-        else:
-            tipo1 = self.expressao_multiplicativa(node.child[0])
-            op = self.operador_multiplicacao(node.child[1])
-            tipo2 = self.expressao_unaria(node.child[2])
-            g.edge('expressao', op)
-        
-            if tipo1 == None:
-                tipo1 = "tipo não declarado"
-            if tipo2 == None:
-                tipo2 = "tipo não delcarado"			
-
-            if (tipo1 != tipo2):
-                print("Warning: Operação com tipos diferentes '" + tipo1 + "' e '" + tipo2)
-            elif(tipo1 == "inteiro") or (tipo2 == "inteiro"):
-                return "interio"
-            else:
-                return "void"
+        tamNoFilho = len(node.child)
+        noFilho = node.child[0]
+        if tamNoFilho == 1:
+            return self.expressao_unaria(noFilho)
+ 
 
     def expressao_unaria(self, node):
-        if (len(node.child) == 1):
+        tamNoFilho = len(node.child)
+        noFilho = node.child[0]
+        if tamNoFilho == 1:
             g.edge('atribuicao', 'fator')
-            return self.fator(node.child[0])
-        else:
-            if(node.child[0].type == "operador_soma"):
-                op = self.operador_soma(node.child[0])
-            else:
-               op = self.operador_negacao(node.child[0])
-            g.edge('expressao', op)
-            g.edge(op, 'fator')        
-            return self.fator(node.child[1])
+            return self.fator(noFilho)
  
-    def operador_logico(self, node):
-        return node.value
-
-    def operador_relacional(self, node):
-        return node.value
-
-    def operador_soma(self, node):
-        return node.value
-
-    def operador_negacao(self, node):
-        return node.value
-
-    def operador_multiplicacao(self, node):
-        return node.value
-
+ 
     def fator(self, node):
-        if (node.child[0].type == "var"):
-             g.edge('fator', node.child[0].value)
-             return self.var(node.child[0])
-        if (node.child[0].type == "chamada_funcao"):
-            return self.chamada_funcao(node.child[0])
-        if (node.child[0].type == "numero"):
-            g.edge('fator', str(node.child[0].value))
-            return self.numero(node.child[0])
-        else:
-            return self.expressao(node.child[0])
+        tipoNoFilho = node.child[0].type
+        noFilho = node.child[0]
+        valor = node.child[0].value
+            
+        if tipoNoFilho == "var":
+             g.edge('fator', valor)
+             tipoVar = self.verifica_var(noFilho)
+             return tipoVar
 
+        if tipoNoFilho == "chamada_funcao":
+            tipoFunc = self.chamada_funcao(noFilho)
+            return tipoFunc
+
+        if tipoNoFilho == "numero":
+            g.edge('fator', str(valor))
+
+            if "." in repr(valor):
+                tipoNum = "flutuante"
+            else:
+                tipoNum ="inteiro"
+            return tipoNum
+
+        else:
+            return self.expressao(noFilho)
+
+
+    def verifica_var(self, node):
+        nome = self.escopo + "-" + node.value
+        apenasNome = node.value
+        
+        if nome not in self.tabelaSimbolos:
+            nome = "global-" + node.value
+            if nome not in self.tabelaSimbolos:
+                print("Erro: Váriavel '" + node.value + "' não declarada")
+            else:
+                if self.tabelaSimbolos[nome][4] == 0:
+                    print("Erro: Váriavel '" + apenasNome + "' utilizada mas não inicializada.")  
+      
+        if nome in self.tabelaSimbolos:
+            self.tabelaSimbolos[nome][2] = True
+            return self.tabelaSimbolos[nome][3]
  
-    def numero(self, node):
-        string = repr(node.value)
-        if "." in string:
-            return "flutuante"
-        else:
-            return "inteiro"
 
 
-    def chamada_funcao(self, node):
-        #verificações da funcao principal
-        #chamada recursiva
-        if (node.value == "principal" and self.escopo == "principal"):
-            print("Erro: Chamada recursiva para a função 'principal'")
-        #chamada não permitida
-        if (node.value == "principal" and self.escopo != "principal"):
+    def verifica_fun(self, nomeFunc):
+        if nomeFunc == "principal" and self.escopo != "principal":
             print("Erro: A função '" + self.escopo + "' realiza uma chamada não permitida para a função 'principal'")
+        
+        elif nomeFunc == "principal" and self.escopo == "principal":
+            print("Erro: Chamada recursiva para a função 'principal'")
 
         #verificar se a funcao chamada foi declarada  
-        if (node.value not in self.tabelaSimbolos.keys()):
-            if node.value != "principal":
-                print("Erro: Função '" + node.value + "' não foi declarada")
-       #verificar os numero de argumentos esperados da funcao
-        else:
-            self.tabelaSimbolos[node.value][5] = 1
-            argslista = []
-            argslista.append(self.lista_argumentos(node.child[0]))
-            
-            if (argslista[0] == None):
-                argslista = []
-            elif (not (type(argslista[0]) is str)):
-                argslista = argslista[0]
-            args_esperados = self.tabelaSimbolos[node.value][2]
+        if nomeFunc not in self.tabelaSimbolos.keys():
+            if nomeFunc != "principal":
+                print("Erro: Função '" + nomeFunc + "' não declarada")
+     
 
-            if (type(args_esperados) is str):
-                args_esperados = []
-            if (len(argslista) != len(args_esperados)):
-                lesperados = (len(args_esperados))
-                lrecebidos = (len(argslista))
-                print("Erro: Numero de argumentos esperados em '" + node.value + "': " + str(lesperados) + ", quantidade de argumentos recebidos: " + str(lrecebidos))
+    def chamada_funcao(self, node):
+        nomeFunc = node.value
+        self.verifica_fun(nomeFunc)
+
+        if nomeFunc in self.tabelaSimbolos.keys():
+            self.tabelaSimbolos[node.value][4] = 1
+
+            argumentos = []
+            argumentos.append(self.lista_argumentos(node.child[0]))
+   
+            if argumentos[0] == None:
+                argumentos = []
+            elif (not (type(argumentos[0]) is str)):
+                argumentos = argumentos[0]
             
-            #verificar os tipos de argumentos recebidos na chamada da função
-            for i in range(len(argslista)):
-                if (argslista[i] != args_esperados[i]):
-                    print("Erro: Função '" + node.value+ "'. Argumento " + str(i) + ", tipo esperado '" + args_esperados[i] + "', tipo recebido '" + argslista[i] + "'")
-            self.tabelaSimbolos[node.value][3] = True
-            return self.tabelaSimbolos[node.value][4]
+            argumentosEsperados = self.tabelaSimbolos[node.value][2]
+            
+            if type(argumentosEsperados) is str:
+                argumentosEsperados = []
+
+            tamEsperados = len(argumentosEsperados)
+            tamRecebidos = len(argumentos)
+
+            if tamRecebidos != tamEsperados:
+            
+                print("Erro: Na função '" + node.value + "' argumentos esperados era '" + str(tamEsperados) + "' quantidade de argumentos recebidos foi '" + str(tamRecebidos) + "'")
+            
+            return self.tabelaSimbolos[node.value][3]
 
 
     def lista_argumentos(self, node):
+        tipoDaExpressao = []
+            
         if len(node.child) == 1:
-            if (node.child[0] == None):
-                return
-            if (node.child[0].type == "expressao"):
-                exp = self.expressao(node.child[0])
-                return(exp)
-            else:
-                return []
+            if node.child[0] != None:
+                if node.child[0].type == "expressao":
+                    tipoDaExpressao = self.expressao(node.child[0])
+                else:
+                    tipoDaExpressao = []
         else:
-            tipoExp = []
-            tipoExp.append(self.lista_argumentos(node.child[0]))
-            tipoExp.append(self.expressao(node.child[1]))
-            return tipoExp
+            tipoDaExpressao = []
+            tipoDaExpressao.append(self.lista_argumentos(node.child[0]))
+            tipoDaExpressao.append(self.expressao(node.child[1]))
+ 
+        return tipoDaExpressao
 
 
 if __name__ == '__main__':
