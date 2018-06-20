@@ -606,49 +606,46 @@ A análise semântica analisa possíveis erros no código da linguagem T++, percorre
 \texttt{\textbf{self}.tree = Syntax(code).ast }
 
 %estratégias utilizadas para a analise
-Para verificar a existências de erros, foi analisado cada nó filho (saída da árvore), percorrendo suas instruções até chegar em alguma instrução no código, como declaração e inicialização de variáveis ou chamadas de funções, verificando a existência de alguma inconsistência não condizente que a estrutura permitida na linguagem. A medida que essas instruções são percorridas, ao identificar variáveis ou funções, elas são adicionadas em uma tabela de símbolos, armazenando seus valores que auxiliam a definir se a ação é ou não permitida no código.
+Para verificar a existências de erros, foi analisado cada nó filho (saída da árvore), percorrendo suas instruções até chegar em alguma instrução no código, como declaração e inicialização de variáveis ou chamadas de funções, verificando a existência de alguma inconsistência não condizente com a estrutura permitida na linguagem. À medida que essas instruções são percorridas, ao identificar variáveis ou funções, elas são adicionadas em uma tabela de símbolos, armazenando seus valores que auxiliam a definir se a ação é ou não permitida no código.
 
 A tabela de símbolos é um dicionário de dados responsável por armazenar todas as variáveis e funções presente no código e seus atributos, como o escopo, nome, tipo e quantidade de parâmetros, em caso de funções. A seguir é demonstrado um exemplo da tabela de símbolo:
 
-\texttt{\{'\textbf{principal}': ['funcao', 'principal', 'void', False, 'inteiro', 0],}
+\texttt{\{'\textbf{principal}': ['funcao', 'principal', 'void', 'inteiro', 0],}
 
-\texttt{'\textbf{global-b}': ['variavel', 'b', True, True, 'inteiro', 0],}\}
+\texttt{'\textbf{global-a}': ['variavel', 'a', False, 'flutuante', 1],}\}
 
-Para as funções, como a \texttt{principal}, na primeira posição do vetor é armazenado o atributo (função), na segunda o nome da função, na terceira armazena os tipos dos parâmetros (se tiver), na quarta identifica se a função possui parâmetros, sendo True possui e False não, na quinta armazena o tipo da função e a na sexta um valor 0 e 1, sendo 1 função utilizada e 0 não utilizada.
+Para as funções, como a \texttt{principal}, na primeira posição do vetor é armazenado o atributo (função), na segunda o nome da função, na terceira armazena os tipos dos parâmetros (se tiver), na quarta armazena o tipo da função e a na sexta um valor 0 e 1, sendo 1 função utilizada e 0 não utilizada.
 
-Já para as variáveis, como a \texttt{golobal-b}, significa que ela possui escopo global, e a primeira posição do vertor armazena se é variável, a segunda o seu valor (\texttt{b}), a terceira se a variável é utilizada, a quarta se a variável foi inicializada (True sim e False não), a quinta armazena o tipo da variável e a sexta um parâmetro que não é alterado,
+Já para as variáveis, como a \texttt{golobal-a}, significa que ela possui escopo global, e a primeira posição do vetor armazena se é variável, a segunda o seu valor (\texttt{a}), a terceira se ela foi inicializada (True sim e False não), a quinta armazena o tipo da variável e a sexta um valor de binário que identifica se a variável foi utilizada.
 
 
 Inicialmente, o primeiro nó filho será "programa", dessa forma a análise semântica inicia-se na função \texttt{programa}, recebendo a árvore como parâmetro. O próximo passo é verificar seu filho, que é "lista\_declarações", chamando respectivamente a função com esse nome. A partir de então é verificado se existe declaração de variáveis, função ou inicialização de variáveis. Ao passo que identifica os nós filhos, é chamada a função que condiz com ele.
 
-Em algumas dessas funções são realizadas a análise de erro, com o auxílio da tabela de símbolos. Para melhor compreensão, considere parte da função \texttt{var} demonstrada na Figura~\ref{var}.
+Em algumas dessas funções são realizadas a análise de erro, com o auxílio da tabela de símbolos. Para melhor compreensão, considere a função \texttt{verifica\_var} demonstrada na Figura~\ref{var}.
 
 \begin{figure}[h]
-\caption{Análise semântica: Função var responsável por determinar erros.}
+\caption{Análise semântica: Função verifica\_var responsável por determinar erros das variáveis.}
 \label{var}
 \begin{lstlisting}[frame=single] 
-def var(self, node):
+def verifica_var(self, node):
  nome = self.escopo + "-" + node.value
  apenasNome = node.value
- if (len(node.child) == 1):
-  #verificar declaracao da variavel
-  if (nome not in self.tabelaSimbolos):
-   nome = "global-" + node.value
-   if (nome not in self.tabelaSimbolos):
-    print("Erro: váriavel'"+node.value+"'não foi declarada")
+        
+ if nome not in self.tabelaSimbolos:
+  nome = "global-" + node.value
+  if nome not in self.tabelaSimbolos:
+   print("Erro:Váriavel'" + node.value + "'não declarada")
   else:
-   if (self.tabelaSimbolos[nome][3] == False):
-    print("Erro:váriavel'"+nome+"'não foi inicializada")
-   var = self.indice(node.child[0])
-   self.tabelaSimbolos[nome][4]=
-                 self.tabelaSimbolos[nome][4]+var
-   self.tabelaSimbolos[nome][2] = True
-   return self.tabelaSimbolos[nome][4]
-(...)
-\end{lstlisting}
+   if self.tabelaSimbolos[nome][2] == False:
+    print("Erro: Váriavel'"+apenasNome+"'não inicializada.")  
+      
+ if nome in self.tabelaSimbolos:
+  self.tabelaSimbolos[nome][4] = 1
+  return self.tabelaSimbolos[nome][3]
+ \end{lstlisting}
 \end{figure}
 
-A função \texttt{var} é responsável por identificar e verificar se a variável (\texttt{node}) recebida por parâmetro foi declarada. Para isso é pesquisado na tabela de símbolos o escopo correspondente a variável, se é global ou se está em alguma função. Então verifica-se o tamanho desse nó filho podendo ser variável ou vetor, ou seja, pode ser \texttt{ID} ou \texttt{ID índice}. Se não for vetor, verifica-se se a variável está presente na tabela de símbolo. Caso não esteja, verifica-se ainda se ela foi declarada como escopo global, se isso não for verdade, quer dizer que a variável não foi declarada, mostrando uma mensagem de erro. Caso a variável esteja na tabela de símbolos, verifica-se se ela foi inicializada por meio da posição 3 na tabela, se for \texttt{False} é mostrado uma mensagem de erro que a variável não foi inicializada, caso contrário, atribui-se \texttt{True} na tabela de símbolos indicando que a variável foi declarada e armazena o seu tipo (inteiro ou flutuante). 
+A função \texttt{verifca\_var} é responsável por identificar e verificar se a variável (\texttt{node}) recebida por parâmetro foi declarada ou inicializada. Para isso é pesquisado na tabela de símbolos o escopo correspondente a variável, se é global ou se está em alguma função. Se a variável não estiver na tabela, é mostrado uma mensagem de erro informando que essa não foi declarada. Se ela estiver, é realizado uma nova verificação, na qual analisa se a posição 2 na tabela de símbolos é False, se sim, outra mensagem é informada dizendo que a variável é utilizada, porém não foi inicializada. Por fim, se a variável estiver na tabela, é atribuído um novo valor na posição 4, que irá identificar que essa variável está sendo utilizada no programa.
 
 Todas as verificações seguem essa mesma ideia, verificar os atributos do nó filho na tabela de símbolos, analisa-los e retornar uma mensagem de erro, caso necessário.  Apenas três funções são chamadas ao terminar de percorrer a árvore, passando apenas a tabela de símbolos, são elas \texttt{verifica\_main}, \texttt{verifica\_variaveis} e \texttt{verifica\_funcoes}, cujo objetivo é, respectivamente, verificar se a função principal foi declarada, se as variáveis e as funções são utilizadas.
 
@@ -779,7 +776,7 @@ Como exemplo de saída, considere o código descrito na linguagem T++, especificad
 
 \lstset{language=c}          % Set your language (you can change the language for each code-block optionally)
 \begin{figure}[h]
-\caption{Exemplo do código BubbleSort na linguagem T++.}
+\caption{Exemplo de código na linguagem T++.}
 \label{codSemantica}
 \begin{lstlisting}[frame=single] 
 flutuante: a
@@ -834,7 +831,7 @@ Por fim, é gerada e salvo em formato SVG uma árvore abstrata resumida da análise
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\linewidth]{./asa}
+	\includegraphics[width=0.9\linewidth]{./asa}
 	\caption{Resultado análise sintática: árvore sintática abstrata.}
 	\label{fig:asa}
 \end{figure}

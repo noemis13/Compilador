@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  18 JUN 2018 18:09
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.3.27)  20 JUN 2018 15:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -858,35 +858,31 @@ LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <12> not available
 
 Underfull \hbox (badness 10000) in paragraph at lines 613--614
 []\OMS/cmsy/m/n/12 f\OT1/pcr/m/n/12 '\OT1/pcr/b/n/12 principal\OT1/pcr/m/n/12 '
-: ['funcao', 'principal', 'void', False,
+: ['funcao', 'principal', 'void',
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 615--616
-[]\OT1/pcr/m/n/12 '\OT1/pcr/b/n/12 global-b\OT1/pcr/m/n/12 ': ['variavel', 'b',
- True, True, 'inteiro',
+[]\OT1/pcr/m/n/12 '\OT1/pcr/b/n/12 global-a\OT1/pcr/m/n/12 ': ['variavel', 'a',
+ False, 'flutuante',
  []
 
 
-Overfull \hbox (5.21304pt too wide) in paragraph at lines 638--639
-[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+Overfull \hbox (5.21304pt too wide) in paragraph at lines 640--642
+[][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[17]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[17] [18]
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 672.
 
- [18]
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 675.
-
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlptm.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 675.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 672.
  [19]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -894,31 +890,24 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <./codigo.jpg, id=102, 182.93344pt x 163.3603pt>
 File: ./codigo.jpg Graphic file (type jpg)
  <use ./codigo.jpg>
-Package pdftex.def Info: ./codigo.jpg used on input line 768.
+Package pdftex.def Info: ./codigo.jpg used on input line 765.
 (pdftex.def)             Requested size: 213.39568pt x 190.5724pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-<./erro.jpg, id=103, 411.03563pt x 32.37094pt>
+ [21 <./codigo.jpg>] <./erro.jpg, id=106, 401.24907pt x 33.87656pt>
 File: ./erro.jpg Graphic file (type jpg)
  <use ./erro.jpg>
-Package pdftex.def Info: ./erro.jpg used on input line 804.
-(pdftex.def)             Requested size: 341.43437pt x 26.88959pt.
+Package pdftex.def Info: ./erro.jpg used on input line 801.
+(pdftex.def)             Requested size: 341.43437pt x 28.82828pt.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[21 <./codigo.jpg>] <./ts.jpg, id=107, 529.98pt x 34.62938pt>
+<./ts.jpg, id=107, 499.8675pt x 37.64063pt>
 File: ./ts.jpg Graphic file (type jpg)
  <use ./ts.jpg>
-Package pdftex.def Info: ./ts.jpg used on input line 813.
-(pdftex.def)             Requested size: 341.43437pt x 22.3096pt.
+Package pdftex.def Info: ./ts.jpg used on input line 810.
+(pdftex.def)             Requested size: 341.43437pt x 25.71129pt.
 
 <./asto.png, id=108, 473.77pt x 622.325pt>
 File: ./asto.png Graphic file (type png)
  <use ./asto.png>
-Package pdftex.def Info: ./asto.png used on input line 823.
+Package pdftex.def Info: ./asto.png used on input line 820.
 (pdftex.def)             Requested size: 298.75264pt x 392.43716pt.
 
 
@@ -942,7 +931,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 37--42
  _ 2012 .
  []
 
-[22 <./erro.jpg> <./ts.jpg>]
+
 Underfull \hbox (badness 10000) in paragraph at lines 44--49
 []\OT1/ptm/m/n/12 Wikibooks (2013).  Constru[][]ao de com-pi-la-do-res: An[]ali
 se sint^^S[]A!`tica.
@@ -954,7 +943,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--49
 3 % A3o _ de _
  []
 
-
+[22 <./erro.jpg> <./ts.jpg>]
 Underfull \hbox (badness 10000) in paragraph at lines 51--56
 []\OT1/ptm/m/n/12 Wikibooks (2014).  Constru[][]ao de com-pi-la-do-res: An[]ali
 se sem[]antica.
@@ -972,24 +961,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 58--63
 mpiladores /
  []
 
-) <./asa.png, id=112, 761.244pt x 1417.295pt>
+) <./asa.png, id=112, 943.525pt x 1200.485pt>
 File: ./asa.png Graphic file (type png)
  <use ./asa.png>
-Package pdftex.def Info: ./asa.png used on input line 837.
-(pdftex.def)             Requested size: 341.43437pt x 635.70076pt.
+Package pdftex.def Info: ./asa.png used on input line 834.
+(pdftex.def)             Requested size: 384.1096pt x 488.72165pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [23 <./asto.png>] [24 <./asa.png>] (./sbc-template.aux) ) 
 Here is how much of TeX's memory you used:
- 15831 strings out of 495004
- 279255 string characters out of 6180662
- 381258 words of memory out of 5000000
- 18694 multiletter control sequences out of 15000+600000
+ 15815 strings out of 495004
+ 279099 string characters out of 6180662
+ 376258 words of memory out of 5000000
+ 18678 multiletter control sequences out of 15000+600000
  23822 words of font info for 50 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 56i,12n,55p,1026b,1709s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,12n,55p,798b,1635s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/te
 xmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
@@ -1003,7 +992,7 @@ s/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw
 /times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on sbc-template.pdf (24 pages, 1068792 bytes).
+Output written on sbc-template.pdf (24 pages, 1055863 bytes).
 PDF statistics:
  164 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream

@@ -27,7 +27,7 @@ class Semantica:
                     print("Warning: Função '" + i + "' não utilizada")
             #verificar se as variaveis são utilzadas
             elif valor[0] == nomeVariavel:
-                if valor[2] == False:
+                if valor[4] == 0:
                     nomeEscopo = i.split("-") 
                     print("Warning: Variável '" + valor[1] + "' não é utilizada, pertencente ao escopo'" + nomeEscopo[0] + "' ")    
     
@@ -169,12 +169,10 @@ class Semantica:
 
         tipoDoCorpo = self.corpo(node.child[1])
         tipFun = self.tabelaSimbolos[node.value][3]
-
-            
         if tipoDoCorpo != tipFun:
             if tipoDoCorpo == None:
                 tipoDoCorpo = "vazio";
-            print("Warning: função '" + node.value + "' retorna: '" + tipoDoCorpo + "' mas, deveria retornar '" + tipFun + "'")
+            print("Warning: Função '" + node.value + "' retorna: '" + tipoDoCorpo + "' mas, deveria retornar '" + tipFun + "'")
         
         #adicionar na arvore
         g.edge('declaracao_funcao', node.value)
@@ -200,7 +198,7 @@ class Semantica:
 # parametro : tipo DOIS_PONTOS ID
 #	  | parametro ABRE_COL FECHA_COL
     def parametro(self, node):
-        self.tabelaSimbolos[self.escopo + "-" + node.value] = ["variavel", node.value, False, node.child[0].value, 1]
+        self.tabelaSimbolos[self.escopo + "-" + node.value] = ["variavel", node.value, True, node.child[0].value, 0]
         
         return(node.child[0].value)
 
@@ -287,7 +285,7 @@ class Semantica:
         if tipoVar != tipoRes:
             if tipoRes is None:
                 tipoRes = "void"        
-            print("Warning: Coerção implícita do valor de '" + valorNoFilho + "'. O tipo esperado era: " + tipoVar + ", tipo recebido foi: " + tipoRes)
+            print("Warning: Coerção implícita do valor de '" + valorNoFilho + "'. O tipo esperado era: '" + tipoVar + "', tipo recebido foi: '" + tipoRes + "'")
 
 
     def expressao(self, node):
@@ -313,11 +311,25 @@ class Semantica:
      
   
     def expressao_aditiva(self, node):
-        tamNoFilho = len(node.child)
-        noFilho = node.child[0]
-        if tamNoFilho == 1:
-            return self.expressao_multiplicativa(noFilho)
+        tamNoFilho = len(node.child) 
         
+        if tamNoFilho == 1:
+            return self.expressao_multiplicativa(node.child[0])       
+        else:
+            tipoExpressao1 = self.expressao_aditiva(node.child[0])
+            tipoExpressao2 = self.expressao_multiplicativa(node.child[2])
+            op = self.op_soma(node.child[1])
+        
+            g.edge('expressao', op)
+        
+            if tipoExpressao1 == None:
+                tipoExpressao1 = "tipo não declarado"
+            if tipoExpressao2 == None:
+                tipoExpressao2 = "tipo não delcarado"			
+            
+            if tipoExpressao1 != tipoExpressao2:
+                print("Warning: Operação com tipos diferentes '" + tipoExpressao1 + "' e '" + tipoExpressao2 + "'")
+                
  
     def expressao_multiplicativa(self, node):
         tamNoFilho = len(node.child)
@@ -360,6 +372,9 @@ class Semantica:
         else:
             return self.expressao(noFilho)
 
+    def op_soma(self, node):
+        operador = node.value
+        return(operador)
 
     def verifica_var(self, node):
         nome = self.escopo + "-" + node.value
@@ -370,11 +385,11 @@ class Semantica:
             if nome not in self.tabelaSimbolos:
                 print("Erro: Váriavel '" + node.value + "' não declarada")
             else:
-                if self.tabelaSimbolos[nome][4] == 0:
+                if self.tabelaSimbolos[nome][2] == False:
                     print("Erro: Váriavel '" + apenasNome + "' utilizada mas não inicializada.")  
       
         if nome in self.tabelaSimbolos:
-            self.tabelaSimbolos[nome][2] = True
+            self.tabelaSimbolos[nome][4] = 1
             return self.tabelaSimbolos[nome][3]
  
 
