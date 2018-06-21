@@ -1,0 +1,175 @@
+Erros da semântica:
+
+*sema-001.py
+Erro: FUnção 'principal' não declarada
+Warning: Variável 'a' não é utilizada, pertencente ao escopo'global' 
+Warning: Variável 'b' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', False, 'inteiro', 0], 'global-b': ['variavel', 'b', False, 'flutuante', 0]}
+
+
+*sema-002.py
+Erro: o índice do tipo 'flutuante' é inválido
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Variável 'a' não é utilizada, pertencente ao escopo'global' 
+Warning: Variável 'b' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', False, 'inteiro', 0], 'global-b': ['variavel', 'b', False, 'flutuante', 0], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'global-c': ['variavel', 'c', True, 'inteiro', 1]}
+
+
+*sema-003.py
+Erro: Função 'func' não declarada
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+
+
+*sema-004.py
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Variável 'b' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'global-b': ['variavel', 'b', False, 'inteiro', 0], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'global-a': ['variavel', 'a', True, 'inteiro', 1]}
+
+
+
+*sema-005.py
+Warning: Função 'func' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Erro: Na função 'func' argumentos esperados era '2' quantidade de argumentos recebidos foi '1'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+                                                                                              
+ Tabela de tabelaSimbolos:  {'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'func': ['funcao', 'func', ['inteiro', 'inteiro'], 'inteiro', 1], 'func-y': ['variavel', 'y', True, 'inteiro', 1], 'principal-a': ['variavel', 'a', True, 'inteiro', 1], 'func-x': ['variavel', 'x', True, 'inteiro', 1]}
+
+*sema-006.py
+Warning: Função 'func' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Coerção implícita do valor de 'b'. O tipo esperado era: 'inteiro', tipo recebido foi: 'flutuante'
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'principal-c': ['variavel', 'c', False, 'flutuante', 1], 'principal-b': ['variavel', 'b', True, 'inteiro', 1], 'principal-a': ['variavel', 'a', True, 'flutuante', 1], 'func': ['funcao', 'func', ['inteiro', 'inteiro'], 'inteiro', 1], 'func-x': ['variavel', 'x', True, 'inteiro', 1], 'func-y': ['variavel', 'y', True, 'inteiro', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+
+*sema-007.py
+Warning: Variável 'a' declarada anteriormente
+Warning: Coerção implícita do valor de 'b'. O tipo esperado era: 'flutuante', tipo recebido foi: 'void'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Variável 'a' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'principal-a': ['variavel', 'a', False, 'flutuante', 1], 'global-a': ['variavel', 'a', False, 'flutuante', 0], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'principal-b': ['variavel', 'b', True, 'flutuante', 1]}
+
+
+
+*sema-008.py
+Erro: Váriavel 'a' não declarada
+Warning: Operação com tipos diferentes 'tipo não declarado' e 'flutuante'
+Warning: Coerção implícita do valor de 'b'. O tipo esperado era: 'flutuante', tipo recebido foi: 'void'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'principal-b': ['variavel', 'b', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+*sema-009.py
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Variável 'c' não é utilizada, pertencente ao escopo'principal' 
+Warning: Variável 'a' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'principal-b': ['variavel', 'b', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'principal-c': ['variavel', 'c', False, 'inteiro', 0], 'global-a': ['variavel', 'a', False, 'flutuante', 0]}
+
+
+*sema-010.py
+Erro: Váriavel 'a' utilizada mas não inicializada.
+Warning: Função 'principal' retorna: 'void' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', False, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+
+*sema-011.py
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Coerção implícita do valor de 'b'. O tipo esperado era: 'inteiro', tipo recebido foi: 'flutuante'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'global-b': ['variavel', 'b', True, 'inteiro', 1]}
+
+*sema-012.py
+Erro: Váriavel 'c' não declarada
+Warning: Função 'func' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'global-b': ['variavel', 'b', True, 'inteiro', 1], 'func': ['funcao', 'func', 'void', 'inteiro', 1], 'global-a': ['variavel', 'a', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+
+*sema-013.py
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Erro: A função 'func' realiza uma chamada não permitida para a função 'principal'             
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'inteiro'                   
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'                  
+                                                                                              
+ Tabela de tabelaSimbolos:  {'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'global-a': ['variavel', 'a', True, 'flutuante', 1], 'func': ['funcao', 'func', 'void', 'inteiro', 1], 'global-b': ['variavel', 'b', True, 'inteiro', 1]}                                            
+
+
+
+*sema-014.py
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'inteiro'                   
+Erro: Chamada recursiva para a função 'principal'                                             
+Warning: Função 'func' não utilizada                                                                                                                                                            
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', True, 'flutuante', 1], 'func': ['funcao', 'func', 'void', 'inteiro', 0], 'global-b': ['variavel', 'b', True, 'inteiro', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 1]}
+
+
+*sema-015.py
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'inteiro'
+Erro: Chamada recursiva para a função 'principal'
+Warning: Função 'func' não utilizada
+
+ Tabela de tabelaSimbolos:  {'func': ['funcao', 'func', 'void', 'inteiro', 0], 'global-b': ['variavel', 'b', True, 'inteiro', 1], 'global-a': ['variavel', 'a', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 1]}
+
+
+*sema-016.py
+Warning: Coerção implícita do valor de 'a'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'inteiro'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+Warning: Função 'func' não utilizada
+
+ Tabela de tabelaSimbolos:  {'global-b': ['variavel', 'b', True, 'inteiro', 1], 'func': ['funcao', 'func', 'void', 'inteiro', 0], 'global-a': ['variavel', 'a', True, 'flutuante', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0]}
+
+
+
+*sema-017.py
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'inteiro'
+Warning: Função 'principal' retorna: 'vazio' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', True, 'flutuante', 1], 'func': ['funcao', 'func', 'void', 'inteiro', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'global-b': ['variavel', 'b', True, 'inteiro', 1]}
+
+
+
+*sema-018.py
+Warning: Função 'func' retorna: 'flutuante' mas, deveria retornar 'void'
+Warning: Função 'principal' retorna: 'void' mas, deveria retornar 'inteiro'
+
+ Tabela de tabelaSimbolos:  {'global-a': ['variavel', 'a', True, 'flutuante', 1], 'global-b': ['variavel', 'b', True, 'inteiro', 1], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'func': ['funcao', 'func', 'void', 'void', 1]}
+
+
+*sema-019.py
+Warning: Coerção implícita do valor de 'm'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Operação com tipos diferentes 'flutuante' e 'inteiro'
+Warning: Coerção implícita do valor de 'z'. O tipo esperado era: 'flutuante', tipo recebido foi: 'void'
+Warning: Função 'fatorial' retorna: 'flutuante' mas, deveria retornar 'inteiro'
+Warning: Função 'principal' retorna: 'void' mas, deveria retornar 'inteiro'
+Warning: Coerção implícita do valor de 'b'. O tipo esperado era: 'flutuante', tipo recebido foi: 'inteiro'
+Warning: Variável 'y' não é utilizada, pertencente ao escopo'global' 
+Warning: Variável 'n' não é utilizada, pertencente ao escopo'global' 
+Warning: Função 'fatorial2' não utilizada
+Warning: Variável 'n' não é utilizada, pertencente ao escopo'fatorial' 
+Warning: Variável 'fat2' não é utilizada, pertencente ao escopo'fatorial2' 
+Warning: Variável 'fat' não é utilizada, pertencente ao escopo'fatorial2' 
+Warning: Variável 'fat3' não é utilizada, pertencente ao escopo'fatorial2' 
+Warning: Variável 'x' não é utilizada, pertencente ao escopo'global' 
+
+ Tabela de tabelaSimbolos:  {'global-z': ['variavel', 'z', True, 'flutuante', 1], 'global-y': ['variavel', 'y', False, 'flutuante', 0], 'fatorial': ['funcao', 'fatorial', ['inteiro', 'flutuante'], 'inteiro', 1], 'global-n': ['variavel', 'n', False, 'inteiro', 0], 'principal': ['funcao', 'principal', 'void', 'inteiro', 0], 'fatorial-m': ['variavel', 'm', True, 'flutuante', 1], 'fatorial2': ['funcao', 'fatorial2', ['inteiro', 'flutuante', 'inteiro'], 'inteiro', 0], 'fatorial-n': ['variavel', 'n', True, 'inteiro', 0], 'fatorial2-fat2': ['variavel', 'fat2', True, 'flutuante', 0], 'global-b': ['variavel', 'b', True, 'flutuante', 1], 'fatorial2-fat': ['variavel', 'fat', True, 'inteiro', 0], 'fatorial2-fat3': ['variavel', 'fat3', True, 'inteiro', 0], 'global-a': ['variavel', 'a', True, 'inteiro', 1], 'global-x': ['variavel', 'x', False, 'flutuante', 0]}
+
+
+
