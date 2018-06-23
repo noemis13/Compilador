@@ -43,7 +43,14 @@ class Geracao():
 		if node.child[0].type == "declaracao_variaveis":
 			self.declaracao_variaveis(node.child[0])
 		elif node.child[0].type == "declaracao_funcao":
-			print("fazer declaracao funcao")
+			tamNoFilho = len(node.child[0].child)
+			if  tamNoFilho != 1:
+				valorNoFilho = node.child[0].child[1].value 
+			else:
+				valorNoFilho = node.child[0].child[0].value
+			self.declaracao_funcao(node.child[0], valorNoFilho)
+		elif node.child[0].type == "inicializacao_varuiaveis":
+			print("fazer unicialização")
 		
 
 	def declaracao_variaveis(self, node):
@@ -63,12 +70,45 @@ class Geracao():
 
 
 
+	def declaracao_funcao(self, node, valorNoFilho):
+		tipoFunc = node.child[0].value
+		if tipoFunc == "inteiro":
+			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), ()), name=valorNoFilho)
+		elif tipoFunc == "flutuante":
+			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), ()), name=valorNoFilho)
+		else:
+			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ()), name=valorNoFilho)
+
+		basicBlock = self.funcao.append_basic_block('entry')
+		self.builder = ir.IRBuilder(basicBlock)
+		self.escopo = valorNoFilho
+
+		self.corpo_funcao(node.child[1].child[1].child[0])	
+		
+		self.builder.ret_void()
+		self.escopo = "global"
+
+				
+	def corpo_funcao(self, node):
+		if len(node.child) != 1:
+			self.corpo_funcao(node.child[0])
+			tipoCorpo = self.acao(node.child[1])
+		
+	
+	def acao(self, node):
+		if node.child[0].type == "expressao":
+			print("fazer expressao")
+			#self.expressao(node.child[0])
+		elif node.child[0].type == "declaracao_variaveis":
+			self.declaracao_variaveis(node.child[0])
+        
+      
 
 	def salva_arquivo(self):
 		arquivo = open('geracaoCodigo.ll', 'w')
 		arquivo.write(str(self.modulo))
 		arquivo.close()	
-		print(self.modulo)
+		#print(self.modulo)
 		
 
 if __name__ == '__main__':

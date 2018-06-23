@@ -148,7 +148,6 @@ class Semantica:
     def declaracao_funcao(self, node):
         tamNode = len(node.child)
         valorNode = node.child[0].value
-
         if tamNode == 1:
             self.tabelaSimbolos[valorNode] = ["funcao", valorNode, [], "void", 0]
             self.cabecalho(node.child[0])
@@ -169,7 +168,6 @@ class Semantica:
     def cabecalho(self, node):
         parametros = self.lista_parametros(node.child[0])       
         self.tabelaSimbolos[node.value][2] = parametros
-
         tipoDoCorpo = self.corpo(node.child[1])
         tipFun = self.tabelaSimbolos[node.value][3]
         if tipoDoCorpo != tipFun:
@@ -216,7 +214,9 @@ class Semantica:
                 tipoCorpo = self.acao(node.child[1])
                 return tipoCorpo
 
+
     def acao(self, node):
+                
         valorNode = node.child[0]
 
         if node.child[0].type == "expressao":
