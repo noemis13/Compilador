@@ -1,6 +1,6 @@
 digraph G {
 	tipo -> inteiro
-	var -> func
+	var -> a
 	lista_variaveis -> var
 	declaracao_variaveis -> tipo
 	declaracao_variaveis -> lista_variaveis
@@ -8,7 +8,15 @@ digraph G {
 	lista_declaracoes -> declaracao
 	tipo -> inteiro
 	lista_parametros -> parametro
-	numero -> 0
+	tipo -> inteiro
+	var -> b
+	lista_variaveis -> var
+	declaracao_variaveis -> tipo
+	declaracao_variaveis -> lista_variaveis
+	acao -> declaracao_variaveis
+	corpo -> acao
+	var -> a
+	numero -> 10
 	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
@@ -16,83 +24,23 @@ digraph G {
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
-	retorna -> expressao
-	acao -> retorna
-	corpo -> acao
-	cabecalho -> func
-	func -> lista_parametros
-	lista_parametros -> corpo
-	declaracao_funcao -> tipo
-	declaracao_funcao -> cabecalho
-	declaracao -> declaracao_funcao
-	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
-	tipo -> inteiro
-	lista_parametros -> parametro
-	numero -> 0
-	fator -> numero
-	expressao_unaria -> fator
-	expressao_multiplicativa -> expressao_unaria
-	expressao_aditiva -> expressao_multiplicativa
-	expressao_simples -> expressao_aditiva
-	expressao_logica -> expressao_simples
-	expressao -> expressao_logica
-	retorna -> expressao
-	acao -> retorna
-	corpo -> acao
-	cabecalho -> func2
-	func2 -> lista_parametros
-	lista_parametros -> corpo
-	declaracao_funcao -> tipo
-	declaracao_funcao -> cabecalho
-	declaracao -> declaracao_funcao
-	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
-	tipo -> inteiro
-	lista_parametros -> parametro
-	numero -> 0
-	fator -> numero
-	expressao_unaria -> fator
-	expressao_multiplicativa -> expressao_unaria
-	expressao_aditiva -> expressao_multiplicativa
-	expressao_simples -> expressao_aditiva
-	expressao_logica -> expressao_simples
-	expressao -> expressao_logica
-	retorna -> expressao
-	acao -> retorna
-	corpo -> acao
-	cabecalho -> func2
-	func2 -> lista_parametros
-	lista_parametros -> corpo
-	declaracao_funcao -> tipo
-	declaracao_funcao -> cabecalho
-	declaracao -> declaracao_funcao
-	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
-	tipo -> inteiro
-	lista_parametros -> parametro
-	lista_argumentos -> expressao
-	chamada_funcao -> func
-	func -> lista_argumentos
-	fator -> chamada_funcao
-	expressao_unaria -> fator
-	expressao_multiplicativa -> expressao_unaria
-	expressao_aditiva -> expressao_multiplicativa
-	expressao_simples -> expressao_aditiva
-	expressao_logica -> expressao_simples
-	expressao -> expressao_logica
+	atribuicao -> var
+	var -> expressao
+	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
-	lista_argumentos -> expressao
-	chamada_funcao -> func2
-	func2 -> lista_argumentos
-	fator -> chamada_funcao
+	var -> b
+	var -> a
+	fator -> var
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
+	atribuicao -> var
+	var -> expressao
+	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
 	numero -> 0

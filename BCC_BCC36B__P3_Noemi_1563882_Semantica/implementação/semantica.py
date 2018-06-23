@@ -17,6 +17,7 @@ class Semantica:
         nomeFuncao = "funcao"
         nomeVariavel = "variavel"
         nomeGlobal = "global"
+
         if nomePrincipal not in tabelaSimbolos.keys():
             print("Erro: FUnção 'principal' não declarada")
         
@@ -25,11 +26,14 @@ class Semantica:
             if valor[0] == nomeFuncao:
                 if i != nomePrincipal and valor[4] != 1:
                     print("Warning: Função '" + i + "' não utilizada")
+
             #verificar se as variaveis são utilzadas
             elif valor[0] == nomeVariavel:
                 if valor[4] == 0:
                     nomeEscopo = i.split("-") 
-                    print("Warning: Variável '" + valor[1] + "' não é utilizada, pertencente ao escopo'" + nomeEscopo[0] + "' ")    
+                    print("Warning: Variável '" + valor[1] + "' não é utilizada, pertencente ao escopo'" + nomeEscopo[0] + "' ") 
+            #verificar se existe funcao e variaveis com o mesmo nome
+                         
     
     def programa(self, node):
         nodeFilho = node.child[0]
@@ -90,7 +94,6 @@ class Semantica:
 
     def declaracao_variaveis(self, node):
         tamVar = len(node.child[1].child) 
-        
         if tamVar != 1:
             #armazenar todas as variaveis na lista de variaveis
             nomeVar = self.lista_variaveis(node.child[1])
@@ -101,8 +104,7 @@ class Semantica:
             
         tipoVar = node.child[0].value
         # se for uma lista de declaracoes
-        print(nomeVar)
-        if len(nomeVar) > 1:
+        if tamVar > 1:
             for i in nomeVar:
                 self.verifica_declaracao_variaveis(i, tipoVar)
         else:
@@ -136,9 +138,7 @@ class Semantica:
             if escopoGlobalVar in self.tabelaSimbolos.keys():
                 print( "Warning: Variável '" + nomeVar + "' declarada anteriormente" )
             #verificar se a variavel não foi declarada em uma função
-            for i, valor in tabelaSimbolos.items():
-                print(valor[0])
-               
+                
         self.tabelaSimbolos[self.escopo + "-" + nomeVar] = ["variavel", nomeVar, False, tipo, 0]
 
         g.edge('declaracao_variaveis', nomeVar)
@@ -463,3 +463,4 @@ if __name__ == '__main__':
     s = Semantica(code.read())
     filename = g.render(filename='img/asto')
     print("\n Tabela de tabelaSimbolos: ", s.tabelaSimbolos)
+

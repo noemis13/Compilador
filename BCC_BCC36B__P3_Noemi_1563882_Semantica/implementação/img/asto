@@ -1,95 +1,36 @@
 digraph G {
 	declaracao -> declaracao_variaveis
-	declaracao_variaveis -> n
-	declaracao -> declaracao_variaveis
-	declaracao_variaveis -> z
-	declaracao_variaveis -> y
-	declaracao_variaveis -> x
+	declaracao_variaveis -> func
 	tipo -> inteiro
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> m
-	atribuicao -> fator
-	fator -> 5
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> z
-	atribuicao -> fator
-	fator -> 1.9
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> z
-	atribuicao -> fator
-	fator -> z
-	atribuicao -> fator
-	fator -> 1
-	expressao -> "+"
 	acao -> retorna
 	retorna -> expressao
 	atribuicao -> fator
-	fator -> m
-	declaracao_funcao -> fatorial
-	fatorial -> acao
-	fatorial -> tipo
+	fator -> 0
+	declaracao_funcao -> func
+	func -> acao
+	func -> tipo
 	declaracao -> declaracao_funcao
 	tipo -> inteiro
-	acao -> leia
-	leia -> n
-	acao -> escreva
-	escreva -> expressao
+	acao -> retorna
+	retorna -> expressao
 	atribuicao -> fator
+	fator -> 0
+	declaracao_funcao -> func2
+	func2 -> acao
+	func2 -> tipo
+	declaracao -> declaracao_funcao
+	tipo -> inteiro
+	acao -> retorna
+	retorna -> expressao
 	atribuicao -> fator
-	fator -> 1
-	atribuicao -> fator
-	fator -> 1.0
+	fator -> 0
+	declaracao_funcao -> func2
+	func2 -> acao
+	func2 -> tipo
+	declaracao -> declaracao_funcao
+	tipo -> inteiro
 	declaracao_funcao -> principal
 	principal -> acao
 	principal -> tipo
-	declaracao -> declaracao_funcao
-	declaracao -> declaracao_variaveis
-	declaracao_variaveis -> a
-	declaracao -> declaracao_variaveis
-	declaracao_variaveis -> b
-	tipo -> inteiro
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> a
-	atribuicao -> fator
-	fator -> 1
-	acao -> escreva
-	escreva -> expressao
-	atribuicao -> fator
-	atribuicao -> fator
-	atribuicao -> fator
-	fator -> 1
-	atribuicao -> fator
-	fator -> 1.0
-	atribuicao -> fator
-	fator -> 1.0
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> a
-	atribuicao -> fator
-	atribuicao -> fator
-	fator -> 1
-	atribuicao -> fator
-	fator -> 1.0
-	acao -> expressao
-	expressao -> atribuicao
-	atribuicao -> b
-	atribuicao -> fator
-	atribuicao -> fator
-	fator -> 1
-	atribuicao -> fator
-	fator -> 1.0
-	acao -> expressao
-	atribuicao -> fator
-	atribuicao -> fator
-	fator -> 1
-	atribuicao -> fator
-	fator -> 1.0
-	declaracao_funcao -> fatorial2
-	fatorial2 -> acao
-	fatorial2 -> tipo
 	declaracao -> declaracao_funcao
 }
