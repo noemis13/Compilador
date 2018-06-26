@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*
 
 from llvmlite import ir
+from subprocess import call
 
 '''
 Este módulo contém uma função main, declarações de variáveis, operações e atribuições
@@ -119,3 +120,7 @@ arquivo = open('vars.ll', 'w')
 arquivo.write(str(module))
 arquivo.close()
 print(module)
+#call("llc vars.ll --mtriple \"x86_64-unknown-linux-gnu\"", shell=True)
+#call("gcc -c vars.s", shell=True)
+#call("gcc -o saidavars vars.o print_scanf.o", shell=True)
+#call("./saidavars", shell=True)
