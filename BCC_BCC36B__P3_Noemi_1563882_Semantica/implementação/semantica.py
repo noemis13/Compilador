@@ -294,6 +294,7 @@ class Semantica:
     def expressao(self, node):
         if node.child[0].type == "atribuicao":
             g.edge('expressao', 'atribuicao')
+            print(self.tabelaSimbolos)
             return self.atribuicao(node.child[0])
         elif node.child[0].type == "expressao_logica":
            return self.expressao_logica(node.child[0])

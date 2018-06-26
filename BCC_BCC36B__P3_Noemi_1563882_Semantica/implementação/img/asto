@@ -1,34 +1,23 @@
 digraph G {
 	declaracao -> declaracao_variaveis
-	declaracao_variaveis -> func
+	declaracao_variaveis -> a
 	tipo -> inteiro
+	acao -> declaracao_variaveis
+	declaracao_variaveis -> b
+	acao -> expressao
+	expressao -> atribuicao
+	atribuicao -> a
+	atribuicao -> fator
+	fator -> 10
+	acao -> expressao
+	expressao -> atribuicao
+	atribuicao -> b
+	atribuicao -> fator
+	fator -> a
 	acao -> retorna
 	retorna -> expressao
 	atribuicao -> fator
 	fator -> 0
-	declaracao_funcao -> func
-	func -> acao
-	func -> tipo
-	declaracao -> declaracao_funcao
-	tipo -> inteiro
-	acao -> retorna
-	retorna -> expressao
-	atribuicao -> fator
-	fator -> 0
-	declaracao_funcao -> func2
-	func2 -> acao
-	func2 -> tipo
-	declaracao -> declaracao_funcao
-	tipo -> inteiro
-	acao -> retorna
-	retorna -> expressao
-	atribuicao -> fator
-	fator -> 0
-	declaracao_funcao -> func2
-	func2 -> acao
-	func2 -> tipo
-	declaracao -> declaracao_funcao
-	tipo -> inteiro
 	declaracao_funcao -> principal
 	principal -> acao
 	principal -> tipo

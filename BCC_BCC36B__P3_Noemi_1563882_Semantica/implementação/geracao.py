@@ -14,8 +14,8 @@ class Geracao():
 
 	def cria_modulo(self):
 		self.modulo = ir.Module("ModuloLLVMLITE")
-		self.printf = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), "printf_f")
-		self.scanf = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), "scanf_f")
+		#self.printf = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), "printf_f")
+		#self.scanf = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), "scanf_f")
 		
 
 	def define_variaveis_auxiliares(self):
@@ -57,17 +57,17 @@ class Geracao():
 		var = node.child[1].child[0].value
 		if self.escopo == "global":
 			if self.tabelaSimbolos["global" + "-" + var][3]=="inteiro":
-				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.IntType(32), "global-" + var)
+				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.IntType(32), name="global-" + var)
 			else:
-				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.FloatType(), "global-" + var)					
+				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.FloatType(), name="global-" + var)					
 		else:
 			if self.tabelaSimbolos[self.escopo + "-" + var][3] == "inteiro":
-				self.tabelaSimbolos[self.escopo + "-" + var][1] = self.builder.alloca(ir.IntType(32), self.escopo + "-" + var)
+				self.tabelaSimbolos[self.escopo + "-" + var][1] = self.builder.alloca(ir.IntType(32), name = self.escopo + "-" + var)
 
 			else:
-				self.tabelaSimbolos[self.escopo + "-" + var][3] = self.builder.alloca(ir.FloatType(), self.escopo + "-" + var)
-		print(self.tabelaSimbolos)
-
+				self.tabelaSimbolos[self.escopo + "-" + var][3] = self.builder.alloca(ir.FloatType(), name= self.escopo + "-" + var)
+		
+		
 
 
 	def declaracao_funcao(self, node, valorNoFilho):
@@ -85,7 +85,7 @@ class Geracao():
 
 		self.corpo_funcao(node.child[1].child[1].child[0])	
 		
-		self.builder.ret_void()
+		#self.builder.ret_void()
 		self.escopo = "global"
 
 				
@@ -97,21 +97,70 @@ class Geracao():
 	
 	def acao(self, node):
 		if node.child[0].type == "expressao":
-			print("fazer expressao")
-			#self.expressao(node.child[0])
+			self.expressao(node.child[0])
 		elif node.child[0].type == "declaracao_variaveis":
 			self.declaracao_variaveis(node.child[0])
         
-      
+	def expressao(self, node):
+		nomeVar = node.child[0].child[0].value 
+		var = self.escopo+"-"+nomeVar
+		self.expressao_logica(node.child[0].child[1], nomeVar)		
+
+	def expressao_logica(self, node, var):
+		if node.child[0].child[0].type == "expressao_simples":
+			self.expressao_simples(node.child[0].child[0], var)
+
+	def expressao_simples(self, node, var):
+		if node.child[0].type == "expressao_aditiva":
+			self.expressao_aditiva(node.child[0], var)
+	
+
+	def expressao_aditiva(self, node, var):
+		if node.child[0].type == "expressao_multiplicativa":
+			self.expressao_multiplicativa(node.child[0], var)
+
+	def expressao_multiplicativa(self, node, var):
+		if node.child[0].type == "expressao_unaria": #vai para fator
+			self.fator(node.child[0].child[0], var)
+			
+
+	def fator(self, node, var):
+		if node.child[0].type == "numero":
+			valor = node.child[0].value			
+			tipo, varCompleto = self.verifica_tipo(var)
+			if tipo == "inteiro":
+																			self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
+				
+			elif tipo == "flutuante":
+				self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
+
+		elif node.child[0].type == "var":
+			valorRecebido = node.child[0].value
+			tipo, varCompleto = self.verifica_tipo(valorRecebido)
+			
+			if varCompleto in self.tabelaSimbolos:
+				if self.tabelaSimbolos[varCompleto][2]==True:
+											
+					#v = self.builder.load(self.tabelaSimbolos[varCompleto][1], "")
+					print("arrumar")
+					
+	
+	def verifica_tipo(self, var):
+		varCompleto = self.escopo+"-"+var
+		if var not in self.tabelaSimbolos:
+			varCompleto = "global"+"-"+var
+		tipo = self.tabelaSimbolos[varCompleto][3]
+		return tipo, varCompleto
+		
 
 	def salva_arquivo(self):
 		arquivo = open('geracaoCodigo.ll', 'w')
 		arquivo.write(str(self.modulo))
-		arquivo.close()	
-		#print(self.modulo)
+		arquivo.close()
+		print(self.modulo)
 		
 
 if __name__ == '__main__':
 	import sys
 	code = io.open(sys.argv[1], mode="r", encoding="utf-8")
-	gen = Geracao(code)
+	gen = Geracao(code) 

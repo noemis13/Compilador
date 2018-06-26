@@ -2,14 +2,11 @@
 target triple = "unknown-unknown-unknown"
 target datalayout = ""
 
-declare float @"printf_f"(float %".1") 
-
-declare float @"scanf_f"(float %".1") 
-
 @"global-a" = external global i32
 define i32 @"principal"() 
 {
 entry:
-  %".2" = alloca i32, i32 principal-b
-  ret void
+  %"principal-b" = alloca i32
+  store i32 10, i32* @"global-a"
+  %".3" = load i32, i32* @"global-a"
 }
