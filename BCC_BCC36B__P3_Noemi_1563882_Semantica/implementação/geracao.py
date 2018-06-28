@@ -16,8 +16,16 @@ class Geracao():
 		self.geracao_codigo(self.tree)
 		self.salva_arquivo()
 
+
 	def cria_modulo(self):
-		self.modulo = ir.Module("ModuloLLVMLITE")
+		self.modulo = ir.Module("ModuloLLVMLITE.bc")
+
+		self.escrevaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), 'escrevaFlutuante')
+		self.escrevaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), [ir.IntType(32)]), 'escrevaInteiro')
+
+		self.leiaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), []), 'leiaFlutuante')
+		self.leiaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), []), 'leiaInteiro')
+		
 		
 
 	def define_variaveis_auxiliares(self):
@@ -46,13 +54,15 @@ class Geracao():
 		if node.child[0].type == "declaracao_variaveis":
 			self.declaracao_variaveis(node.child[0])
 		elif node.child[0].type == "declaracao_funcao":
+			
 			tamNoFilho = len(node.child[0].child)
 			if  tamNoFilho != 1:
 				valorNoFilho = node.child[0].child[1].value 
 			else:
 				valorNoFilho = node.child[0].child[0].value
 			self.declaracao_funcao(node.child[0], valorNoFilho)
-		elif node.child[0].type == "inicializacao_varuiaveis":
+		
+		elif node.child[0].type == "inicializacao_variaveis":
 			print("fazer unicialização")
 		
 
@@ -61,6 +71,8 @@ class Geracao():
 		if self.escopo == "global":
 			if self.tabelaSimbolos["global" + "-" + var][3]=="inteiro":
 				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.IntType(32), name="global-" + var)
+				
+				
 			else:
 				self.tabelaSimbolos["global" + "-" + var][1] = ir.GlobalVariable(self.modulo, ir.FloatType(), name="global-" + var)					
 		else:
@@ -87,12 +99,24 @@ class Geracao():
 			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ()), name=nomeFunc)
 
 		basicBlock = self.funcao.append_basic_block('entry')
+
 		self.builder = ir.IRBuilder(basicBlock)
 		self.escopo = valorNoFilho
+		
+		if len(node.child) == 0:
+			self.cabecalho(node.child[0])
 
-		self.corpo_funcao(node.child[1].child[1].child[0])	
+		else:
+			self.cabecalho(node.child[1])
+			
+		#self.corpo_funcao(node.child[1].child[1].child[0])
+
 		#self.builder.ret_void()
 		self.escopo = "global"
+
+	def cabecalho(self, node):
+		self.corpo_funcao(node.child[1])		
+
 
 				
 	def corpo_funcao(self, node):
@@ -107,77 +131,120 @@ class Geracao():
 		elif node.child[0].type == "declaracao_variaveis":
 			self.declaracao_variaveis(node.child[0])
 		elif node.child[0].type == "retorna":
-        		print("rrrrreeeeeeeeeetorna \n")
-        
+			self.retorna(node.child[0])        		
+
 	def expressao(self, node):
-		nomeVar = node.child[0].child[0].value 
-		var = self.escopo+"-"+nomeVar
-		self.expressao_logica(node.child[0].child[1], nomeVar)		
+		if node.child[0].type == "atribuicao":
+			nomeVar = node.child[0].child[0].value
+			var = self.escopo+"-"+nomeVar
+			
+			self.expressao_logica(node.child[0].child[1].child[0], nomeVar)
+		else:
+			return self.expressao_logica(node.child[0], "")
+			
 
 	def expressao_logica(self, node, var):
-		if node.child[0].child[0].type == "expressao_simples":
-			self.expressao_simples(node.child[0].child[0], var)
+		if node.child[0].type == "expressao_simples":
+			return self.expressao_simples(node.child[0], var)
 
 	def expressao_simples(self, node, var):
 		if node.child[0].type == "expressao_aditiva":
-			self.expressao_aditiva(node.child[0], var)
+			return self.expressao_aditiva(node.child[0], var)
 	
 
 	def expressao_aditiva(self, node, var):
 		if node.child[0].type == "expressao_multiplicativa":
-			self.expressao_multiplicativa(node.child[0], var)
+			return self.expressao_multiplicativa(node.child[0], var)
 
 	def expressao_multiplicativa(self, node, var):
 		if node.child[0].type == "expressao_unaria": #vai para fator
-			self.fator(node.child[0].child[0], var)
+			return self.fator(node.child[0].child[0], var)
 			
 
 	def fator(self, node, var):
 		if node.child[0].type == "numero":
-			valor = node.child[0].value			
-			tipo, varCompleto = self.verifica_tipo(var)
-			if tipo == "inteiro":
-				self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
-				self.valores[varCompleto] = [valor]
-
+			valor = node.child[0].value
+			tipo= self.verifica_tipo(valor)
+			varCompleto = self.verifica_escopo(var)
+			if len(var) != 0:			
+				if tipo == "inteiro":
+					self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
+					self.valores[varCompleto] = [valor]
 				
-			elif tipo == "flutuante":
-				self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
-				self.valores[varCompleto] = [valor]
+				elif tipo == "flutuante":
+					self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
+					self.valores[varCompleto] = [valor]
+			else:
+				return valor, tipo #quando for retorna no codio
+
 
 		elif node.child[0].type == "var":
-			tipoVar, escopoVar = self.verifica_tipo(var)
 			valorRecebido = node.child[0].value
-			tipo, varCompleto = self.verifica_tipo(valorRecebido)
+			escopoVar = self.verifica_escopo(var)
+			
+			varCompleto = self.verifica_escopo(valorRecebido)
+			tipo = self.tabelaSimbolos[varCompleto][3]
 			if varCompleto in self.tabelaSimbolos:
 				if self.tabelaSimbolos[varCompleto][2]==True:
-					#v = self.builder.load(self.tabelaSimbolos[varCompleto][1], "")
+
 					if varCompleto in self.valores:
 						valor = self.valores[varCompleto][0]
 						if tipo == "inteiro":
-							self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[escopoVar][1])
-						elif tipo == "flutuante":
-							self.builder.store(ir.Constant(ir.FloatType, valor), self.tabelaSimbolos[escopoVar][1])
-		
-	
-	
-	def verifica_tipo(self, var):
+							#self.int_to_float(self.builder.load(self.tabelaSimbolos[varCompleto][1], escopoVar))
+							
+							#self.builder.store(ir.Constant(ir.IntType(32), int(valor)), self.tabelaSimbolos[escopoVar][1])
+							l = self.builder.load(self.tabelaSimbolos[varCompleto][1], escopoVar)
+							
+							self.builder.store(l, self.tabelaSimbolos[escopoVar][1])
+		 	
+						else:
+							self.builder.load(self.tabelaSimbolos[varCompleto][1])		
+
+
+	def verifica_escopo(self, var):
 		varCompleto = self.escopo+"-"+var
 		if varCompleto not in self.tabelaSimbolos:
 			varCompleto = "global"+"-"+var
-		tipo = self.tabelaSimbolos[varCompleto][3]
-		return tipo, varCompleto
+		return varCompleto
 		
+	def verifica_tipo(self, valor):
+		if "." in repr(valor):
+			tipo = "flutuante"
+		else:
+			tipo ="inteiro"
+		return tipo
+
+
+	def float_to_int(self, num):
+		return self.builder.fptosi(num, ir.IntType(32))
+
+	def int_to_float(self, num):
+		return self.builder.sitofp(num, ir.FloatType())
+
+
+
+	def retorna(self, node):
+		expRetorna, tipo = self.expressao(node.child[0])
+		if tipo == "inteiro":
+			expRetorna = ir.Constant(ir.IntType(32), expRetorna)
+		elif tipo == "flutuante":
+			expRetorna = ir.Constant(ir.FloatType(), expRetorna)
+
+		self.builder.ret(expRetorna)
+
+
+
+
 
 	def salva_arquivo(self):
-		arquivo = open('geracaoCodigo.ll', 'w')
+		arquivo = open('gera.ll', 'w')
 		arquivo.write(str(self.modulo))
 		arquivo.close()
 		print(self.modulo)
-		#call("llc geracaoCodigo.ll --mtriple \"x86_64-unknown-linux-gnu\"", shell=True)
-		#call("gcc -c geracaoCodigo.s", shell=True)
-		#call("gcc -o saidaGeracao geracaoCodigo.o print_scanf.o", shell=True)
-		#call("./saidaGeracao", shell=True)
+		call("./llc gera.ll --mtriple \"x86_64-unknown-linux-gnu\"", shell=True)
+		call("gcc -c gera.s", shell=True)
+		call("gcc -o saidaGeracao gera.o print_scanf.o", shell=True)
+		call("./saidaGeracao", shell=True)
 
 		
 

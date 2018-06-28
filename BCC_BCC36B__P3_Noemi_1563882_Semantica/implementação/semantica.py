@@ -57,7 +57,6 @@ class Semantica:
 
         
     def declaracao(self, node):
-        
         if node.child[0].type == "inicializacao_variaveis":
             #adicionar na arvore
             g.edge('declaracao', 'inicializacao_variaveis')
@@ -165,7 +164,7 @@ class Semantica:
           
          
 #cabecalho : ID ABRE_PAR lista_parametros FECHA_PAR corpo FIM     
-    def cabecalho(self, node):
+    def cabecalho(self, node):    
         parametros = self.lista_parametros(node.child[0])       
         self.tabelaSimbolos[node.value][2] = parametros
         tipoDoCorpo = self.corpo(node.child[1])
@@ -216,7 +215,6 @@ class Semantica:
 
 
     def acao(self, node):
-                
         valorNode = node.child[0]
 
         if node.child[0].type == "expressao":
