@@ -1,5 +1,5 @@
 	.text
-	.file	"gera.ll"
+	.file	"programa.ll"
 	.globl	main                    # -- Begin function main
 	.p2align	4, 0x90
 	.type	main,@function
@@ -17,8 +17,11 @@ main:                                   # @main
 	movl	%eax, 16(%rsp)
 	cvtsi2ssl	12(%rsp), %xmm0
 	callq	escrevaFlutuante
-	movl	12(%rsp), %eax
-	addl	%eax, %eax
+	xorps	%xmm0, %xmm0
+	cvtsi2ssl	12(%rsp), %xmm0
+	cvtsi2ssl	16(%rsp), %xmm1
+	addss	%xmm0, %xmm1
+	cvttss2si	%xmm1, %eax
 	addq	$24, %rsp
 	retq
 .Lfunc_end0:

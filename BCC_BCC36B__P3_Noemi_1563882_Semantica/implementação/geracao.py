@@ -20,21 +20,22 @@ class Geracao():
 	def cria_modulo(self):
 		self.modulo = ir.Module("ModuloLLVMLITE.bc")
 
-		self.escrevaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), 'escrevaFlutuante')
-		self.escrevaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), [ir.IntType(32)]), 'escrevaInteiro')
-
-		self.leiaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), []), 'leiaFlutuante')
-		self.leiaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), []), 'leiaInteiro')
-		
 		
 
 	def define_variaveis_auxiliares(self):
 		self.valores = {}
 		self.valoresExpressoes = {}
+		self.valoresLeia = {}
 		self.builder = None
 		self.escopo = "global"
 		self.funcao = None
 		self.var = None
+		self.escrevaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), 'escrevaFlutuante')
+		self.escrevaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), [ir.IntType(32)]), 'escrevaInteiro')
+		
+		self.leiaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), []), 'leiaFlutuante')
+		self.leiaInteiro = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), []), 'leiaInteiro')
+		
 
 	
 	def geracao_codigo(self, node):
@@ -141,6 +142,10 @@ class Geracao():
 			self.retorna(node.child[0]) 
 		elif node.child[0].type == "se":
 			self.verifica_condicional(node.child[0])
+		elif node.child[0].type == "leia":
+			self.leia(node.child[0])
+		elif node.child[0].type == "escreva":
+			self.escreva(node.child[0])
 
 
 	def expressao(self, node):
@@ -236,54 +241,50 @@ class Geracao():
 		return tipo
 
 
-	def float_to_int(self, num):
-		return self.builder.fptosi(num, ir.IntType(32))
-
-	def int_to_float(self, num):
-		return self.builder.sitofp(num, ir.FloatType())
-
-
-
-
 
 	def retorna(self, node):
-		expRetorna, tipo = self.expressao(node.child[0])
-		escopoExp = self.verifica_escopo(expRetorna)
-			
-
+		expRetorna, tipo = self.expressao(node.child[0])	
 		if type(expRetorna) is str:
 			#verificar se o retorno foi inicializado
+			escopoExp = self.verifica_escopo(expRetorna)
+			
 			if self.tabelaSimbolos[escopoExp][2] == False:
-				#retorna 0 
-				expRetorna1 = self.retorno_numero(0, tipo)
+				if escopoExp in self.valoresLeia:
+					print(self.tabelaSimbolos[escopoExp][1])
+					expRetorna1 = self.builder.load(self.tabelaSimbolos[escopoExp][1])
+				else:
+					#retorna 0 
+					expRetorna1 = self.retorno_numero(0, tipo)
+				
 			else:
 				expRetorna1 = self.retorno_var(expRetorna, tipo)
+			#print(expRetorna1)
 		
 		else:
 			expRetorna1 = self.retorno_numero(expRetorna, tipo)
-			print(expRetorna1)
-		
-
+			
 		#verificar se retorna expressao soma	
 		if expRetorna in self.valoresExpressoes: 
-				
+			escopoExp = self.verifica_escopo(expRetorna)
 			valor = self.valoresExpressoes[expRetorna][0]
 			if type(valor) is str:
-				if self.tabelaSimbolos[escopoExp][2] == False:				#retorna 0 
-					expRetorna2 = self.retorno_numero(0, tipo)
+				if self.tabelaSimbolos[escopoExp][2] == False:				#retorna 0
+					if escopoExp in self.valoresLeia:
+						expRetorna2 = self.builder.load(self.tabelaSimbolos[escopoExp][1])
+					else: 
+						expRetorna2 = self.retorno_numero(0, tipo)
 				else:			
 					expRetorna2 = self.retorno_var(expRetorna, tipo)
 			else:
 				expRetorna2 = self.retorno_numero	(expRetorna, tipo)
 			#operacao
 			if self.valoresExpressoes[expRetorna][2] == "+":
-				soma = self.builder.add(expRetorna2, expRetorna1, name="retornoSoma", flags=())
+				if tipo == "inteiro" and self.valoresExpressoes[expRetorna][1] == "inteiro":
+					soma = self.builder.add(expRetorna2, expRetorna1, name="retornoSoma", flags=())
 				self.builder.ret(soma)
 						
 		else:
 			self.builder.ret(expRetorna1)
-
-		
 
 
 	def retorno_var(self, expRetorna, tipo):
@@ -309,8 +310,6 @@ class Geracao():
 		return expRetorna1
 
 
-
-
 	def verifica_condicional(self, node):
 		
 		expressao, tipo = self.expressao(node.child[0])
@@ -333,6 +332,44 @@ class Geracao():
 		#	else:
 		#		self.builder.cbranch(if_1, blocoSe, blocoFim)
 		
+
+	def float_to_int(self, num):
+		return self.builder.fptosi(num, ir.IntType(32))
+
+	def int_to_float(self, num):
+		return self.builder.sitofp(num, ir.FloatType())
+
+
+	def leia(self, node):
+		valor = self.builder.call(self.leiaFlutuante, [], "leiaFlutuante")
+		escopoNode = self.verifica_escopo(node.value)
+		self.valoresLeia[escopoNode]=[True]
+		
+		if escopoNode in self.tabelaSimbolos:
+			tipoNode = self.tabelaSimbolos[escopoNode][3]
+
+			if tipoNode == "inteiro":
+				self.builder.store(self.float_to_int(valor), self.tabelaSimbolos[escopoNode][1])
+				return self.builder.load(self.tabelaSimbolos[escopoNode][1])
+			elif tipoNode == "flutuante":
+				self.builder.store(valor, self.tabelaSimbolos[escopoNode][1])
+				return self.builder.load(self.tabelaSimbolos[escopoNode][1])
+
+
+	def escreva(self, node):
+		valor, tipo = self.expressao(node.child[0])
+		escopoValor = self.verifica_escopo(valor)
+		if tipo == "inteiro":
+			valorExp = self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoValor][1]))
+			return self.builder.call(self.escrevaFlutuante, [valorExp])
+		
+		elif tipo == "flutuante":
+			valorExp = self.builder.load(self.tabelaSimbolos[escopoValor])
+			valorExp = self.float_to_int(valorExp)
+			return self.builder.call(self.escrevaFlutuante, [valorExp])		
+
+#		if tipo == "inteiro":
+			#valor = self.float		
 
 
 	def salva_arquivo(self):

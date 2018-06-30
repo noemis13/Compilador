@@ -3,10 +3,11 @@ inteiro principal()
 	inteiro: b
 	inteiro: c
 
-{	leia(a)
+	leia(a)
 	leia(b)
+	escreva(a)
 
-	c := soma(a, b)
+{	c := soma(a, b)
 
 	escreva(c)}
 	

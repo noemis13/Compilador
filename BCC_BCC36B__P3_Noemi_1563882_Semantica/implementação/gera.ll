@@ -16,6 +16,19 @@ entry:
   %"principal-a" = alloca i32
   %"principal-b" = alloca i32
   %"principal-c" = alloca i32
-  %"retornoSoma" = add i32 0, 0
+  %"leiaFlutuante" = call float @"leiaFlutuante"()
+  %".2" = fptosi float %"leiaFlutuante" to i32
+  store i32 %".2", i32* %"principal-a"
+  %".4" = load i32, i32* %"principal-a"
+  %"leiaFlutuante.1" = call float @"leiaFlutuante"()
+  %".5" = fptosi float %"leiaFlutuante.1" to i32
+  store i32 %".5", i32* %"principal-b"
+  %".7" = load i32, i32* %"principal-b"
+  %".8" = load i32, i32* %"principal-a"
+  %".9" = sitofp i32 %".8" to float
+  %".10" = call float @"escrevaFlutuante"(float %".9")
+  %".11" = load i32, i32* %"principal-a"
+  %".12" = load i32, i32* %"principal-a"
+  %"retornoSoma" = add i32 %".12", %".11"
   ret i32 %"retornoSoma"
 }
