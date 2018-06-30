@@ -3,7 +3,7 @@ digraph G {
 	declaracao_variaveis -> a
 	tipo -> inteiro
 	acao -> declaracao_variaveis
-	declaracao_variaveis -> b
+	declaracao_variaveis -> ret
 	acao -> expressao
 	expressao -> atribuicao
 	atribuicao -> a
@@ -11,13 +11,13 @@ digraph G {
 	fator -> 10
 	acao -> expressao
 	expressao -> atribuicao
-	atribuicao -> b
+	atribuicao -> ret
 	atribuicao -> fator
-	fator -> a
+	fator -> 1
 	acao -> retorna
 	retorna -> expressao
 	atribuicao -> fator
-	fator -> 0
+	fator -> ret
 	declaracao_funcao -> principal
 	principal -> acao
 	principal -> tipo

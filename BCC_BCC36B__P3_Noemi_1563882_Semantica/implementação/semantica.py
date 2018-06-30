@@ -241,8 +241,7 @@ class Semantica:
         valorNode = node.value 
         
         g.edge('leia', valorNode)
-
-        if valorNode not in self.tabelaSimbolos.keys():
+        if self.escopo+"-"+valorNode not in self.tabelaSimbolos.keys():
             if "global-" + valorNode not in self.tabelaSimbolos.keys():
                 print("Erro: Não foi declarada a '" + valorNode + "'")
         return "void"
@@ -292,7 +291,6 @@ class Semantica:
     def expressao(self, node):
         if node.child[0].type == "atribuicao":
             g.edge('expressao', 'atribuicao')
-            print(self.tabelaSimbolos)
             return self.atribuicao(node.child[0])
         elif node.child[0].type == "expressao_logica":
            return self.expressao_logica(node.child[0])

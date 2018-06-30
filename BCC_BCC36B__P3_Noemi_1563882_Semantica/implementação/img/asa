@@ -1,13 +1,13 @@
 digraph G {
 	tipo -> inteiro
+	lista_parametros -> parametro
+	tipo -> inteiro
 	var -> a
 	lista_variaveis -> var
 	declaracao_variaveis -> tipo
 	declaracao_variaveis -> lista_variaveis
-	declaracao -> declaracao_variaveis
-	lista_declaracoes -> declaracao
-	tipo -> inteiro
-	lista_parametros -> parametro
+	acao -> declaracao_variaveis
+	corpo -> acao
 	tipo -> inteiro
 	var -> b
 	lista_variaveis -> var
@@ -15,8 +15,15 @@ digraph G {
 	declaracao_variaveis -> lista_variaveis
 	acao -> declaracao_variaveis
 	corpo -> acao
+	tipo -> inteiro
+	var -> c
+	lista_variaveis -> var
+	declaracao_variaveis -> tipo
+	declaracao_variaveis -> lista_variaveis
+	acao -> declaracao_variaveis
+	corpo -> acao
 	var -> a
-	numero -> 10
+	numero -> 1
 	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
@@ -30,8 +37,8 @@ digraph G {
 	acao -> expressao
 	corpo -> acao
 	var -> b
-	var -> a
-	fator -> var
+	numero -> 2
+	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
@@ -43,11 +50,18 @@ digraph G {
 	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
-	numero -> 0
-	fator -> numero
+	var -> a
+	fator -> var
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
+	operador_soma -> "+"
+	var -> b
+	fator -> var
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> operador_soma
+	operador_soma -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
@@ -61,7 +75,6 @@ digraph G {
 	declaracao_funcao -> cabecalho
 	declaracao -> declaracao_funcao
 	lista_declaracoes -> declaracao
-	declaracao -> lista_declaracoes
 	programa
 	programa -> lista_declaracoes
 }

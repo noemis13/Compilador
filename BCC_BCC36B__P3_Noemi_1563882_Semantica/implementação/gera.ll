@@ -13,10 +13,9 @@ declare i32 @"leiaInteiro"()
 define i32 @"main"() 
 {
 entry:
-  %"principal-b" = alloca i32
   %"principal-a" = alloca i32
-  store i32 10, i32* %"principal-a"
-  %"principal-b.1" = load i32, i32* %"principal-a"
-  store i32 %"principal-b.1", i32* %"principal-b"
-  ret i32 0
+  %"principal-b" = alloca i32
+  %"principal-c" = alloca i32
+  %"retornoSoma" = add i32 0, 0
+  ret i32 %"retornoSoma"
 }
