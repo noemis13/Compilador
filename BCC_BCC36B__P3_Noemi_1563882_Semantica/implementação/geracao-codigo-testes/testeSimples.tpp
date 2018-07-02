@@ -1,3 +1,9 @@
+inteiro soma(inteiro: a, inteiro:b)
+	{retorna(a + b)}
+	retorna(0)
+fim
+
+
 inteiro principal()
 	inteiro: a
 	inteiro: b
@@ -5,11 +11,11 @@ inteiro principal()
 
 	leia(a)
 	leia(b)
-	escreva(a)
 
-{	c := soma(a, b)
+	{c := soma(a, b)}
 
-	escreva(c)}
-	
-  retorna(a+b)
+	{escreva(c)}
+
+  retorna(0)
 fim
+

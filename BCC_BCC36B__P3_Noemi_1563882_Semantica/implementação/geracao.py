@@ -99,10 +99,21 @@ class Geracao():
 		if valorNoFilho == "principal":
 			nomeFunc = "main"
 
+		if len(node.child) == 0:
+			parametros = self.lista_parametros(node.child[0].child[0])
+			valorParam = self.valor_lista_parametros(node.child[0].child[0])
+		else:
+			valorParam = self.valor_lista_parametros(node.child[1].child[0])
+			parametros = self.lista_parametros(node.child[1].child[0])
+			
+		print(valorParam)
+		
 		if tipoFunc == "inteiro":
 			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), ()), name=nomeFunc)
+
 		elif tipoFunc == "flutuante":
 			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), ()), name=nomeFunc)
+
 		else:
 			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ()), name=nomeFunc)
 
@@ -116,15 +127,45 @@ class Geracao():
 
 		else:
 			self.cabecalho(node.child[1])
-			
-		#self.corpo_funcao(node.child[1].child[1].child[0])
-
-		#self.builder.ret_void()
+		
 		self.escopo = "global"
 
-	def cabecalho(self, node):
-		self.corpo_funcao(node.child[1])		
 
+
+
+	def cabecalho(self, node):
+		self.corpo_funcao(node.child[1])
+		#return self.lista_parametros(node.child[0])
+		
+
+	def lista_parametros(self, node):
+		parametros = []
+		if len(node.child) == 1:
+			if node.child[0] == None:
+				parametros = "void"
+			else:
+				parametros.append(node.child[0].child[0].value)
+				
+		else:
+			parametros = self.lista_parametros(node.child[0])
+			parametros.append(node.child[1].child[0].value)
+				
+		return parametros
+
+
+	def valor_lista_parametros(self, node):
+		valorParam = []
+		if len(node.child) == 1:
+			if node.child[0] == None:
+				valorParam = "void"
+			else:
+				valorParam.append(node.child[0].value)
+			
+		else:
+			valorParam = self.valor_lista_parametros(node.child[0])
+			valorParam.append(node.child[1].value)
+				
+		return valorParam
 
 				
 	def corpo_funcao(self, node):
@@ -138,15 +179,15 @@ class Geracao():
 			self.expressao(node.child[0])
 		elif node.child[0].type == "declaracao_variaveis":
 			self.declaracao_variaveis(node.child[0])
-		elif node.child[0].type == "retorna":
-			self.retorna(node.child[0]) 
 		elif node.child[0].type == "se":
 			self.verifica_condicional(node.child[0])
 		elif node.child[0].type == "leia":
 			self.leia(node.child[0])
 		elif node.child[0].type == "escreva":
 			self.escreva(node.child[0])
-
+		elif node.child[0].type == "retorna":
+			self.retorna(node.child[0]) 
+		
 
 	def expressao(self, node):
 		
@@ -185,9 +226,12 @@ class Geracao():
 			self.valoresExpressoes[valorExp1] = [valorExp2, tipoExp, operadorAditivo]
 			return valorExp1, tipo		
 
+
 	def expressao_multiplicativa(self, node, var):
 		if node.child[0].type == "expressao_unaria": #vai para fator
 			return self.fator(node.child[0].child[0], var)
+
+
 		
 	def fator(self, node, var):
 		if node.child[0].type == "numero":
@@ -227,12 +271,52 @@ class Geracao():
 								self.builder.store(l, self.tabelaSimbolos[escopoVar][1])
 			return valorRecebido, tipo
 
+		elif node.child[0].type == "chamada_funcao":
+			nomeFunc = node.child[0].value
+			argsFun = self.lista_argumentos(node.child[0].child[0])
+			func = self.modulo.get_global(nomeFunc)
+			valores = []
+			tipo = []
+			for i in range(len(argsFun)):
+				if argsFun[i][0] != "i":
+					escopoArgs = self.verifica_escopo(argsFun[i][0])
+					if argsFun[i][1] == "inteiro":
+						valores.append(self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoArgs][1])))
+					
+	
+			#chamdaFun = self.builder.call(func, valores)
+
+
+			for i in range(len(argsFun)):
+				if argsFun[i][1] == "inteiro":
+					valores[i] = self.builder.fptosi(valores[i], ir.IntType(32))
+			
+			chmadaFun = self.builder.call(func, valores)
+			
+							
+
+			
+			
+	
+	def lista_argumentos(self, node):
+		args = []
+		if len(node.child) == 1:
+			args = self.expressao(node.child[0])
+			return args
+		else:
+			args = []
+			args.append(self.lista_argumentos(node.child[0]))
+			args.append(self.expressao(node.child[1]))
+			return args
+
+
 	def verifica_escopo(self, var):
 		varCompleto = self.escopo+"-"+var
 		if varCompleto not in self.tabelaSimbolos:
 			varCompleto = "global"+"-"+var
 		return varCompleto
-		
+	
+	
 	def verifica_tipo(self, valor):
 		if "." in repr(valor):
 			tipo = "flutuante"
@@ -247,18 +331,17 @@ class Geracao():
 		if type(expRetorna) is str:
 			#verificar se o retorno foi inicializado
 			escopoExp = self.verifica_escopo(expRetorna)
-			
 			if self.tabelaSimbolos[escopoExp][2] == False:
 				if escopoExp in self.valoresLeia:
-					print(self.tabelaSimbolos[escopoExp][1])
 					expRetorna1 = self.builder.load(self.tabelaSimbolos[escopoExp][1])
+				elif escopoExp in self.valores:
+					expRetorna1 = self.retorno_numero(self.valores[escopoExp], tipo)
 				else:
 					#retorna 0 
 					expRetorna1 = self.retorno_numero(0, tipo)
 				
 			else:
 				expRetorna1 = self.retorno_var(expRetorna, tipo)
-			#print(expRetorna1)
 		
 		else:
 			expRetorna1 = self.retorno_numero(expRetorna, tipo)
@@ -313,31 +396,58 @@ class Geracao():
 	def verifica_condicional(self, node):
 		
 		expressao, tipo = self.expressao(node.child[0])
+		escopoVar = self.verifica_escopo(expressao)	
+		varCorpoSe = node.child[1].child[1].child[0].child[0].child[0].value
+		expressaoCorpoSe = self.expressao(node.child[1].child[1].child[0].child[0].child[1])
+		escopoVarCorpoSe = self.verifica_escopo(varCorpoSe)
+			
 		
+		blocoEntao = self.funcao.append_basic_block(name='entao')
+		if len(node.child) ==3:
+			blocoSenao = self.builder.append_basic_block('senao')
 
-#		blocoSe = self.funcao.append_basic_block(name='entao')
-#		blocoFim = self.funcao.append_basic_block(name='fim')
-
-		escopoVar = self.verifica_escopo(expressao)
+		blocoFim = self.funcao.append_basic_block(name='fim')
 		
 		if escopoVar in self.tabelaSimbolos:
 			var_comp = self.builder.load(self.tabelaSimbolos[escopoVar][1], expressao+"_cmp", align=4)
 			op = self.valoresExpressoes[expressao][2]
-			valor_comp = self.valoresExpressoes[expressao][0]			
-			#if_1 = self.builder.icmp_signed(op, var_comp, valor_comp, name="se_"+expressao)
+			valor_comp = self.valoresExpressoes[expressao][0]
+			
 
-		#	if len(node.child) == 3:
+			tipoValorComp = self.verifica_tipo(valor_comp)
+			if tipoValorComp == "inteiro":
+				comparaSe = self.builder.icmp_signed(op, var_comp, ir.Constant(ir.IntType(32), valor_comp), name="se_"+expressao)
+				if len(node.child) == 3:
+					self.builder.cbranch(comparaSe, blocoEntao, blocoSenao)
+				else:
+					self.builder.cbranch(comparaSe, blocoEntao, blocoFim)	
+				self.builder.position_at_end(blocoEntao)
+				self.builder.store(ir.Constant(ir.IntType(32), expressaoCorpoSe[0]), self.tabelaSimbolos[escopoVarCorpoSe][1])				
+				self.valores[escopoVarCorpoSe] = expressaoCorpoSe[0]
 				
-		#		self.builder.cbranch(if_1, blocoSe, blocoSenao)
-		#	else:
-		#		self.builder.cbranch(if_1, blocoSe, blocoFim)
-		
+				self.builder.branch(blocoFim)
+				
+				if len(node.child) ==3:
+					varCorpoSenao = node.child[2].child[1].child[0].child[0].child[0].value
+					expressaoCorpoSenao = self.expressao(node.child[2].child[1].child[0].child[0].child[1])
+					escopoVarCorpoSenao = self.verifica_escopo(varCorpoSenao)
+					
+					self.builder.position_at_end(blocoSenao)
+					self.builder.store(ir.Constant(ir.IntType(32), expressaoCorpoSenao[0]), self.tabelaSimbolos[escopoVarCorpoSenao][1])
+					self.valores[escopoVarCorpoSenao] = expressaoCorpoSenao[0]
+				
+					self.builder.branch(blocoFim)
+				self.builder.position_at_end(blocoFim)
+					
+
+
 
 	def float_to_int(self, num):
 		return self.builder.fptosi(num, ir.IntType(32))
 
 	def int_to_float(self, num):
 		return self.builder.sitofp(num, ir.FloatType())
+
 
 
 	def leia(self, node):
@@ -356,6 +466,7 @@ class Geracao():
 				return self.builder.load(self.tabelaSimbolos[escopoNode][1])
 
 
+
 	def escreva(self, node):
 		valor, tipo = self.expressao(node.child[0])
 		escopoValor = self.verifica_escopo(valor)
@@ -368,8 +479,6 @@ class Geracao():
 			valorExp = self.float_to_int(valorExp)
 			return self.builder.call(self.escrevaFlutuante, [valorExp])		
 
-#		if tipo == "inteiro":
-			#valor = self.float		
 
 
 	def salva_arquivo(self):

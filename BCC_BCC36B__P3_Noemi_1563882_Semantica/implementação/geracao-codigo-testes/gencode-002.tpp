@@ -6,10 +6,10 @@ inteiro principal()
 	
 	a := 10    
 	se a > 5 então
-        ret := 1
-    senão
-        ret := 0
-    fim
+        	ret := 1
+    	senão
+        	ret := 10
+    	fim
 
     retorna(ret)
 fim

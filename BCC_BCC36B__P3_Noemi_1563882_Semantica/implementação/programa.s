@@ -1,28 +1,28 @@
 	.text
 	.file	"programa.ll"
-	.globl	main                    # -- Begin function main
+	.section	.rodata.cst4,"aM",@progbits,4
+	.p2align	2               # -- Begin function main
+.LCPI0_0:
+	.long	1065353216              # float 1
+	.text
+	.globl	main
 	.p2align	4, 0x90
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
 # BB#0:                                 # %entry
-	subq	$24, %rsp
-.Lcfi0:
-	.cfi_def_cfa_offset 32
-	callq	leiaFlutuante
+	movl	$10, global.a(%rip)
+	xorl	%eax, %eax
+	testb	%al, %al
+	jne	.LBB0_2
+# BB#1:                                 # %entao
+	movl	$1, -4(%rsp)
+	jmp	.LBB0_3
+.LBB0_2:                                # %senao
+	movl	$0, -4(%rsp)
+.LBB0_3:                                # %fim
+	cvtsi2ssl	-4(%rsp), %xmm0
 	cvttss2si	%xmm0, %eax
-	movl	%eax, 12(%rsp)
-	callq	leiaFlutuante
-	cvttss2si	%xmm0, %eax
-	movl	%eax, 16(%rsp)
-	cvtsi2ssl	12(%rsp), %xmm0
-	callq	escrevaFlutuante
-	xorps	%xmm0, %xmm0
-	cvtsi2ssl	12(%rsp), %xmm0
-	cvtsi2ssl	16(%rsp), %xmm1
-	addss	%xmm0, %xmm1
-	cvttss2si	%xmm1, %eax
-	addq	$24, %rsp
 	retq
 .Lfunc_end0:
 	.size	main, .Lfunc_end0-main
