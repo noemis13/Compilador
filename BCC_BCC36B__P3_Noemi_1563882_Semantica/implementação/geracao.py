@@ -89,9 +89,7 @@ class Geracao():
 
 			else:
 				self.tabelaSimbolos[self.escopo + "-" + var][3] = self.builder.alloca(ir.FloatType(), name= self.escopo + "-" + var)
-		
-		
-
+				
 
 	def declaracao_funcao(self, node, valorNoFilho):
 		tipoFunc = node.child[0].value
@@ -99,32 +97,59 @@ class Geracao():
 		if valorNoFilho == "principal":
 			nomeFunc = "main"
 
+		self.escopo = valorNoFilho
+
+
+		#parametros
 		if len(node.child) == 0:
 			parametros = self.lista_parametros(node.child[0].child[0])
 			valorParam = self.valor_lista_parametros(node.child[0].child[0])
 		else:
 			valorParam = self.valor_lista_parametros(node.child[1].child[0])
 			parametros = self.lista_parametros(node.child[1].child[0])
-			
-		print(valorParam)
+		carregaParametro = []
+		for i in range(len(parametros)):
+			carregaParametro.append(self.tipo_parametros(valorParam[i], parametros[i]))
 		
-		if tipoFunc == "inteiro":
-			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), ()), name=nomeFunc)
+		if len(carregaParametro) > 0:
+		
+			if tipoFunc == "inteiro":
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), ( [carregaParametro[i][0][0] for i in range(0, len(carregaParametro))])), name=nomeFunc)
 
-		elif tipoFunc == "flutuante":
-			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), ()), name=nomeFunc)
+			elif tipoFunc == "flutuante":
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), ( [carregaParametro[i][0][0] for i in range(0, len(carregaParametro))])), name=nomeFunc)
 
+			else:
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ( [carregaParametro[i][0][0] for i in range(0, len(carregaParametro))])), name=nomeFunc)
+
+			basicBlock = 	self.funcao.append_basic_block('entry')
+			self.builder = ir.IRBuilder(basicBlock)
+
+
+			for i, v in enumerate(carregaParametro):
+				self.funcao.args[i].name = v[0][1]
+				escopoParam = self.verifica_escopo(v[0][1])
+				self.tabelaSimbolos[escopoParam][1] = self.builder.alloca(v[0][0], name=v[0][1])
+				self.builder.store(self.funcao.args[i],self.tabelaSimbolos[escopoParam][1] )
+				self.builder.load(self.tabelaSimbolos[escopoParam][1])			
+
+		#declaracao sem parametros
 		else:
-			self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ()), name=nomeFunc)
+			if tipoFunc == "inteiro":
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.IntType(32), ()), name=nomeFunc)
 
-		basicBlock = self.funcao.append_basic_block('entry')
+			elif tipoFunc == "flutuante":
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), ()), name=nomeFunc)
 
-		self.builder = ir.IRBuilder(basicBlock)
-		self.escopo = valorNoFilho
+			else:
+				self.funcao = ir.Function(self.modulo, ir.FunctionType(ir.VoidType(), ()), name=nomeFunc)
+
+
+			basicBlock = self.funcao.append_basic_block('entry')
+			self.builder = ir.IRBuilder(basicBlock)
 		
 		if len(node.child) == 0:
 			self.cabecalho(node.child[0])
-
 		else:
 			self.cabecalho(node.child[1])
 		
@@ -132,20 +157,13 @@ class Geracao():
 
 
 
-
-	def cabecalho(self, node):
-		self.corpo_funcao(node.child[1])
-		#return self.lista_parametros(node.child[0])
-		
-
 	def lista_parametros(self, node):
 		parametros = []
 		if len(node.child) == 1:
-			if node.child[0] == None:
-				parametros = "void"
-			else:
-				parametros.append(node.child[0].child[0].value)
-				
+			if node.child[0] != None:
+				#parametros = "void"
+	#		else:
+				parametros.append(node.child[0].child[0].value)				
 		else:
 			parametros = self.lista_parametros(node.child[0])
 			parametros.append(node.child[1].child[0].value)
@@ -156,9 +174,9 @@ class Geracao():
 	def valor_lista_parametros(self, node):
 		valorParam = []
 		if len(node.child) == 1:
-			if node.child[0] == None:
-				valorParam = "void"
-			else:
+			if node.child[0] != None:
+				#valorParam = "void"
+			#else:
 				valorParam.append(node.child[0].value)
 			
 		else:
@@ -167,6 +185,24 @@ class Geracao():
 				
 		return valorParam
 
+
+	def tipo_parametros(self, valorParam, parametros):
+		tipo = []
+		if parametros == "inteiro":
+			conv = ir.IntType(32)
+		elif parametros == "flutuante":
+			conv = ir.FloatType()
+		else:
+			conv = ir.VoidType
+		tipo.append((conv, valorParam))
+		return tipo
+
+
+
+	def cabecalho(self, node):
+		self.corpo_funcao(node.child[1])
+		#return self.lista_parametros(node.child[0])
+	
 				
 	def corpo_funcao(self, node):
 		if len(node.child) != 1:
@@ -324,7 +360,8 @@ class Geracao():
 			tipo ="inteiro"
 		return tipo
 
-
+#print(self.tabelaSimbolos[escopoValor][1])
+		
 
 	def retorna(self, node):
 		expRetorna, tipo = self.expressao(node.child[0])	
@@ -371,13 +408,21 @@ class Geracao():
 
 
 	def retorno_var(self, expRetorna, tipo):
-		nomeEscopo = self.escopo+"-"+expRetorna
-		if nomeEscopo not in self.valores:
-			nomeEscopo = "global-"+expRetorna
+#		nomeEscopo = self.escopo+"-"+expRetorna
+#		if nomeEscopo not in self.valores:
+#			nomeEscopo = "global-"+expRetorna
+
+		nomeEscopo = self.verifica_escopo(expRetorna)
+		
 		if tipo == "inteiro":
 			retorno = self.builder.alloca(ir.IntType(32), name='retorno')
-			self.builder.store(ir.Constant(ir.IntType(32), self.valores[nomeEscopo][0]), retorno)
-			expRetorna1 = self.builder.load(retorno, name='', align=4)
+			if nomeEscopo not in self.valores:
+				print("aqui")
+				expRetorna1 = (self.builder.load(self.tabelaSimbolos[nomeEscopo][1]))
+				
+			else:
+				self.builder.store(ir.Constant(ir.IntType(32), self.valores[nomeEscopo][0]), retorno)
+				expRetorna1 = self.builder.load(retorno, name='', align=4)
 		elif tipo == "flutuante":
 			retorno = self.builder.alloca(ir.FloatType(), name='retorno')
 			self.builder.store(ir.Constant(ir.FloatType(), self.valores[nomeEscopo][0]), retorno)
@@ -394,13 +439,21 @@ class Geracao():
 
 
 	def verifica_condicional(self, node):
-		
 		expressao, tipo = self.expressao(node.child[0])
-		escopoVar = self.verifica_escopo(expressao)	
-		varCorpoSe = node.child[1].child[1].child[0].child[0].child[0].value
-		expressaoCorpoSe = self.expressao(node.child[1].child[1].child[0].child[0].child[1])
-		escopoVarCorpoSe = self.verifica_escopo(varCorpoSe)
+		escopoVar = self.verifica_escopo(expressao)
+	
+		if node.child[1].child[1].child[0].type == "expressao":
+			varCorpoSe = node.child[1].child[1].child[0].child[0].child[0].value
+			expressaoCorpoSe = self.expressao(node.child[1].child[1].child[0].child[0].child[1])
+			escopoVarCorpoSe = self.verifica_escopo(varCorpoSe)
+			self.monta_condicional(node, expressao, tipo, escopoVar, varCorpoSe, expressaoCorpoSe, escopoVarCorpoSe)
+
+		if node.child[1].child[1].child[0].type == "se":
 			
+			self.verifica_condicional(node.child[1].child[1].child[0])
+
+
+	def monta_condicional(self,node,  expressao, tipo, escopoVar, varCorpoSe, expressaoCorpoSe, escopoVarCorpoSe):
 		
 		blocoEntao = self.funcao.append_basic_block(name='entao')
 		if len(node.child) ==3:
@@ -438,6 +491,7 @@ class Geracao():
 				
 					self.builder.branch(blocoFim)
 				self.builder.position_at_end(blocoFim)
+		print("uma")
 					
 
 
@@ -470,13 +524,37 @@ class Geracao():
 	def escreva(self, node):
 		valor, tipo = self.expressao(node.child[0])
 		escopoValor = self.verifica_escopo(valor)
+			
 		if tipo == "inteiro":
 			valorExp = self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoValor][1]))
 			return self.builder.call(self.escrevaFlutuante, [valorExp])
-		
+
 		elif tipo == "flutuante":
 			valorExp = self.builder.load(self.tabelaSimbolos[escopoValor])
 			valorExp = self.float_to_int(valorExp)
+			return self.builder.call(self.escrevaFlutuante, [valorExp])
+
+		#valor, tipo = self.expressao(node.child[0])
+		#escopoValor = self.verifica_escopo(valor)
+		#if tipo == "inteiro":
+		#	if self.tabelaSimbolos[escopoValor][2] == False:
+		#		if escopoValor in self.valores:
+		#			valorExp = self.int_to_float( ir.Constant(ir.IntType(32), self.valores[escopoValor]))
+					
+		#	else:
+		#		valorExp = self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoValor][1]))
+			
+		#	return self.builder.call(self.escrevaFlutuante, [valorExp])
+		
+		elif tipo == "flutuante":
+			if self.tabelaSimbolos[escopoValor][2] == False:
+				if escopoValor in self.valores:
+					valorExp = self.int_to_float( ir.Constant(ir.IntType(32), self.valores[escopoValor]))
+			else:
+
+				valorExp = self.builder.load(self.tabelaSimbolos[escopoValor])
+				valorExp = self.float_to_int(valorExp)
+
 			return self.builder.call(self.escrevaFlutuante, [valorExp])		
 
 

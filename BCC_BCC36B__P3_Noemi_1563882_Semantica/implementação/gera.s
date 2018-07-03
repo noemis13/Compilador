@@ -1,28 +1,48 @@
 	.text
 	.file	"gera.ll"
+	.globl	soma                    # -- Begin function soma
+	.p2align	4, 0x90
+	.type	soma,@function
+soma:                                   # @soma
+	.cfi_startproc
+# BB#0:                                 # %entry
+	movl	%edi, -8(%rsp)
+	movl	%esi, -12(%rsp)
+	movl	%edi, %eax
+	retq
+.Lfunc_end0:
+	.size	soma, .Lfunc_end0-soma
+	.cfi_endproc
+                                        # -- End function
 	.globl	main                    # -- Begin function main
 	.p2align	4, 0x90
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
 # BB#0:                                 # %entry
-	movl	$10, a(%rip)
+	subq	$24, %rsp
+.Lcfi0:
+	.cfi_def_cfa_offset 32
+	callq	leiaFlutuante
+	cvttss2si	%xmm0, %eax
+	movl	%eax, 12(%rsp)
+	callq	leiaFlutuante
+	cvttss2si	%xmm0, %eax
+	movl	%eax, 20(%rsp)
+	cvtsi2ssl	12(%rsp), %xmm0
+	cvtsi2ssl	%eax, %xmm1
+	cvttss2si	%xmm0, %edi
+	cvttss2si	%xmm1, %esi
+	callq	soma
+	xorps	%xmm0, %xmm0
+	cvtsi2ssl	16(%rsp), %xmm0
+	callq	escrevaFlutuante
 	xorl	%eax, %eax
-	testb	%al, %al
-	jne	.LBB0_2
-# BB#1:                                 # %entao
-	movl	$1, -4(%rsp)
-	movl	$10, %eax
+	addq	$24, %rsp
 	retq
-.LBB0_2:                                # %senao
-	movl	$10, -4(%rsp)
-	movl	$10, %eax
-	retq
-.Lfunc_end0:
-	.size	main, .Lfunc_end0-main
+.Lfunc_end1:
+	.size	main, .Lfunc_end1-main
 	.cfi_endproc
                                         # -- End function
-	.type	a,@object               # @a
-	.comm	a,4,4
 
 	.section	".note.GNU-stack","",@progbits

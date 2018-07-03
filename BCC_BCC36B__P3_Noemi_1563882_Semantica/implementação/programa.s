@@ -1,31 +1,39 @@
 	.text
 	.file	"programa.ll"
-	.section	.rodata.cst4,"aM",@progbits,4
-	.p2align	2               # -- Begin function main
-.LCPI0_0:
-	.long	1065353216              # float 1
-	.text
-	.globl	main
+	.globl	soma                    # -- Begin function soma
+	.p2align	4, 0x90
+	.type	soma,@function
+soma:                                   # @soma
+	.cfi_startproc
+# BB#0:                                 # %entry
+	movl	%edi, -4(%rsp)
+	movl	%esi, -8(%rsp)
+	xorl	%eax, %eax
+	retq
+.Lfunc_end0:
+	.size	soma, .Lfunc_end0-soma
+	.cfi_endproc
+                                        # -- End function
+	.globl	main                    # -- Begin function main
 	.p2align	4, 0x90
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
 # BB#0:                                 # %entry
-	movl	$10, global.a(%rip)
-	xorl	%eax, %eax
-	testb	%al, %al
-	jne	.LBB0_2
-# BB#1:                                 # %entao
-	movl	$1, -4(%rsp)
-	jmp	.LBB0_3
-.LBB0_2:                                # %senao
-	movl	$0, -4(%rsp)
-.LBB0_3:                                # %fim
-	cvtsi2ssl	-4(%rsp), %xmm0
+	subq	$24, %rsp
+.Lcfi0:
+	.cfi_def_cfa_offset 32
+	callq	leiaFlutuante
 	cvttss2si	%xmm0, %eax
+	movl	%eax, 16(%rsp)
+	callq	leiaFlutuante
+	cvttss2si	%xmm0, %eax
+	movl	%eax, 12(%rsp)
+	xorl	%eax, %eax
+	addq	$24, %rsp
 	retq
-.Lfunc_end0:
-	.size	main, .Lfunc_end0-main
+.Lfunc_end1:
+	.size	main, .Lfunc_end1-main
 	.cfi_endproc
                                         # -- End function
 

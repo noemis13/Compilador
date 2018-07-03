@@ -45,6 +45,55 @@ digraph G {
 	operador_relacional -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
+	var -> a
+	fator -> var
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> expressao_aditiva
+	operador_relacional -> "<"
+	numero -> 20
+	fator -> numero
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> operador_relacional
+	operador_relacional -> expressao_aditiva
+	expressao_logica -> expressao_simples
+	expressao -> expressao_logica
+	var -> ret
+	numero -> 1
+	fator -> numero
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> expressao_aditiva
+	expressao_logica -> expressao_simples
+	expressao -> expressao_logica
+	atribuicao -> var
+	var -> expressao
+	expressao -> atribuicao
+	acao -> expressao
+	corpo -> acao
+	var -> ret
+	numero -> 2
+	fator -> numero
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> expressao_multiplicativa
+	expressao_simples -> expressao_aditiva
+	expressao_logica -> expressao_simples
+	expressao -> expressao_logica
+	atribuicao -> var
+	var -> expressao
+	expressao -> atribuicao
+	acao -> expressao
+	corpo -> acao
+	se -> expressao
+	expressao -> corpo
+	corpo -> corpo
+	acao -> se
+	corpo -> acao
 	var -> ret
 	numero -> 1
 	fator -> numero
@@ -78,8 +127,8 @@ digraph G {
 	corpo -> corpo
 	acao -> se
 	corpo -> acao
-	var -> ret
-	fator -> var
+	numero -> 0
+	fator -> numero
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
