@@ -7,8 +7,8 @@ soma:                                   # @soma
 	.cfi_startproc
 # BB#0:                                 # %entry
 	movl	%edi, -4(%rsp)
-	movl	%esi, -8(%rsp)
-	xorl	%eax, %eax
+	cvtsi2ssl	%edi, %xmm0
+	cvttss2si	%xmm0, %eax
 	retq
 .Lfunc_end0:
 	.size	soma, .Lfunc_end0-soma
@@ -25,10 +25,17 @@ main:                                   # @main
 	.cfi_def_cfa_offset 32
 	callq	leiaFlutuante
 	cvttss2si	%xmm0, %eax
-	movl	%eax, 16(%rsp)
+	movl	%eax, 12(%rsp)
 	callq	leiaFlutuante
 	cvttss2si	%xmm0, %eax
-	movl	%eax, 12(%rsp)
+	movl	%eax, 20(%rsp)
+	cvtsi2ssl	12(%rsp), %xmm0
+	cvttss2si	%xmm0, %edi
+	callq	soma
+	movl	%eax, 16(%rsp)
+	xorps	%xmm0, %xmm0
+	cvtsi2ssl	%eax, %xmm0
+	callq	escrevaFlutuante
 	xorl	%eax, %eax
 	addq	$24, %rsp
 	retq

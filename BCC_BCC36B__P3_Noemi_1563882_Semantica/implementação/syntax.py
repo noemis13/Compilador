@@ -276,11 +276,18 @@ class Syntax:
 
     def p_repita(self, p):
         '''
-            repita : REPITA corpo ATE expressao
+            repita : REPITA corpo ate
         '''
-        p[0] = Tree('repita', [p[2], p[4]])
+        p[0] = Tree('repita', [p[2], p[3]])
         g1.edge('repita', 'corpo')
         g1.edge('corpo', 'expressao')
+
+    def p_ate(self, p):
+        ''' 
+            ate : ATE expressao
+        '''
+        p[0] = Tree('ate', [p[2]])
+        
 
 #    def p_repita_error(self, p):
 #        '''

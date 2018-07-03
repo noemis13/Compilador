@@ -26,8 +26,12 @@ class Geracao():
 		self.valores = {}
 		self.valoresExpressoes = {}
 		self.valoresLeia = {}
+		self.valoresRetorno = {}
+		self.valoresRepita = {}
+		self.escopoVar = []
 		self.builder = None
 		self.escopo = "global"
+		self.escopoRepita = None
 		self.funcao = None
 		self.var = None
 		self.escrevaFlutuante = ir.Function(self.modulo, ir.FunctionType(ir.FloatType(), [ir.FloatType()]), 'escrevaFlutuante')
@@ -202,36 +206,42 @@ class Geracao():
 	def cabecalho(self, node):
 		self.corpo_funcao(node.child[1])
 		#return self.lista_parametros(node.child[0])
-	
-				
+
+
 	def corpo_funcao(self, node):
-		if len(node.child) != 1:
-			self.corpo_funcao(node.child[0])
-			tipoCorpo = self.acao(node.child[1])
+		ret = []
+		if node.child != None:
+			if len(node.child) == 1:
+				tipoCorpo = "void"
+			else:
+				self.corpo_funcao(node.child[0])
+				return self.acao(node.child[1])
+				
 			
 	
 	def acao(self, node):
 		if node.child[0].type == "expressao":
-			self.expressao(node.child[0])
+			return self.expressao(node.child[0])
 		elif node.child[0].type == "declaracao_variaveis":
-			self.declaracao_variaveis(node.child[0])
+			return self.declaracao_variaveis(node.child[0])
 		elif node.child[0].type == "se":
-			self.verifica_condicional(node.child[0])
+			return self.verifica_condicional(node.child[0])
 		elif node.child[0].type == "leia":
-			self.leia(node.child[0])
+			return self.leia(node.child[0])
 		elif node.child[0].type == "escreva":
-			self.escreva(node.child[0])
+			return self.escreva(node.child[0])
 		elif node.child[0].type == "retorna":
-			self.retorna(node.child[0]) 
-		
+			return self.retorna(node.child[0]) 
+		elif node.child[0].type == "repita":
+			return self.verifica_repeticao(node.child[0])
+			
 
 	def expressao(self, node):
-		
 		if node.child[0].type == "atribuicao":
 			nomeVar = node.child[0].child[0].value
 			var = self.escopo+"-"+nomeVar
 			
-			self.expressao_logica(node.child[0].child[1].child[0], nomeVar)
+			return self.expressao_logica(node.child[0].child[1].child[0], nomeVar)
 		else:
 			return self.expressao_logica(node.child[0], "")
 			
@@ -240,16 +250,21 @@ class Geracao():
 		if node.child[0].type == "expressao_simples":
 			return self.expressao_simples(node.child[0], var)
 
-	def expressao_simples(self, node, var):
-		
+	def expressao_simples(self, node, var):	
 		if node.child[0].type == "expressao_aditiva":
 			return self.expressao_aditiva(node.child[0], var)
 		elif node.child[0].type == "expressao_simples":
+			
 			valor, tipo =  self.expressao_simples(node.child[0], var)
 			valorNum, tipoNum = self.expressao_aditiva(node.child[2], var)
 			operadorRelacional = node.child[1].value
 			self.valoresExpressoes[valor] = [valorNum, tipoNum, operadorRelacional]
-			return valor, tipo			
+			if self.escopoRepita == "ate":
+				ret = []
+				ret = [valor, tipo, operadorRelacional, valorNum, tipoNum]
+				return ret
+			else:
+				return valor, tipo			
 			
 
 	def expressao_aditiva(self, node, var):
@@ -264,6 +279,7 @@ class Geracao():
 
 
 	def expressao_multiplicativa(self, node, var):
+		
 		if node.child[0].type == "expressao_unaria": #vai para fator
 			return self.fator(node.child[0].child[0], var)
 
@@ -274,21 +290,28 @@ class Geracao():
 			valor = node.child[0].value
 			tipo= self.verifica_tipo(valor)
 			varCompleto = self.verifica_escopo(var)
-			if len(var) != 0:			
+			if len(var) != 0:
 				if tipo == "inteiro":
 					self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
+					
 					self.valores[varCompleto] = [valor]
-				
+			#		return self.builder.load(self.tabelaSimbolos[varCompleto][1])
+	
 				elif tipo == "flutuante":
 					self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
 					self.valores[varCompleto] = [valor]
+			#		return self.builder.load(self.tabelaSimbolos[varCompleto][1])
+				if self.escopoRepita == "repita":
+					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1])]
+					self.escopoVar.append(varCompleto)
+					
 			else:
 				return valor, tipo #quando for retorna no codio
-
+				
 
 		elif node.child[0].type == "var":
+
 			valorRecebido = node.child[0].value
-						
 			varCompleto = self.verifica_escopo(valorRecebido)
 			tipo = self.tabelaSimbolos[varCompleto][3]
 			if len(var) != 0:
@@ -301,11 +324,19 @@ class Geracao():
 							if tipo == "inteiro":
 								l = self.builder.load(self.tabelaSimbolos[varCompleto][1], escopoVar)
 								self.builder.store(l, self.tabelaSimbolos[escopoVar][1])
+								
 							
 							else:
 								l = self.builder.load(self.tabelaSimbolos[varCompleto][1], escopoVar)
 								self.builder.store(l, self.tabelaSimbolos[escopoVar][1])
-			return valorRecebido, tipo
+			#	return self.builder.load(self.tabelaSimbolos[varCompleto][1])
+				if self.escopoRepita == "repita":
+					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1])]
+					self.escopoVar.append(varCompleto)
+
+			else:
+				#retorna
+				return valorRecebido, tipo
 
 		elif node.child[0].type == "chamada_funcao":
 			nomeFunc = node.child[0].value
@@ -326,11 +357,8 @@ class Geracao():
 			for i in range(len(argsFun)):
 				if argsFun[i][1] == "inteiro":
 					valores[i] = self.builder.fptosi(valores[i], ir.IntType(32))
-			
-			chmadaFun = self.builder.call(func, valores)
-			
-							
-
+			chamadaFun = self.builder.call(func, valores)	
+			return chamadaFun
 			
 			
 	
@@ -364,7 +392,7 @@ class Geracao():
 		
 
 	def retorna(self, node):
-		expRetorna, tipo = self.expressao(node.child[0])	
+		expRetorna, tipo = self.expressao(node.child[0])
 		if type(expRetorna) is str:
 			#verificar se o retorno foi inicializado
 			escopoExp = self.verifica_escopo(expRetorna)
@@ -372,7 +400,9 @@ class Geracao():
 				if escopoExp in self.valoresLeia:
 					expRetorna1 = self.builder.load(self.tabelaSimbolos[escopoExp][1])
 				elif escopoExp in self.valores:
-					expRetorna1 = self.retorno_numero(self.valores[escopoExp], tipo)
+							
+					expRetorna1 = (self.builder.load(self.tabelaSimbolos[escopoExp][1]))
+					#expRetorna1 = self.retorno_numero(self.valores[escopoExp], tipo)
 				else:
 					#retorna 0 
 					expRetorna1 = self.retorno_numero(0, tipo)
@@ -417,7 +447,6 @@ class Geracao():
 		if tipo == "inteiro":
 			retorno = self.builder.alloca(ir.IntType(32), name='retorno')
 			if nomeEscopo not in self.valores:
-				print("aqui")
 				expRetorna1 = (self.builder.load(self.tabelaSimbolos[nomeEscopo][1]))
 				
 			else:
@@ -428,7 +457,6 @@ class Geracao():
 			self.builder.store(ir.Constant(ir.FloatType(), self.valores[nomeEscopo][0]), retorno)
 			expRetorna1 = self.builder.load(retorno, name='', align=4)
 		return expRetorna1	
-		
 
 	def retorno_numero(self, expRetorna, tipo):
 		if tipo == "inteiro":
@@ -436,6 +464,8 @@ class Geracao():
 		elif tipo == "flutuante":
 			expRetorna1 = ir.Constant(ir.FloatType(), expRetorna)
 		return expRetorna1
+
+
 
 
 	def verifica_condicional(self, node):
@@ -491,9 +521,7 @@ class Geracao():
 				
 					self.builder.branch(blocoFim)
 				self.builder.position_at_end(blocoFim)
-		print("uma")
-					
-
+		
 
 
 	def float_to_int(self, num):
@@ -524,7 +552,6 @@ class Geracao():
 	def escreva(self, node):
 		valor, tipo = self.expressao(node.child[0])
 		escopoValor = self.verifica_escopo(valor)
-			
 		if tipo == "inteiro":
 			valorExp = self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoValor][1]))
 			return self.builder.call(self.escrevaFlutuante, [valorExp])
@@ -558,6 +585,51 @@ class Geracao():
 			return self.builder.call(self.escrevaFlutuante, [valorExp])		
 
 
+
+
+	def verifica_repeticao(self, node):
+		self.escopoRepita = "repita"
+
+		self.phi = True
+
+		blocoRepita = self.builder.append_basic_block('repita')
+		blocoFim = self.builder.append_basic_block('fim')
+		self.builder.branch(blocoRepita)
+		self.builder.position_at_end(blocoRepita)
+
+		self.corpo_funcao(node.child[0])
+		condParada = ""
+		if node.child[1].type == "ate":
+			self.escopoRepita = "ate"
+			condParada = (self.expressao(node.child[1].child[0]))
+				
+		self.escopoRepita = None
+		blocoRepita = self.builder.basic_block
+		self.phi = True
+		
+		escopoCondParada = self.verifica_escopo(condParada[0])
+		varComp = self.builder.load(self.tabelaSimbolos[escopoCondParada][1], condParada[0]+"_cmp", align=4)
+		condicao = ""		
+		if condParada[2] == "=":
+			if(condParada[4] == "inteiro"):
+				condicao = self.builder.icmp_signed('==', varComp, ir.Constant(ir.IntType(32), condParada[3]), name = 'Igualdade')
+			elif condParada[4] == "flutuante":
+				condicao = self.builder.icmp_signed('==', varComp, ir.Constant(ir.FloatType(), condParada[3]), name = 'Igualdade')
+			
+		self.builder.cbranch(condicao, blocoRepita, blocoFim)
+		self.builder.position_at_end(blocoFim)
+		self.phi = True
+		
+		for i in range(0, len(self.valoresRepita)):
+			loadValor = self.valoresRepita[self.escopoVar[i]][2]
+			if self.valoresRepita[self.escopoVar[i]][1] == "inteiro":
+				phi = self.builder.phi(ir.IntType(32), 'repitaTemp')
+			else:
+				phi = self.builder.phi(ir.FloatType(), 'repitaTemp')
+
+			phi.add_incoming(loadValor, blocoRepita)
+		self.phi = False
+			
 
 	def salva_arquivo(self):
 		arquivo = open('gera.ll', 'w')

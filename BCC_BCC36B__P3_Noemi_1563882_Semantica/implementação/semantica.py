@@ -216,7 +216,6 @@ class Semantica:
 
     def acao(self, node):
         valorNode = node.child[0]
-
         if node.child[0].type == "expressao":
             g.edge('acao', 'expressao')
             return self.expressao(valorNode)
@@ -308,8 +307,7 @@ class Semantica:
         noFilho = node.child[0]
         if tamNoFilho == 1:
             return self.expressao_aditiva(noFilho)
-     
-  
+        
     def expressao_aditiva(self, node):
         tamNoFilho = len(node.child) 
         

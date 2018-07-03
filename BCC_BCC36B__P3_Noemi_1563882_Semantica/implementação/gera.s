@@ -1,48 +1,43 @@
 	.text
 	.file	"gera.ll"
-	.globl	soma                    # -- Begin function soma
-	.p2align	4, 0x90
-	.type	soma,@function
-soma:                                   # @soma
-	.cfi_startproc
-# BB#0:                                 # %entry
-	movl	%edi, -8(%rsp)
-	movl	%esi, -12(%rsp)
-	movl	%edi, %eax
-	retq
-.Lfunc_end0:
-	.size	soma, .Lfunc_end0-soma
-	.cfi_endproc
-                                        # -- End function
 	.globl	main                    # -- Begin function main
 	.p2align	4, 0x90
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
 # BB#0:                                 # %entry
-	subq	$24, %rsp
+	pushq	%rax
 .Lcfi0:
-	.cfi_def_cfa_offset 32
-	callq	leiaFlutuante
-	cvttss2si	%xmm0, %eax
-	movl	%eax, 12(%rsp)
-	callq	leiaFlutuante
-	cvttss2si	%xmm0, %eax
-	movl	%eax, 20(%rsp)
-	cvtsi2ssl	12(%rsp), %xmm0
-	cvtsi2ssl	%eax, %xmm1
-	cvttss2si	%xmm0, %edi
-	cvttss2si	%xmm1, %esi
-	callq	soma
-	xorps	%xmm0, %xmm0
-	cvtsi2ssl	16(%rsp), %xmm0
+	.cfi_def_cfa_offset 16
+	movl	$10, n(%rip)
+	movl	$0, soma(%rip)
+	xorl	%eax, %eax
+	.p2align	4, 0x90
+.LBB0_1:                                # %repita
+                                        # =>This Inner Loop Header: Depth=1
+	movl	n(%rip), %ecx
+	movl	%ecx, soma(%rip)
+	movl	$1, n(%rip)
+	testb	%al, %al
+	jne	.LBB0_1
+# BB#2:                                 # %fim
+	movl	n(%rip), %eax
+	cvtsi2ssl	%eax, %xmm0
 	callq	escrevaFlutuante
 	xorl	%eax, %eax
-	addq	$24, %rsp
+	popq	%rcx
 	retq
-.Lfunc_end1:
-	.size	main, .Lfunc_end1-main
+.Lfunc_end0:
+	.size	main, .Lfunc_end0-main
 	.cfi_endproc
                                         # -- End function
+	.type	n,@object               # @n
+	.comm	n,4,4
+	.type	soma,@object            # @soma
+	.comm	soma,4,4
+	.type	a,@object               # @a
+	.comm	a,4,4
+	.type	b,@object               # @b
+	.comm	b,4,4
 
 	.section	".note.GNU-stack","",@progbits
