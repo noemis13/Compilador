@@ -12,8 +12,6 @@ declare i32 @"leiaInteiro"()
 
 @"global.n" = external global i32
 @"global.soma" = external global i32
-@"global.a" = external global i32
-@"global.b" = external global i32
 define i32 @"main"() 
 {
 entry:
@@ -27,22 +25,28 @@ entry:
   %".9" = sitofp i32 %".8" to float
   br label %"repita"
 repita:
-  %".11" = load i32, i32* @"global.n"
+  %".11" = load i32, i32* @"global.soma"
   %".12" = sitofp i32 %".11" to float
-  %".13" = fptosi float %".12" to i32
-  store i32 %".13", i32* @"global.a"
-  %".15" = load i32, i32* @"global.a"
-  %".16" = sitofp i32 %".15" to float
-  %".17" = fptosi float 0x3ff0000000000000 to i32
-  store i32 %".17", i32* @"global.n"
-  %".19" = load i32, i32* @"global.n"
-  %".20" = sitofp i32 %".19" to float
+  %".13" = load i32, i32* @"global.n"
+  %".14" = sitofp i32 %".13" to float
+  %"addtmp" = fadd float %".12", %".14"
+  %".15" = fptosi float %"addtmp" to i32
+  store i32 %".15", i32* @"global.soma"
+  %".17" = load i32, i32* @"global.soma"
+  %".18" = sitofp i32 %".17" to float
+  %".19" = fptosi float 0x3ff0000000000000 to i32
+  store i32 %".19", i32* @"global.n"
   %".21" = load i32, i32* @"global.n"
   %".22" = sitofp i32 %".21" to float
-  %"fcmpIgual" = fcmp ueq float %".22",              0x0
+  %".23" = load i32, i32* @"global.n"
+  %".24" = sitofp i32 %".23" to float
+  %"fcmpIgual" = fcmp ueq float %".24",              0x0
   br i1 %"fcmpIgual", label %"repita", label %"fimRepita"
 fimRepita:
-  %"repitaTmp" = phi i32 [%".20", %"repita"]
-  %".24" = fptosi float              0x0 to i32
-  ret i32 %".24"
+  %"repitaTmp" = phi i32 [%".22", %"repita"]
+  %".26" = load i32, i32* @"global.soma"
+  %".27" = sitofp i32 %".26" to float
+  %".28" = call float @"escrevaFlutuante"(float %".27")
+  %".29" = fptosi float              0x0 to i32
+  ret i32 %".29"
 }

@@ -60,12 +60,19 @@ digraph G {
 	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
-	var -> a
-	var -> n
+	var -> soma
+	var -> soma
 	fator -> var
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
+	operador_soma -> "+"
+	var -> n
+	fator -> var
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> operador_soma
+	operador_soma -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica
@@ -74,7 +81,7 @@ digraph G {
 	expressao -> atribuicao
 	acao -> expressao
 	corpo -> acao
-	var -> b
+	var -> n
 	numero -> 1
 	fator -> numero
 	expressao_unaria -> fator
@@ -108,11 +115,18 @@ digraph G {
 	corpo -> expressao
 	acao -> repita
 	corpo -> acao
-	numero -> 0
-	fator -> numero
+	var -> n
+	fator -> var
 	expressao_unaria -> fator
 	expressao_multiplicativa -> expressao_unaria
 	expressao_aditiva -> expressao_multiplicativa
+	operador_soma -> "+"
+	var -> soma
+	fator -> var
+	expressao_unaria -> fator
+	expressao_multiplicativa -> expressao_unaria
+	expressao_aditiva -> operador_soma
+	operador_soma -> expressao_multiplicativa
 	expressao_simples -> expressao_aditiva
 	expressao_logica -> expressao_simples
 	expressao -> expressao_logica

@@ -10,6 +10,5 @@ inteiro principal()
     	senão
         	ret := 10
     	fim
-
     retorna(ret)
 fim

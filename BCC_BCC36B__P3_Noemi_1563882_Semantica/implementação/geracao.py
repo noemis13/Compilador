@@ -28,6 +28,7 @@ class Geracao():
 		self.valoresLeia = {}
 		self.valoresRetorno = {}
 		self.valoresRepita = {}
+		self.valoresStore = {}
 		self.escopoVar = []
 		self.builder = None
 		self.escopo = "global"
@@ -271,11 +272,46 @@ class Geracao():
 		if node.child[0].type == "expressao_multiplicativa":
 			return self.expressao_multiplicativa(node.child[0], var)
 		elif node.child[0].type == "expressao_aditiva":
-			valorExp1, tipo = self.expressao_aditiva(node.child[0], var)
-			valorExp2, tipoExp = self.expressao_multiplicativa(node.child[2], var)
-			operadorAditivo = node.child[1].value
-			self.valoresExpressoes[valorExp1] = [valorExp2, tipoExp, operadorAditivo]
-			return valorExp1, tipo		
+			if len(var) > 0:
+				valorExp1, tipo = self.expressao_aditiva(node.child[0], "")
+				valorExp2, tipoExp = self.expressao_multiplicativa(node.child[2], "")
+				operadorAditivo = node.child[1].value
+				
+				escopoExp1 = self.verifica_escopo(valorExp1)
+									
+				expEsquerda = self.builder.load(self.tabelaSimbolos[escopoExp1][1])
+				expDireita = ""
+				if type(valorExp2) is str:
+					escopoExp2 = self.verifica_escopo(valorExp2)
+					expDireita = self.builder.load(self.tabelaSimbolos[escopoExp2][1])
+				else:
+					if tipoExp == "inteiro":
+						allocaDireita = self.builder.alloca(ir.IntType(32), name="direta_"+var)
+						storeDireita = self.builder.store(ir.Constant(ir.IntType(32), valorExp2), allocaDireita)
+					else:
+						allocaDireita = self.builder.alloca(ir.FloatType(), name="direta_"+var)
+						storeDireita = self.builder.store(ir.Constant(ir.FloatType(), valorExp2), allocaDireita)
+
+					expDireita = self.builder.load(allocaDireita)	
+					#calcular expressao		
+				resExp = self.calcula_expressao(expEsquerda, operadorAditivo, expDireita, self.tabelaSimbolos[self.verifica_escopo(var)][0])
+				#splitResExp = str(resExp).split(" = ")
+				
+				#self.tabelaSimbolos[self.verifica_escopo(var)][1] = splitResExp[1]
+				
+
+				self.valoresRepita[self.verifica_escopo(var)] = [resExp, 0, 0, True, True]						
+				self.escopoVar.append(self.verifica_escopo(var))
+				
+			else:
+				valorExp1, tipo = self.expressao_aditiva(node.child[0], var)
+				valorExp2, tipoExp = self.expressao_multiplicativa(node.child[2], var)
+				operadorAditivo = node.child[1].value
+				self.valoresExpressoes[valorExp1] = [valorExp2, tipoExp, operadorAditivo]
+				return valorExp1, tipo		
+
+
+
 
 
 	def expressao_multiplicativa(self, node, var):
@@ -292,17 +328,21 @@ class Geracao():
 			varCompleto = self.verifica_escopo(var)
 			if len(var) != 0:
 				if tipo == "inteiro":
-					self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
+		
+					s = self.builder.store(ir.Constant(ir.IntType(32), valor), self.tabelaSimbolos[varCompleto][1])
 					
 					self.valores[varCompleto] = [valor]
+					self.valoresStore[varCompleto] =[valor, s] 
 			#		return self.builder.load(self.tabelaSimbolos[varCompleto][1])
 	
 				elif tipo == "flutuante":
-					self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
+					s = self.builder.store(ir.Constant(ir.FloatType(), valor), self.tabelaSimbolos[varCompleto][1])
 					self.valores[varCompleto] = [valor]
+					self.valoresStore[varCompleto] =[valor, s] 
+	
 			#		return self.builder.load(self.tabelaSimbolos[varCompleto][1])
 				if self.escopoRepita == "repita":
-					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1])]
+					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1]), False, False]
 					self.escopoVar.append(varCompleto)
 					
 			else:
@@ -331,7 +371,7 @@ class Geracao():
 								self.builder.store(l, self.tabelaSimbolos[escopoVar][1])
 			#	return self.builder.load(self.tabelaSimbolos[varCompleto][1])
 				if self.escopoRepita == "repita":
-					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1])]
+					self.valoresRepita[varCompleto] = [valor, tipo, self.builder.load(self.tabelaSimbolos[varCompleto][1]), False, False]
 					self.escopoVar.append(varCompleto)
 
 			else:
@@ -561,17 +601,6 @@ class Geracao():
 			valorExp = self.float_to_int(valorExp)
 			return self.builder.call(self.escrevaFlutuante, [valorExp])
 
-		#valor, tipo = self.expressao(node.child[0])
-		#escopoValor = self.verifica_escopo(valor)
-		#if tipo == "inteiro":
-		#	if self.tabelaSimbolos[escopoValor][2] == False:
-		#		if escopoValor in self.valores:
-		#			valorExp = self.int_to_float( ir.Constant(ir.IntType(32), self.valores[escopoValor]))
-					
-		#	else:
-		#		valorExp = self.int_to_float(self.builder.load(self.tabelaSimbolos[escopoValor][1]))
-			
-		#	return self.builder.call(self.escrevaFlutuante, [valorExp])
 		
 		elif tipo == "flutuante":
 			if self.tabelaSimbolos[escopoValor][2] == False:
@@ -585,6 +614,20 @@ class Geracao():
 			return self.builder.call(self.escrevaFlutuante, [valorExp])		
 
 
+	def calcula_expressao(self, expEsquerda, operador, expDireita, var):
+		if operador == "+":
+			return self.builder.add(expEsquerda, expDireita, name="add_"+var, flags=())
+		
+		elif operador == "-":
+			return self.builder.sub(expEsquerda, expDireita, name="sub_"+var, flags=())
+
+		elif operador == "*":
+			return self.builder.mul(expEsquerda, expDireita, name="mul_"+var, flags=())
+		
+		else:
+			return self.builder.mul(expEsquerda, expDireita, name="div_"+var, flags=())
+		
+		#return expressao
 
 
 	def verifica_repeticao(self, node):
@@ -606,7 +649,8 @@ class Geracao():
 		self.escopoRepita = None
 		blocoRepita = self.builder.basic_block
 		self.phi = True
-		
+		self.phi2 = True
+
 		escopoCondParada = self.verifica_escopo(condParada[0])
 		varComp = self.builder.load(self.tabelaSimbolos[escopoCondParada][1], condParada[0]+"_cmp", align=4)
 		condicao = ""		
@@ -619,16 +663,32 @@ class Geracao():
 		self.builder.cbranch(condicao, blocoRepita, blocoFim)
 		self.builder.position_at_end(blocoFim)
 		self.phi = True
+		self.phi2 = True
 		
+		loadValor  = []
 		for i in range(0, len(self.valoresRepita)):
-			loadValor = self.valoresRepita[self.escopoVar[i]][2]
-			if self.valoresRepita[self.escopoVar[i]][1] == "inteiro":
-				phi = self.builder.phi(ir.IntType(32), 'repitaTemp')
-			else:
-				phi = self.builder.phi(ir.FloatType(), 'repitaTemp')
+			escopoValor = self.escopoVar[i]
+			if self.valoresRepita[self.escopoVar[i]][3] == False:				
+				loadValor = self.valoresRepita[self.escopoVar[i]][2]
+				
+				if self.valoresRepita[self.escopoVar[i]][1] == "inteiro":
+					phi = self.builder.phi(ir.IntType(32), 'repitaTemp')
+				else:
+					phi = self.builder.phi(ir.FloatType(), 'repitaTemp')
 
-			phi.add_incoming(loadValor, blocoRepita)
+				phi.add_incoming(loadValor, blocoRepita)
+				
+			elif self.valoresRepita[self.escopoVar[i]][3] != False:			
+				phi2 = self.builder.phi(ir.IntType(32), 'repitaTemp2') 
+				#else:
+				#	phi2 = self.builder.phi(ir.FloatType(), 'repitaTemp2')		
+				phi2.add_incoming(self.valoresRepita[self.escopoVar[i]][0], blocoRepita)	
+				
+						
+				
+				
 		self.phi = False
+		self.phi2 = False
 			
 
 	def salva_arquivo(self):
